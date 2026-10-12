@@ -511,3 +511,58 @@ main {
 .aviso-pagina:not(:empty) {
   padding: var(--espacio-xl) 0;
 }
+
+/* ==========================================================
+   12. PÁGINAS DE CONTENIDO (nosotros, blogs)
+   ========================================================== */
+
+/* Párrafo de entrada, un poco más grande que el texto normal */
+.texto-destacado {
+  font-size: 1.2rem;
+  color: var(--color-verde-bosque);
+  font-weight: 600;
+}
+
+/* Foto que acompaña a un texto */
+.contenido-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Caja blanca para destacar un bloque de texto (misión, historia...) */
+.caja-contenido {
+  height: 100%;             /* dos cajas en la misma fila quedan del mismo alto */
+  padding: var(--espacio-lg);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-left: 5px solid var(--color-naranja); /* franja de color al costado */
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+.caja-contenido-titulo {
+  font-size: 1.4rem;
+  margin-bottom: var(--espacio-md);
+}
+
+/* Bloque del desarrollador: ícono a la izquierda y texto a la derecha */
+.desarrollador {
+  display: flex;
+  gap: var(--espacio-md);
+  align-items: flex-start;
+}
+
+.desarrollador-icono {
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--color-verde-bosque);
+}
+
+.desarrollador-nombre {
+  font-size: 1.3rem;
+  margin-bottom: var(--espacio-sm);
+}

@@ -24,6 +24,7 @@
   --color-texto-suave: #5C6B63;    /* texto secundario */
   --color-blanco: #FFFFFF;         /* fondo de tarjetas y formularios */
   --color-borde: #D9D2C5;          /* bordes y separadores */
+  --color-error: #B3261E;          /* avisos de error (por ejemplo, contador excedido) */
 
   /* Tipografía: fuentes del sistema, no necesitan descarga ni internet */
   --fuente-base: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
@@ -658,4 +659,49 @@ main {
 .articulo-fuentes h2 {
   margin-top: 0;
   font-size: 1.1rem;
+}
+
+/* ==========================================================
+   14. FORMULARIOS (contacto, registro, login)
+   Los campos usan las clases de Bootstrap (form-control, form-label);
+   aquí va lo propio: la caja, las ayudas y los mensajes.
+   ========================================================== */
+
+/* Caja blanca que contiene un formulario */
+.formulario {
+  max-width: 38rem;
+  padding: var(--espacio-lg);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Texto "(opcional)" junto a la etiqueta de un campo */
+.etiqueta-opcional {
+  color: var(--color-texto-suave);
+  font-size: var(--tamano-texto-chico);
+}
+
+/* Contador de caracteres, alineado a la derecha bajo el campo */
+.contador {
+  text-align: right;
+}
+
+/* El contador cambia de color si se supera el máximo */
+.contador-excedido {
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+/* Mensaje de confirmación después de enviar un formulario */
+.mensaje-exito {
+  margin: var(--espacio-md) 0 0;
+  color: var(--color-verde-bosque);
+  font-weight: 600;
+}
+
+/* Mientras está vacío no ocupa espacio */
+.mensaje-exito:empty {
+  margin: 0;
 }

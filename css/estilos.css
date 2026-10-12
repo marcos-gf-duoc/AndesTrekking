@@ -1,0 +1,91 @@
+/*
+  Archivo: css/estilos.css
+  Qué es: hoja de estilos común de AndesTrekking. Define la identidad visual
+          (colores, tipografía, espaciados) y los estilos base del sitio.
+  Quién lo usa: todas las páginas de la tienda y también las del panel admin.
+  Orden de carga: va DESPUÉS de bootstrap.min.css, para que estos estilos
+          tengan prioridad sobre los de Bootstrap cuando coinciden.
+*/
+
+/* ==========================================================
+   1. VARIABLES DE LA IDENTIDAD VISUAL
+   Se definen en :root para que estén disponibles en todo el
+   sitio. Se usan con var(--nombre-de-la-variable).
+   ========================================================== */
+:root {
+  /* Colores: paleta outdoor (verdes bosque, tierra y acento naranja) */
+  --color-verde-bosque: #2D4A3E;   /* color principal: header y títulos */
+  --color-verde-oscuro: #1F352C;   /* footer y hover del verde */
+  --color-tierra: #7A5230;         /* detalles y etiquetas de categoría */
+  --color-arena: #F5EFE6;          /* fondo general de la página */
+  --color-naranja: #B8450A;        /* acento: botones principales y enlaces */
+  --color-naranja-claro: #F4A261;  /* acento sobre fondos verdes */
+  --color-texto: #24302B;          /* texto general */
+  --color-texto-suave: #5C6B63;    /* texto secundario */
+  --color-blanco: #FFFFFF;         /* fondo de tarjetas y formularios */
+  --color-borde: #D9D2C5;          /* bordes y separadores */
+
+  /* Tipografía: fuentes del sistema, no necesitan descarga ni internet */
+  --fuente-base: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  --tamano-texto: 1rem;            /* 1rem = 16px en la mayoría de navegadores */
+  --tamano-texto-chico: 0.875rem;
+  --interlineado: 1.6;
+
+  /* Espaciados: una escala corta para mantener el diseño parejo */
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 4rem;
+
+  /* Bordes y sombra */
+  --radio-borde: 0.5rem;
+  --sombra-suave: 0 2px 8px rgba(31, 53, 44, 0.12);
+}
+
+/* ==========================================================
+   2. ESTILOS BASE
+   ========================================================== */
+body {
+  font-family: var(--fuente-base);
+  font-size: var(--tamano-texto);
+  line-height: var(--interlineado);
+  color: var(--color-texto);
+  background-color: var(--color-arena);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-verde-bosque);
+  font-weight: 700;
+  line-height: 1.25; /* los títulos van más apretados que el texto normal */
+}
+
+a {
+  color: var(--color-naranja);
+}
+
+a:hover {
+  color: var(--color-verde-bosque);
+}
+
+/* Evita que una imagen grande se salga de su contenedor en pantallas chicas */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Foco visible: marca el elemento activo al navegar con el teclado (Tab).
+   :focus-visible no se activa al hacer clic con el mouse. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-naranja);
+  outline-offset: 2px; /* separa el contorno del borde del elemento */
+}

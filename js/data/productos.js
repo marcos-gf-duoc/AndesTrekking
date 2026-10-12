@@ -26,7 +26,9 @@ const CATEGORIAS = [
 //   stock         unidades disponibles; 0 significa "Agotado"
 //   stockCritico  si stock <= stockCritico, el admin ve una alerta
 //   categoria     una de las CATEGORIAS
-//   imagenes      rutas de las fotos; vacío = se usa la imagen de reemplazo
+//   imagenes      nombres de archivo de las fotos, que están en la carpeta
+//                 assets/img/productos/. La primera es la foto principal.
+//                 Si está vacío, se usa assets/img/general/placeholder.webp
 const PRODUCTOS_INICIALES = [
   // ---------- Mochilas ----------
   {
@@ -37,7 +39,7 @@ const PRODUCTOS_INICIALES = [
     stock: 12,
     stockCritico: 3,
     categoria: "Mochilas",
-    imagenes: []
+    imagenes: ["mochila-aconcagua-65.webp"]
   },
   {
     codigo: "MOC-002",
@@ -47,7 +49,7 @@ const PRODUCTOS_INICIALES = [
     stock: 20,
     stockCritico: 5,
     categoria: "Mochilas",
-    imagenes: []
+    imagenes: ["mochila-torres-40.webp"]
   },
   {
     codigo: "MOC-003",
@@ -57,7 +59,7 @@ const PRODUCTOS_INICIALES = [
     stock: 2, // caso de prueba: stock bajo el crítico (alerta en el admin)
     stockCritico: 5,
     categoria: "Mochilas",
-    imagenes: []
+    imagenes: ["mochila-cumbre-22.webp"]
   },
 
   // ---------- Calzado ----------
@@ -69,7 +71,7 @@ const PRODUCTOS_INICIALES = [
     stock: 15,
     stockCritico: 4,
     categoria: "Calzado",
-    imagenes: []
+    imagenes: ["botas-patagonia-mid.webp"]
   },
   {
     codigo: "CAL-002",
@@ -79,7 +81,7 @@ const PRODUCTOS_INICIALES = [
     stock: 18,
     stockCritico: 4,
     categoria: "Calzado",
-    imagenes: []
+    imagenes: ["zapatillas-sendero-trail.webp"]
   },
   {
     codigo: "CAL-003",
@@ -89,7 +91,7 @@ const PRODUCTOS_INICIALES = [
     stock: 0, // caso de prueba: sin stock (botón "Agotado" en la tienda)
     stockCritico: 3,
     categoria: "Calzado",
-    imagenes: []
+    imagenes: ["sandalias-rio-claro.webp"]
   },
 
   // ---------- Carpas y Refugio ----------
@@ -101,7 +103,7 @@ const PRODUCTOS_INICIALES = [
     stock: 8,
     stockCritico: 2,
     categoria: "Carpas y Refugio",
-    imagenes: []
+    imagenes: ["carpa-refugio-1.webp", "carpa-refugio-2.webp"]
   },
   {
     codigo: "CAR-002",
@@ -111,7 +113,7 @@ const PRODUCTOS_INICIALES = [
     stock: 10,
     stockCritico: 3,
     categoria: "Carpas y Refugio",
-    imagenes: []
+    imagenes: ["saco-cordillera.webp"]
   },
 
   // ---------- Ropa Técnica ----------
@@ -123,7 +125,7 @@ const PRODUCTOS_INICIALES = [
     stock: 14,
     stockCritico: 4,
     categoria: "Ropa Técnica",
-    imagenes: []
+    imagenes: ["chaqueta-ventisquero.webp"]
   },
   {
     codigo: "ROP-002",
@@ -133,7 +135,7 @@ const PRODUCTOS_INICIALES = [
     stock: 25,
     stockCritico: 6,
     categoria: "Ropa Técnica",
-    imagenes: []
+    imagenes: [] // caso de prueba: sin foto (se muestra la imagen de reemplazo)
   },
 
   // ---------- Accesorios ----------
@@ -145,7 +147,7 @@ const PRODUCTOS_INICIALES = [
     stock: 16,
     stockCritico: 4,
     categoria: "Accesorios",
-    imagenes: []
+    imagenes: ["bastones-araucaria.webp"]
   },
   {
     codigo: "ACC-002",
@@ -155,7 +157,7 @@ const PRODUCTOS_INICIALES = [
     stock: 30,
     stockCritico: 8,
     categoria: "Accesorios",
-    imagenes: []
+    imagenes: ["botella-glaciar.webp"]
   },
 
   // ---------- Navegación y Seguridad ----------
@@ -167,7 +169,7 @@ const PRODUCTOS_INICIALES = [
     stock: 22,
     stockCritico: 5,
     categoria: "Navegación y Seguridad",
-    imagenes: []
+    imagenes: ["linterna-lucero-1.webp", "linterna-lucero-2.webp"]
   },
   {
     codigo: "NAV-002",
@@ -177,6 +179,6 @@ const PRODUCTOS_INICIALES = [
     stock: 50,
     stockCritico: 10,
     categoria: "Navegación y Seguridad",
-    imagenes: []
+    imagenes: ["guia-senderos.webp"]
   }
 ];

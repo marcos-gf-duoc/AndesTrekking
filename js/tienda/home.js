@@ -11,21 +11,20 @@
 const CODIGOS_DESTACADOS = ["MOC-001", "CAL-001", "CAR-001", "ROP-001"];
 
 // Recibe: nada.
-// Hace: lee los productos guardados en localStorage y busca, uno por uno,
-//       los códigos de CODIGOS_DESTACADOS. Si un código ya no existe
-//       (por ejemplo, porque el administrador eliminó el producto), lo salta.
+// Hace: busca en localStorage, uno por uno, los códigos de
+//       CODIGOS_DESTACADOS, con buscarProductoPorCodigo (tienda-comun.js).
+//       Si un código ya no existe (por ejemplo, porque el administrador
+//       eliminó el producto), lo salta.
 // Devuelve: un arreglo con los productos destacados encontrados.
 function obtenerProductosDestacados() {
-  const productos = leerDeStorage(CLAVE_PRODUCTOS);
   const destacados = [];
 
   CODIGOS_DESTACADOS.forEach(function (codigoBuscado) {
-    // Recorre todos los productos hasta encontrar el del código buscado
-    for (let i = 0; i < productos.length; i++) {
-      if (productos[i].codigo === codigoBuscado) {
-        destacados.push(productos[i]);
-        break; // ya se encontró: no hace falta seguir recorriendo
-      }
+    const producto = buscarProductoPorCodigo(codigoBuscado);
+
+    // buscarProductoPorCodigo devuelve null cuando no encuentra el código
+    if (producto !== null) {
+      destacados.push(producto);
     }
   });
 

@@ -202,6 +202,18 @@ main {
   margin-bottom: var(--espacio-xs);
 }
 
+/* Enlaces de las listas del footer (categorías): blancos y sin subrayado,
+   porque el naranja de los enlaces normales no se lee sobre el verde oscuro */
+.pie-lista a {
+  color: var(--color-blanco);
+  text-decoration: none;
+}
+
+.pie-lista a:hover {
+  color: var(--color-naranja-claro);
+  text-decoration: underline;
+}
+
 /* Línea final con el texto de derechos */
 .pie-derechos {
   margin-top: var(--espacio-lg);
@@ -219,6 +231,7 @@ main {
 }
 
 /* Foco sobre fondo verde: contorno naranja claro, igual que en el header */
+.pie a:focus-visible,
 .pie input:focus-visible,
 .pie button:focus-visible {
   outline-color: var(--color-naranja-claro);

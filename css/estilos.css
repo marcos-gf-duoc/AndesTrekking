@@ -359,3 +359,36 @@ main {
   font-size: 1.75rem;
   margin-bottom: var(--espacio-md);
 }
+
+/* ==========================================================
+   9. FILTRO POR CATEGORÍA (productos.html)
+   Fila de botones redondeados; cada uno es un enlace.
+   ========================================================== */
+.filtro-categorias {
+  display: flex;
+  flex-wrap: wrap;          /* si no caben en una línea, bajan a la siguiente */
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-lg);
+}
+
+.filtro-categoria {
+  padding: var(--espacio-xs) var(--espacio-md);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-verde-bosque);
+  border-radius: 999px;
+  color: var(--color-verde-bosque);
+  text-decoration: none;
+}
+
+/* Botón con el mouse encima y botón de la categoría elegida */
+.filtro-categoria:hover,
+.filtro-categoria.activo {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}
+
+/* Subtítulo sobre la grilla: categoría y cantidad de productos */
+.filtro-resumen {
+  font-size: 1.25rem;
+  margin-bottom: var(--espacio-md);
+}

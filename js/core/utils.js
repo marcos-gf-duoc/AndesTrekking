@@ -64,3 +64,22 @@ function escaparHtml(texto) {
 
   return textoSeguro;
 }
+
+// Recibe: nada.
+// Hace: toma la fecha actual del computador y la escribe con el formato
+//       AAAA-MM-DD (por ejemplo "2026-10-12"), que es el que usa el sitio
+//       para guardar fechas.
+// Devuelve: la fecha de hoy como texto.
+function obtenerFechaDeHoy() {
+  const hoy = new Date();
+
+  const anio = hoy.getFullYear();
+  const mes = hoy.getMonth() + 1; // getMonth cuenta desde 0: enero es 0
+  const dia = hoy.getDate();
+
+  // padStart(2, "0") completa con un cero a la izquierda: "5" pasa a "05"
+  const mesDosDigitos = String(mes).padStart(2, "0");
+  const diaDosDigitos = String(dia).padStart(2, "0");
+
+  return anio + "-" + mesDosDigitos + "-" + diaDosDigitos;
+}

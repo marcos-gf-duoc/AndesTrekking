@@ -511,3 +511,151 @@ main {
 .aviso-pagina:not(:empty) {
   padding: var(--espacio-xl) 0;
 }
+
+/* ==========================================================
+   12. PÁGINAS DE CONTENIDO (nosotros, blogs)
+   ========================================================== */
+
+/* Párrafo de entrada, un poco más grande que el texto normal */
+.texto-destacado {
+  font-size: 1.2rem;
+  color: var(--color-verde-bosque);
+  font-weight: 600;
+}
+
+/* Foto que acompaña a un texto */
+.contenido-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Caja blanca para destacar un bloque de texto (misión, historia...) */
+.caja-contenido {
+  height: 100%;             /* dos cajas en la misma fila quedan del mismo alto */
+  padding: var(--espacio-lg);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-left: 5px solid var(--color-naranja); /* franja de color al costado */
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+.caja-contenido-titulo {
+  font-size: 1.4rem;
+  margin-bottom: var(--espacio-md);
+}
+
+/* Bloque del desarrollador: ícono a la izquierda y texto a la derecha */
+.desarrollador {
+  display: flex;
+  gap: var(--espacio-md);
+  align-items: flex-start;
+}
+
+.desarrollador-icono {
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--color-verde-bosque);
+}
+
+.desarrollador-nombre {
+  font-size: 1.3rem;
+  margin-bottom: var(--espacio-sm);
+}
+
+/* Tarjeta de blog (blogs.html): foto arriba y texto abajo */
+.tarjeta-blog {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+  overflow: hidden;         /* recorta la foto en las esquinas redondeadas */
+}
+
+.tarjeta-blog-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;     /* foto más apaisada que la de los productos */
+  object-fit: cover;
+}
+
+/* El cuerpo ocupa el alto que sobra, para poder dejar el botón abajo */
+.tarjeta-blog-cuerpo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;  /* el botón queda del ancho de su texto */
+  padding: var(--espacio-lg);
+}
+
+.tarjeta-blog-titulo {
+  font-size: 1.4rem;
+  margin-bottom: var(--espacio-md);
+}
+
+/* margin-top: auto empuja el botón al fondo de la tarjeta */
+.tarjeta-blog-cuerpo .btn {
+  margin-top: auto;
+}
+
+/* ==========================================================
+   13. ARTÍCULO DE BLOG (blog-1.html y blog-2.html)
+   ========================================================== */
+
+/* Columna angosta y centrada: las líneas cortas se leen mejor */
+.articulo {
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+/* Enlace para volver al listado de blogs */
+.articulo-volver {
+  display: inline-block;
+  margin-bottom: var(--espacio-md);
+  font-size: var(--tamano-texto-chico);
+}
+
+.articulo-figura {
+  margin: var(--espacio-lg) 0;
+}
+
+.articulo-imagen {
+  display: block;
+  width: 100%;
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Pie de foto con el crédito de la imagen */
+.articulo-figura figcaption {
+  margin-top: var(--espacio-sm);
+  font-size: var(--tamano-texto-chico);
+  color: var(--color-texto-suave);
+}
+
+/* Subtítulos dentro del artículo */
+.articulo h2 {
+  font-size: 1.4rem;
+  margin-top: var(--espacio-lg);
+  margin-bottom: var(--espacio-sm);
+}
+
+/* Lista de fuentes al final, separada por una línea */
+.articulo-fuentes {
+  margin-top: var(--espacio-xl);
+  padding-top: var(--espacio-md);
+  border-top: 1px solid var(--color-borde);
+  font-size: var(--tamano-texto-chico);
+}
+
+.articulo-fuentes h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}

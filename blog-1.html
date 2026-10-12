@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--
+  Archivo: blog-1.html
+  Qué es: detalle del blog 1 de AndesTrekking: el volcán Ojos del Salado.
+          Muestra la imagen, el título y la descripción larga del caso.
+  Se llega desde: blogs.html (botón "Ver caso").
+  Script propio: no tiene; solo usa los scripts comunes.
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Hace que la página se adapte al ancho de la pantalla del celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="El Ojos del Salado, en la frontera entre Chile y Argentina, es el volcán activo más alto del mundo.">
+  <title>Ojos del Salado: el volcán activo más alto del mundo | AndesTrekking</title>
+
+  <!-- Estilos, en este orden: Bootstrap, íconos y al final los propios,
+       para que estilos.css tenga prioridad sobre Bootstrap -->
+  <link rel="stylesheet" href="assets/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+  <!-- HEADER: logo, menú de navegación, carrito y enlaces de sesión -->
+  <header class="encabezado">
+    <!-- navbar-expand-lg: en pantallas grandes el menú se ve completo;
+         en pantallas chicas se oculta y aparece el botón para abrirlo -->
+    <nav class="navbar navbar-expand-lg" aria-label="Menú principal">
+      <div class="container">
+
+        <!-- Nombre de la tienda (se cambia por el logo cuando esté listo) -->
+        <a class="navbar-brand encabezado-marca" href="index.html">AndesTrekking</a>
+
+        <!-- Botón que abre y cierra el menú en el celular.
+             data-bs-target apunta al id del bloque que se muestra u oculta -->
+        <button class="navbar-toggler encabezado-boton-menu" type="button"
+                data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+                aria-controls="menuPrincipal" aria-expanded="false"
+                aria-label="Abrir o cerrar el menú">
+          <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menuPrincipal">
+
+          <!-- Enlaces de navegación. me-auto empuja el otro grupo a la derecha.
+               En cada página, el enlace de esa página lleva además
+               class="nav-link active" y aria-current="page" -->
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+            <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
+            <!-- "active" marca Blogs, porque este artículo pertenece a esa sección -->
+            <li class="nav-item"><a class="nav-link active" href="blogs.html">Blogs</a></li>
+            <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+          </ul>
+
+          <!-- Carrito y enlaces de sesión. Más adelante, tienda-comun.js
+               actualizará el contador y cambiará los enlaces si hay sesión -->
+          <ul class="navbar-nav" id="menuSesion">
+            <li class="nav-item">
+              <a class="nav-link" href="carrito.html">
+                <i class="bi bi-cart3" aria-hidden="true"></i>
+                Carrito
+                <span class="carrito-contador" id="contadorCarrito">0</span>
+                <span class="visually-hidden">productos</span>
+              </a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+            <li class="nav-item"><a class="nav-link" href="registro.html">Registrarse</a></li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN: contenido propio de cada página -->
+  <main class="container py-4">
+
+    <!-- ARTÍCULO: imagen, título y descripción larga del caso -->
+    <article class="articulo">
+
+      <a class="articulo-volver" href="blogs.html">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver a Noticias importantes
+      </a>
+
+      <h1>Ojos del Salado: el volcán activo más alto del mundo</h1>
+
+      <!-- figure une la foto con su pie (figcaption). El pie lleva el crédito
+           que exige la licencia Creative Commons de la imagen -->
+      <figure class="articulo-figura">
+        <img class="articulo-imagen" src="assets/img/blog/ojos-del-salado.webp"
+             alt="Volcán Ojos del Salado, con manchas de nieve, sobre una planicie desértica"
+             width="800" height="600">
+        <figcaption>
+          Foto: sergejf, en
+          <a href="https://commons.wikimedia.org/wiki/File:Majestic_Ojos_del_Salado_volcano_(4320230217).jpg">Wikimedia Commons</a>,
+          licencia <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.
+          Imagen recortada.
+        </figcaption>
+      </figure>
+
+      <p class="texto-destacado">
+        En plena cordillera de los Andes, sobre la frontera entre Chile y
+        Argentina, se levanta el Nevado Ojos del Salado: el volcán activo
+        más alto del mundo.
+      </p>
+
+      <p>
+        Con cerca de 6.890 metros de altura, es además la segunda cumbre más
+        alta de América, solo por detrás del Aconcagua.
+      </p>
+
+      <h2>¿Dónde está?</h2>
+      <p>
+        Del lado chileno se encuentra en la Región de Atacama, al este de
+        Copiapó. Del lado argentino, en la provincia de Catamarca. Forma
+        parte de la llamada Ruta de los Seismiles, un conjunto de montañas
+        que superan los 6.000 metros de altura.
+      </p>
+
+      <h2>Activo, aunque parezca dormido</h2>
+      <p>
+        Su última erupción ocurrió hace más de mil años, pero el volcán no
+        está apagado. En la cumbre todavía hay fumarolas, que son salidas de
+        gases y vapor desde el interior de la Tierra. Por eso se lo sigue
+        clasificando como un volcán activo.
+      </p>
+
+      <h2>Un lago en las alturas</h2>
+      <p>
+        Cerca de la cima, a unos 6.400 metros, hay una pequeña laguna dentro
+        de un cráter. Se la considera el lago más alto del planeta.
+      </p>
+
+      <h2>¿Cuánto mide exactamente?</h2>
+      <p>
+        Depende de la fuente. La cifra más citada es 6.893 metros, pero otras
+        mediciones dan entre 6.879 y 6.887 metros. Medir una montaña tan alta
+        y tan aislada no es sencillo, y cada método entrega un resultado
+        algo distinto.
+      </p>
+
+      <h2>Un desafío para excursionistas con experiencia</h2>
+      <p>
+        Subir a esa altura exige una buena aclimatación, equipo adecuado para
+        el frío y el viento, y la compañía de guías que conozcan la zona. No
+        es una salida para principiantes, pero sí un recordatorio de las
+        montañas extraordinarias que tiene Chile.
+      </p>
+
+      <!-- Fuentes de los datos del artículo -->
+      <section class="articulo-fuentes" aria-labelledby="tituloFuentes">
+        <h2 id="tituloFuentes">Fuentes</h2>
+        <ul>
+          <li><a href="https://chile.travel/atractivos/volcan-ojos-del-salado/">Volcán Ojos del Salado, Chile Travel</a></li>
+          <li><a href="https://www.nationalgeographicla.com/medio-ambiente/2024/12/el-volcan-mas-alto-del-mundo-se-encuentra-en-sudamerica-descubre-donde-queda-exactamente-y-cual-es-su-altitud">El volcán más alto del mundo se encuentra en Sudamérica, National Geographic</a></li>
+          <li><a href="https://volcano.oregonstate.edu/ojos-del-salado">Ojos del Salado, Oregon State University</a></li>
+        </ul>
+      </section>
+
+    </article>
+
+  </main>
+
+  <!-- FOOTER: nombre, categorías, medios de pago y newsletter -->
+  <footer class="pie">
+    <div class="container">
+      <!-- Cuatro columnas: una bajo otra en el celular (col-12), de a dos
+           en tablet (col-md-6) y las cuatro en fila en escritorio (col-lg-3).
+           g-4 es la separación entre columnas -->
+      <div class="row g-4">
+
+        <!-- Columna 1: nombre de la tienda -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <p class="pie-marca">AndesTrekking</p>
+          <p>Equipamiento para trekking, senderismo y vida al aire libre.</p>
+        </div>
+
+        <!-- Columna 2: categorías. Cada una enlaza al listado filtrado -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Categorías</h2>
+          <ul class="pie-lista">
+            <li><a href="productos.html?categoria=Mochilas">Mochilas</a></li>
+            <li><a href="productos.html?categoria=Calzado">Calzado</a></li>
+            <li><a href="productos.html?categoria=Carpas%20y%20Refugio">Carpas y Refugio</a></li>
+            <li><a href="productos.html?categoria=Ropa%20T%C3%A9cnica">Ropa Técnica</a></li>
+            <li><a href="productos.html?categoria=Accesorios">Accesorios</a></li>
+            <li><a href="productos.html?categoria=Navegaci%C3%B3n%20y%20Seguridad">Navegación y Seguridad</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: medios de pago -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Medios de pago</h2>
+          <ul class="pie-lista">
+            <li><i class="bi bi-credit-card" aria-hidden="true"></i> Tarjeta de crédito</li>
+            <li><i class="bi bi-credit-card-2-front" aria-hidden="true"></i> Tarjeta de débito</li>
+            <li><i class="bi bi-bank" aria-hidden="true"></i> Transferencia bancaria</li>
+          </ul>
+        </div>
+
+        <!-- Columna 4: newsletter. novalidate apaga la validación del
+             navegador: la validación la hará JavaScript (tienda-comun.js) -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Newsletter</h2>
+          <form id="formularioNewsletter" novalidate>
+            <label for="correoNewsletter" class="form-label">Recibe novedades en tu correo</label>
+            <input type="email" class="form-control" id="correoNewsletter"
+                   placeholder="nombre@gmail.com" autocomplete="email" maxlength="100">
+            <!-- Aquí JavaScript escribirá el mensaje de error del correo -->
+            <div class="invalid-feedback" id="errorCorreoNewsletter"></div>
+            <button type="submit" class="btn boton-principal mt-2">Suscribirme</button>
+            <!-- Aquí JavaScript escribirá la confirmación de la suscripción -->
+            <p class="mt-2 mb-0" id="mensajeNewsletter"></p>
+          </form>
+        </div>
+
+      </div>
+
+      <p class="pie-derechos">&copy; 2026 AndesTrekking. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts, siempre al final del body y en este orden:
+       1. Bootstrap bundle
+       2. js/data/*
+       3. js/core/*
+       4. Script común de la zona (js/tienda/tienda-comun.js)
+       5. Script de la página
+       El orden importa: cada archivo usa lo que definieron los anteriores.
+       El paso 5 es el script propio de cada página (esta no tiene). -->
+
+  <!-- 1. Bootstrap: menú desplegable del celular, modales, etc. -->
+  <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+  <!-- 2. Datos iniciales (semillas) -->
+  <script src="js/data/productos.js"></script>
+  <script src="js/data/usuarios.js"></script>
+  <script src="js/data/ordenes.js"></script>
+  <script src="js/data/cupones.js"></script>
+  <script src="js/data/regiones.js"></script>
+
+  <!-- 3. Lógica compartida. storage.js va después de los datos porque
+       copia las semillas a localStorage apenas se carga -->
+  <script src="js/core/storage.js"></script>
+  <script src="js/core/utils.js"></script>
+
+  <!-- 4. Script común de la tienda: tarjetas de producto -->
+  <script src="js/tienda/tienda-comun.js"></script>
+</body>
+</html>

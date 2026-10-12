@@ -11,6 +11,7 @@ Cada vez que se agrega una imagen al proyecto, se agrega una fila a la tabla que
 |---|---|---|---|---|
 | `placeholder.webp` | Imagen de reemplazo para productos sin foto: dos montañas, un sol y el texto "Imagen no disponible" | Marcos Godoy (creación propia, generada con código) | No aplica | Uso propio del proyecto |
 | `hero.webp` | Foto del hero del home: excursionista frente a un lago turquesa y montañas nevadas en la Patagonia | Paulius Dragunas | https://unsplash.com/photos/14weKuGAe3I | Licencia Unsplash |
+| `nosotros.webp` | Foto de la página Nosotros: dos excursionistas con mochilas en un sendero hacia montañas nevadas | Toomas Tartes | https://unsplash.com/photos/Yizrl9N_eDA | Licencia Unsplash |
 
 ## Imágenes de productos (`assets/img/productos/`)
 
@@ -39,5 +40,10 @@ El producto ROP-002 (Primera capa térmica Lenga) no tiene foto: muestra la imag
 
 ## Imágenes de blogs (`assets/img/blog/`)
 
+Se descargaron desde Wikimedia Commons. Ambas se modificaron: se recortaron a 800 × 600 px y se convirtieron a WebP.
+Las licencias Creative Commons BY-SA exigen nombrar al autor, enlazar la licencia e indicar los cambios; por eso el crédito también aparece bajo la foto en cada página de blog.
+
 | Archivo | Descripción | Autor | Fuente | Licencia |
 |---|---|---|---|---|
+| `ojos-del-salado.webp` | Vista del volcán Ojos del Salado (blog 1) | sergejf | https://commons.wikimedia.org/wiki/File:Majestic_Ojos_del_Salado_volcano_(4320230217).jpg | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) |
+| `gran-abuelo.webp` | Tronco del alerce "Gran Abuelo", Parque Nacional Alerce Costero (blog 2) | Yiyo Zamorano | https://commons.wikimedia.org/wiki/File:%22El_Gran_Abuelo%22._Alerce_Milenario_de_3.500_a%C3%B1os_aprox.jpg | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |

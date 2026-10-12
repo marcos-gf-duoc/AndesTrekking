@@ -151,7 +151,22 @@
        3. js/core/*
        4. Script común de la zona (js/tienda/tienda-comun.js)
        5. Script de la página
-       Por ahora solo existe el primero. -->
+       El orden importa: cada archivo usa lo que definieron los anteriores.
+       Los pasos 4 y 5 se agregan cuando existan esos archivos. -->
+
+  <!-- 1. Bootstrap: menú desplegable del celular, modales, etc. -->
   <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+  <!-- 2. Datos iniciales (semillas) -->
+  <script src="js/data/productos.js"></script>
+  <script src="js/data/usuarios.js"></script>
+  <script src="js/data/ordenes.js"></script>
+  <script src="js/data/cupones.js"></script>
+  <script src="js/data/regiones.js"></script>
+
+  <!-- 3. Lógica compartida. storage.js va después de los datos porque
+       copia las semillas a localStorage apenas se carga -->
+  <script src="js/core/storage.js"></script>
+  <script src="js/core/utils.js"></script>
 </body>
 </html>

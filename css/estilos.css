@@ -392,3 +392,109 @@ main {
   font-size: 1.25rem;
   margin-bottom: var(--espacio-md);
 }
+
+/* ==========================================================
+   10. DETALLE DE PRODUCTO (producto.html)
+   ========================================================== */
+
+/* Ruta de navegación: Inicio > Categoría > Producto */
+.ruta-navegacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--espacio-lg);
+  font-size: var(--tamano-texto-chico);
+}
+
+/* Agrega el signo ">" antes de cada elemento, menos del primero
+   ("li + li" significa: un li que viene después de otro li) */
+.ruta-navegacion li + li::before {
+  content: ">";
+  margin-right: var(--espacio-sm);
+  color: var(--color-texto-suave);
+}
+
+.detalle-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Fila de miniaturas bajo la foto principal */
+.detalle-miniaturas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  margin-top: var(--espacio-sm);
+}
+
+/* Cada miniatura es un botón con una foto dentro */
+.detalle-miniatura {
+  width: 6rem;
+  padding: 0;
+  background: none;
+  border: 3px solid transparent; /* borde invisible: reserva el espacio del borde activo */
+  border-radius: var(--radio-borde);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.detalle-miniatura img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* Miniatura de la foto que se está viendo */
+.detalle-miniatura.activa {
+  border-color: var(--color-naranja);
+}
+
+.detalle-categoria {
+  margin-bottom: var(--espacio-xs);
+  color: var(--color-tierra);
+  font-size: var(--tamano-texto-chico);
+  font-weight: 700;
+  text-transform: uppercase; /* muestra el texto en mayúsculas */
+  letter-spacing: 1px;
+}
+
+.detalle-precio {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/* Cantidad y botón, alineados por abajo */
+.detalle-compra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--espacio-md);
+  margin-top: var(--espacio-lg);
+}
+
+.detalle-cantidad {
+  width: 6rem;
+}
+
+/* ==========================================================
+   11. AVISO DE PÁGINA
+   Mensaje centrado que ocupa el lugar del contenido, por ejemplo
+   cuando el producto buscado no existe.
+   ========================================================== */
+.aviso-pagina {
+  text-align: center;
+}
+
+/* :empty aplica cuando el elemento no tiene contenido: así el aviso
+   no ocupa espacio mientras no se usa */
+.aviso-pagina:not(:empty) {
+  padding: var(--espacio-xl) 0;
+}

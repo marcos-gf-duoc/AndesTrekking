@@ -25,6 +25,21 @@ function obtenerRutaImagen(producto) {
   return CARPETA_IMAGENES_PRODUCTOS + producto.imagenes[0];
 }
 
+// Recibe: el código de un producto (por ejemplo "MOC-001").
+// Hace: lo busca entre los productos guardados en localStorage.
+// Devuelve: el producto encontrado, o null si ningún producto tiene ese código.
+function buscarProductoPorCodigo(codigo) {
+  const productos = leerDeStorage(CLAVE_PRODUCTOS);
+
+  for (let i = 0; i < productos.length; i++) {
+    if (productos[i].codigo === codigo) {
+      return productos[i];
+    }
+  }
+
+  return null;
+}
+
 // Recibe: un producto.
 // Hace: arma el HTML de su tarjeta: foto, nombre, precio y botón.
 //       La foto y el nombre son un enlace al detalle del producto.

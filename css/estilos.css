@@ -310,3 +310,39 @@ main {
 .tarjeta-producto .boton-anadir {
   margin: 0 var(--espacio-md) var(--espacio-md);
 }
+
+/* ==========================================================
+   7. HERO DEL HOME
+   Bloque de presentación de index.html: texto y foto.
+   ========================================================== */
+.hero {
+  padding: var(--espacio-md) 0 var(--espacio-lg);
+}
+
+.hero-titulo {
+  font-size: 2.2rem;
+  margin-bottom: var(--espacio-md);
+}
+
+.hero-texto {
+  font-size: 1.15rem;
+  color: var(--color-texto-suave);
+  margin-bottom: var(--espacio-lg);
+}
+
+.hero-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+/* En pantallas grandes (desde 992px, el mismo corte "lg" de Bootstrap)
+   el título crece, porque tiene más espacio */
+@media (min-width: 992px) {
+  .hero-titulo {
+    font-size: 3rem;
+  }
+}

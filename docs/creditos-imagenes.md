@@ -10,6 +10,7 @@ Cada vez que se agrega una imagen al proyecto, se agrega una fila a la tabla que
 | Archivo | Descripción | Autor | Fuente | Licencia |
 |---|---|---|---|---|
 | `placeholder.webp` | Imagen de reemplazo para productos sin foto: dos montañas, un sol y el texto "Imagen no disponible" | Marcos Godoy (creación propia, generada con código) | No aplica | Uso propio del proyecto |
+| `hero.webp` | Foto del hero del home: excursionista frente a un lago turquesa y montañas nevadas en la Patagonia | Paulius Dragunas | https://unsplash.com/photos/14weKuGAe3I | Licencia Unsplash |
 
 ## Imágenes de productos (`assets/img/productos/`)
 

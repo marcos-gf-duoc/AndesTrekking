@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<!--
+  Archivo: plantilla.html
+  Qué es: página base de la tienda AndesTrekking. No es una página del sitio:
+          sirve de molde para copiar al crear cada página pública
+          (index.html, productos.html, contacto.html, etc.).
+  Cómo se usa: copiar el archivo, cambiar el <title>, la descripción y el
+          contenido del <main>. El header y el footer se dejan iguales.
+  Nota: se elimina cuando exista index.html (rama feature/catalogo).
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Hace que la página se adapte al ancho de la pantalla del celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AndesTrekking: tienda online de trekking, senderismo y outdoor.">
+  <title>Plantilla | AndesTrekking</title>
+
+  <!-- Estilos, en este orden: Bootstrap, íconos y al final los propios,
+       para que estilos.css tenga prioridad sobre Bootstrap -->
+  <link rel="stylesheet" href="assets/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+  <!-- HEADER: logo, menú de navegación, carrito y enlaces de sesión -->
+  <header class="encabezado">
+    <!-- navbar-expand-lg: en pantallas grandes el menú se ve completo;
+         en pantallas chicas se oculta y aparece el botón para abrirlo -->
+    <nav class="navbar navbar-expand-lg" aria-label="Menú principal">
+      <div class="container">
+
+        <!-- Nombre de la tienda (se cambia por el logo cuando esté listo) -->
+        <a class="navbar-brand encabezado-marca" href="index.html">AndesTrekking</a>
+
+        <!-- Botón que abre y cierra el menú en el celular.
+             data-bs-target apunta al id del bloque que se muestra u oculta -->
+        <button class="navbar-toggler encabezado-boton-menu" type="button"
+                data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+                aria-controls="menuPrincipal" aria-expanded="false"
+                aria-label="Abrir o cerrar el menú">
+          <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menuPrincipal">
+
+          <!-- Enlaces de navegación. me-auto empuja el otro grupo a la derecha.
+               En cada página, el enlace de esa página lleva además
+               class="nav-link active" y aria-current="page" -->
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+            <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
+            <li class="nav-item"><a class="nav-link" href="blogs.html">Blogs</a></li>
+            <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+          </ul>
+
+          <!-- Carrito y enlaces de sesión. Más adelante, tienda-comun.js
+               actualizará el contador y cambiará los enlaces si hay sesión -->
+          <ul class="navbar-nav" id="menuSesion">
+            <li class="nav-item">
+              <a class="nav-link" href="carrito.html">
+                <i class="bi bi-cart3" aria-hidden="true"></i>
+                Carrito
+                <span class="carrito-contador" id="contadorCarrito">0</span>
+                <span class="visually-hidden">productos</span>
+              </a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+            <li class="nav-item"><a class="nav-link" href="registro.html">Registrarse</a></li>
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN: contenido propio de cada página -->
+  <main class="container py-4">
+    <!-- Contenido de ejemplo: se reemplaza al copiar la plantilla -->
+    <h1>Título de la página</h1>
+    <p>
+      <i class="bi bi-compass" aria-hidden="true"></i>
+      Texto de ejemplo con un <a href="#">enlace de prueba</a>.
+    </p>
+  </main>
+
+  <!-- FOOTER: nombre, categorías, medios de pago y newsletter -->
+  <footer class="pie">
+    <div class="container">
+      <!-- Cuatro columnas: una bajo otra en el celular (col-12), de a dos
+           en tablet (col-md-6) y las cuatro en fila en escritorio (col-lg-3).
+           g-4 es la separación entre columnas -->
+      <div class="row g-4">
+
+        <!-- Columna 1: nombre de la tienda -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <p class="pie-marca">AndesTrekking</p>
+          <p>Equipamiento para trekking, senderismo y vida al aire libre.</p>
+        </div>
+
+        <!-- Columna 2: categorías de productos -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Categorías</h2>
+          <ul class="pie-lista">
+            <li>Mochilas</li>
+            <li>Calzado</li>
+            <li>Carpas y Refugio</li>
+            <li>Ropa Técnica</li>
+            <li>Accesorios</li>
+            <li>Navegación y Seguridad</li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: medios de pago -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Medios de pago</h2>
+          <ul class="pie-lista">
+            <li><i class="bi bi-credit-card" aria-hidden="true"></i> Tarjeta de crédito</li>
+            <li><i class="bi bi-credit-card-2-front" aria-hidden="true"></i> Tarjeta de débito</li>
+            <li><i class="bi bi-bank" aria-hidden="true"></i> Transferencia bancaria</li>
+          </ul>
+        </div>
+
+        <!-- Columna 4: newsletter. novalidate apaga la validación del
+             navegador: la validación la hará JavaScript (tienda-comun.js) -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Newsletter</h2>
+          <form id="formularioNewsletter" novalidate>
+            <label for="correoNewsletter" class="form-label">Recibe novedades en tu correo</label>
+            <input type="email" class="form-control" id="correoNewsletter"
+                   placeholder="nombre@gmail.com" autocomplete="email" maxlength="100">
+            <!-- Aquí JavaScript escribirá el mensaje de error del correo -->
+            <div class="invalid-feedback" id="errorCorreoNewsletter"></div>
+            <button type="submit" class="btn boton-principal mt-2">Suscribirme</button>
+            <!-- Aquí JavaScript escribirá la confirmación de la suscripción -->
+            <p class="mt-2 mb-0" id="mensajeNewsletter"></p>
+          </form>
+        </div>
+
+      </div>
+
+      <p class="pie-derechos">&copy; 2026 AndesTrekking. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts, siempre al final del body y en este orden:
+       1. Bootstrap bundle
+       2. js/data/*
+       3. js/core/*
+       4. Script común de la zona (js/tienda/tienda-comun.js)
+       5. Script de la página
+       Por ahora solo existe el primero. -->
+  <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+</body>
+</html>

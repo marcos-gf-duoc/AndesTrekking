@@ -1,0 +1,244 @@
+/*
+  Archivo: css/estilos.css
+  Qué es: hoja de estilos común de AndesTrekking. Define la identidad visual
+          (colores, tipografía, espaciados) y los estilos base del sitio.
+  Quién lo usa: todas las páginas de la tienda y también las del panel admin.
+  Orden de carga: va DESPUÉS de bootstrap.min.css, para que estos estilos
+          tengan prioridad sobre los de Bootstrap cuando coinciden.
+*/
+
+/* ==========================================================
+   1. VARIABLES DE LA IDENTIDAD VISUAL
+   Se definen en :root para que estén disponibles en todo el
+   sitio. Se usan con var(--nombre-de-la-variable).
+   ========================================================== */
+:root {
+  /* Colores: paleta outdoor (verdes bosque, tierra y acento naranja) */
+  --color-verde-bosque: #2D4A3E;   /* color principal: header y títulos */
+  --color-verde-oscuro: #1F352C;   /* footer y hover del verde */
+  --color-tierra: #7A5230;         /* detalles y etiquetas de categoría */
+  --color-arena: #F5EFE6;          /* fondo general de la página */
+  --color-naranja: #B8450A;        /* acento: botones principales y enlaces */
+  --color-naranja-claro: #F4A261;  /* acento sobre fondos verdes */
+  --color-texto: #24302B;          /* texto general */
+  --color-texto-suave: #5C6B63;    /* texto secundario */
+  --color-blanco: #FFFFFF;         /* fondo de tarjetas y formularios */
+  --color-borde: #D9D2C5;          /* bordes y separadores */
+
+  /* Tipografía: fuentes del sistema, no necesitan descarga ni internet */
+  --fuente-base: system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  --tamano-texto: 1rem;            /* 1rem = 16px en la mayoría de navegadores */
+  --tamano-texto-chico: 0.875rem;
+  --interlineado: 1.6;
+
+  /* Espaciados: una escala corta para mantener el diseño parejo */
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 2rem;
+  --espacio-xl: 4rem;
+
+  /* Bordes y sombra */
+  --radio-borde: 0.5rem;
+  --sombra-suave: 0 2px 8px rgba(31, 53, 44, 0.12);
+}
+
+/* ==========================================================
+   2. ESTILOS BASE
+   ========================================================== */
+body {
+  font-family: var(--fuente-base);
+  font-size: var(--tamano-texto);
+  line-height: var(--interlineado);
+  color: var(--color-texto);
+  background-color: var(--color-arena);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-verde-bosque);
+  font-weight: 700;
+  line-height: 1.25; /* los títulos van más apretados que el texto normal */
+}
+
+a {
+  color: var(--color-naranja);
+}
+
+a:hover {
+  color: var(--color-verde-bosque);
+}
+
+/* Evita que una imagen grande se salga de su contenedor en pantallas chicas */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Foco visible: marca el elemento activo al navegar con el teclado (Tab).
+   :focus-visible no se activa al hacer clic con el mouse. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-naranja);
+  outline-offset: 2px; /* separa el contorno del borde del elemento */
+}
+
+/* ==========================================================
+   3. HEADER DE LA TIENDA
+   La estructura (navbar, colapso en el celular) la da Bootstrap.
+   Los colores y detalles son propios.
+   ========================================================== */
+.encabezado {
+  background-color: var(--color-verde-bosque);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Nombre de la tienda. Se escribe .encabezado delante para que el
+   selector pese más que los de Bootstrap para .navbar-brand */
+.encabezado .encabezado-marca {
+  color: var(--color-blanco);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px; /* separa un poco las letras */
+}
+
+.encabezado .encabezado-marca:hover {
+  color: var(--color-naranja-claro);
+}
+
+/* Enlaces del menú */
+.encabezado .nav-link {
+  color: var(--color-blanco);
+}
+
+/* Enlace con el mouse encima y enlace de la página actual (.active) */
+.encabezado .nav-link:hover,
+.encabezado .nav-link.active {
+  color: var(--color-naranja-claro);
+}
+
+/* Botón que abre el menú en el celular */
+.encabezado .encabezado-boton-menu {
+  color: var(--color-blanco);
+  border: 1px solid var(--color-blanco);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Círculo con la cantidad de productos del carrito */
+.carrito-contador {
+  display: inline-block;
+  min-width: 1.5rem;       /* ancho mínimo para que con un dígito se vea redondo */
+  padding: 0 var(--espacio-xs);
+  background-color: var(--color-naranja-claro);
+  color: var(--color-texto);
+  border-radius: 999px;    /* un radio muy grande deja los extremos redondos */
+  font-size: var(--tamano-texto-chico);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Sobre el fondo verde, el contorno de foco naranja casi no se ve:
+   aquí se usa el naranja claro */
+.encabezado a:focus-visible,
+.encabezado button:focus-visible {
+  outline-color: var(--color-naranja-claro);
+}
+
+/* ==========================================================
+   4. FOOTER DE LA TIENDA
+   ========================================================== */
+
+/* Mantiene el footer al fondo de la ventana aunque la página tenga
+   poco contenido: el body es una columna que mide al menos el alto
+   de la pantalla (100vh) y el main ocupa todo el espacio que sobra */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.pie {
+  margin-top: var(--espacio-xl);
+  padding-top: var(--espacio-lg);
+  background-color: var(--color-verde-oscuro);
+  color: var(--color-blanco);
+}
+
+/* Nombre de la tienda en el footer */
+.pie-marca {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: var(--espacio-sm);
+}
+
+/* Título de cada columna. Se indica el color porque los títulos
+   son verdes por defecto y no se verían sobre el fondo verde */
+.pie-titulo {
+  color: var(--color-naranja-claro);
+  font-size: 1.1rem;
+  margin-bottom: var(--espacio-md);
+}
+
+/* Lista sin viñetas ni sangría */
+.pie-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pie-lista li {
+  margin-bottom: var(--espacio-xs);
+}
+
+/* Línea final con el texto de derechos */
+.pie-derechos {
+  margin-top: var(--espacio-lg);
+  margin-bottom: 0;
+  padding: var(--espacio-md) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* blanco casi transparente */
+  font-size: var(--tamano-texto-chico);
+  text-align: center;
+}
+
+/* El mensaje de error rojo de Bootstrap no se lee sobre el verde oscuro:
+   en el footer se muestra en naranja claro */
+.pie .invalid-feedback {
+  color: var(--color-naranja-claro);
+}
+
+/* Foco sobre fondo verde: contorno naranja claro, igual que en el header */
+.pie input:focus-visible,
+.pie button:focus-visible {
+  outline-color: var(--color-naranja-claro);
+}
+
+/* ==========================================================
+   5. COMPONENTES PROPIOS
+   ========================================================== */
+
+/* Botón principal del sitio. Se usa junto a la clase "btn" de Bootstrap,
+   que aporta la forma (relleno, bordes redondeados); el color es propio */
+.boton-principal {
+  background-color: var(--color-naranja);
+  border-color: var(--color-naranja);
+  color: var(--color-blanco);
+}
+
+.boton-principal:hover,
+.boton-principal:focus {
+  background-color: var(--color-naranja-claro);
+  border-color: var(--color-naranja-claro);
+  color: var(--color-texto);
+}

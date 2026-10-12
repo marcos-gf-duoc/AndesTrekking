@@ -52,13 +52,18 @@ function guardarEnStorage(clave, valor) {
   localStorage.setItem(clave, textoParaGuardar);
 }
 
-// Recibe: el nombre de una clave y su valor inicial.
-// Hace: guarda el valor inicial solo si la clave todavía no tiene un dato
-//       válido. Si ya tiene datos, no los toca.
+// Recibe: el nombre de una clave y el arreglo con que debe partir.
+// Hace: guarda el arreglo inicial solo si la clave no tiene un arreglo.
+//       Eso pasa cuando la clave no existe, cuando su contenido está dañado
+//       o cuando alguien la cambió a mano por algo que no es un arreglo.
+//       Si ya tiene un arreglo (aunque esté vacío), no lo toca.
 // Devuelve: nada.
-function crearClaveSiNoExiste(clave, valorInicial) {
-  if (leerDeStorage(clave) === null) {
-    guardarEnStorage(clave, valorInicial);
+function crearArregloSiFalta(clave, arregloInicial) {
+  const datoGuardado = leerDeStorage(clave);
+
+  // Array.isArray responde true solo si el dato es un arreglo
+  if (!Array.isArray(datoGuardado)) {
+    guardarEnStorage(clave, arregloInicial);
   }
 }
 
@@ -70,12 +75,12 @@ function crearClaveSiNoExiste(clave, valorInicial) {
 //       devuelve null, que justamente significa "sin cupón" y "sin sesión".
 // Devuelve: nada.
 function cargarSemillas() {
-  crearClaveSiNoExiste(CLAVE_PRODUCTOS, PRODUCTOS_INICIALES);
-  crearClaveSiNoExiste(CLAVE_USUARIOS, USUARIOS_INICIALES);
-  crearClaveSiNoExiste(CLAVE_ORDENES, ORDENES_INICIALES);
-  crearClaveSiNoExiste(CLAVE_MENSAJES, []);
-  crearClaveSiNoExiste(CLAVE_CARRITO, []);
-  crearClaveSiNoExiste(CLAVE_SUSCRIPTORES, []);
+  crearArregloSiFalta(CLAVE_PRODUCTOS, PRODUCTOS_INICIALES);
+  crearArregloSiFalta(CLAVE_USUARIOS, USUARIOS_INICIALES);
+  crearArregloSiFalta(CLAVE_ORDENES, ORDENES_INICIALES);
+  crearArregloSiFalta(CLAVE_MENSAJES, []);
+  crearArregloSiFalta(CLAVE_CARRITO, []);
+  crearArregloSiFalta(CLAVE_SUSCRIPTORES, []);
 }
 
 // Recibe: nada.

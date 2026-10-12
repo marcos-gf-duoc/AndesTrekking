@@ -120,14 +120,60 @@ function prepararCompra(producto) {
   campoCantidad.max = producto.stock;
 }
 
+// Cantidad máxima de productos relacionados que se muestran
+const MAXIMO_RELACIONADOS = 4;
+
+// Recibe: el producto que se está viendo.
+// Hace: recorre todos los productos y junta los que son de la misma
+//       categoría, sin incluir el producto que se está viendo. Se detiene
+//       al completar MAXIMO_RELACIONADOS.
+// Devuelve: un arreglo con los productos relacionados (puede estar vacío).
+function obtenerProductosRelacionados(producto) {
+  const todosLosProductos = leerDeStorage(CLAVE_PRODUCTOS);
+  const relacionados = [];
+
+  for (let i = 0; i < todosLosProductos.length; i++) {
+    const candidato = todosLosProductos[i];
+    const esMismaCategoria = candidato.categoria === producto.categoria;
+    const esOtroProducto = candidato.codigo !== producto.codigo;
+
+    if (esMismaCategoria && esOtroProducto) {
+      relacionados.push(candidato);
+    }
+
+    // Con el máximo completo no hace falta seguir recorriendo
+    if (relacionados.length === MAXIMO_RELACIONADOS) {
+      break;
+    }
+  }
+
+  return relacionados;
+}
+
+// Recibe: el producto que se está viendo.
+// Hace: dibuja las tarjetas de sus productos relacionados. Si no hay
+//       ninguno, quita la sección completa para no dejar un título solo.
+// Devuelve: nada.
+function mostrarRelacionados(producto) {
+  const relacionados = obtenerProductosRelacionados(producto);
+
+  if (relacionados.length === 0) {
+    document.getElementById("seccionRelacionados").remove();
+    return;
+  }
+
+  mostrarTarjetasProductos(relacionados, "grillaRelacionados");
+}
+
 // Recibe: nada.
 // Hace: reemplaza el detalle por un aviso de "producto no encontrado", con
-//       un enlace para volver al listado. Quita la ruta de navegación y el
-//       bloque del detalle, que quedarían vacíos.
+//       un enlace para volver al listado. Quita la ruta de navegación, el
+//       bloque del detalle y la sección de relacionados, que quedarían vacíos.
 // Devuelve: nada.
 function mostrarAvisoNoEncontrado() {
   document.getElementById("rutaNavegacion").remove();
   document.getElementById("detalleProducto").remove();
+  document.getElementById("seccionRelacionados").remove();
 
   // Este HTML es fijo (no incluye datos escritos por usuarios)
   let html = "";
@@ -161,6 +207,7 @@ function iniciarProducto() {
   mostrarDatosProducto(producto);
   mostrarImagenes(producto);
   prepararCompra(producto);
+  mostrarRelacionados(producto);
 }
 
 // Se ejecuta al cargar el archivo, con la página ya dibujada

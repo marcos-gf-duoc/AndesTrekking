@@ -87,7 +87,62 @@
   </main>
 
   <!-- FOOTER: nombre, categorías, medios de pago y newsletter -->
-  <footer>
+  <footer class="pie">
+    <div class="container">
+      <!-- Cuatro columnas: una bajo otra en el celular (col-12), de a dos
+           en tablet (col-md-6) y las cuatro en fila en escritorio (col-lg-3).
+           g-4 es la separación entre columnas -->
+      <div class="row g-4">
+
+        <!-- Columna 1: nombre de la tienda -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <p class="pie-marca">AndesTrekking</p>
+          <p>Equipamiento para trekking, senderismo y vida al aire libre.</p>
+        </div>
+
+        <!-- Columna 2: categorías de productos -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Categorías</h2>
+          <ul class="pie-lista">
+            <li>Mochilas</li>
+            <li>Calzado</li>
+            <li>Carpas y Refugio</li>
+            <li>Ropa Técnica</li>
+            <li>Accesorios</li>
+            <li>Navegación y Seguridad</li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: medios de pago -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Medios de pago</h2>
+          <ul class="pie-lista">
+            <li><i class="bi bi-credit-card" aria-hidden="true"></i> Tarjeta de crédito</li>
+            <li><i class="bi bi-credit-card-2-front" aria-hidden="true"></i> Tarjeta de débito</li>
+            <li><i class="bi bi-bank" aria-hidden="true"></i> Transferencia bancaria</li>
+          </ul>
+        </div>
+
+        <!-- Columna 4: newsletter. novalidate apaga la validación del
+             navegador: la validación la hará JavaScript (tienda-comun.js) -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <h2 class="pie-titulo">Newsletter</h2>
+          <form id="formularioNewsletter" novalidate>
+            <label for="correoNewsletter" class="form-label">Recibe novedades en tu correo</label>
+            <input type="email" class="form-control" id="correoNewsletter"
+                   placeholder="nombre@gmail.com" autocomplete="email" maxlength="100">
+            <!-- Aquí JavaScript escribirá el mensaje de error del correo -->
+            <div class="invalid-feedback" id="errorCorreoNewsletter"></div>
+            <button type="submit" class="btn boton-principal mt-2">Suscribirme</button>
+            <!-- Aquí JavaScript escribirá la confirmación de la suscripción -->
+            <p class="mt-2 mb-0" id="mensajeNewsletter"></p>
+          </form>
+        </div>
+
+      </div>
+
+      <p class="pie-derechos">&copy; 2026 AndesTrekking. Todos los derechos reservados.</p>
+    </div>
   </footer>
 
   <!-- Scripts, siempre al final del body y en este orden:

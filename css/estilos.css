@@ -151,3 +151,94 @@ textarea:focus-visible {
 .encabezado button:focus-visible {
   outline-color: var(--color-naranja-claro);
 }
+
+/* ==========================================================
+   4. FOOTER DE LA TIENDA
+   ========================================================== */
+
+/* Mantiene el footer al fondo de la ventana aunque la página tenga
+   poco contenido: el body es una columna que mide al menos el alto
+   de la pantalla (100vh) y el main ocupa todo el espacio que sobra */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.pie {
+  margin-top: var(--espacio-xl);
+  padding-top: var(--espacio-lg);
+  background-color: var(--color-verde-oscuro);
+  color: var(--color-blanco);
+}
+
+/* Nombre de la tienda en el footer */
+.pie-marca {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: var(--espacio-sm);
+}
+
+/* Título de cada columna. Se indica el color porque los títulos
+   son verdes por defecto y no se verían sobre el fondo verde */
+.pie-titulo {
+  color: var(--color-naranja-claro);
+  font-size: 1.1rem;
+  margin-bottom: var(--espacio-md);
+}
+
+/* Lista sin viñetas ni sangría */
+.pie-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pie-lista li {
+  margin-bottom: var(--espacio-xs);
+}
+
+/* Línea final con el texto de derechos */
+.pie-derechos {
+  margin-top: var(--espacio-lg);
+  margin-bottom: 0;
+  padding: var(--espacio-md) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* blanco casi transparente */
+  font-size: var(--tamano-texto-chico);
+  text-align: center;
+}
+
+/* El mensaje de error rojo de Bootstrap no se lee sobre el verde oscuro:
+   en el footer se muestra en naranja claro */
+.pie .invalid-feedback {
+  color: var(--color-naranja-claro);
+}
+
+/* Foco sobre fondo verde: contorno naranja claro, igual que en el header */
+.pie input:focus-visible,
+.pie button:focus-visible {
+  outline-color: var(--color-naranja-claro);
+}
+
+/* ==========================================================
+   5. COMPONENTES PROPIOS
+   ========================================================== */
+
+/* Botón principal del sitio. Se usa junto a la clase "btn" de Bootstrap,
+   que aporta la forma (relleno, bordes redondeados); el color es propio */
+.boton-principal {
+  background-color: var(--color-naranja);
+  border-color: var(--color-naranja);
+  color: var(--color-blanco);
+}
+
+.boton-principal:hover,
+.boton-principal:focus {
+  background-color: var(--color-naranja-claro);
+  border-color: var(--color-naranja-claro);
+  color: var(--color-texto);
+}

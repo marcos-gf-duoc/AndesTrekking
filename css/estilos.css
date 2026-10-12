@@ -89,3 +89,65 @@ textarea:focus-visible {
   outline: 3px solid var(--color-naranja);
   outline-offset: 2px; /* separa el contorno del borde del elemento */
 }
+
+/* ==========================================================
+   3. HEADER DE LA TIENDA
+   La estructura (navbar, colapso en el celular) la da Bootstrap.
+   Los colores y detalles son propios.
+   ========================================================== */
+.encabezado {
+  background-color: var(--color-verde-bosque);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Nombre de la tienda. Se escribe .encabezado delante para que el
+   selector pese más que los de Bootstrap para .navbar-brand */
+.encabezado .encabezado-marca {
+  color: var(--color-blanco);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.5px; /* separa un poco las letras */
+}
+
+.encabezado .encabezado-marca:hover {
+  color: var(--color-naranja-claro);
+}
+
+/* Enlaces del menú */
+.encabezado .nav-link {
+  color: var(--color-blanco);
+}
+
+/* Enlace con el mouse encima y enlace de la página actual (.active) */
+.encabezado .nav-link:hover,
+.encabezado .nav-link.active {
+  color: var(--color-naranja-claro);
+}
+
+/* Botón que abre el menú en el celular */
+.encabezado .encabezado-boton-menu {
+  color: var(--color-blanco);
+  border: 1px solid var(--color-blanco);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Círculo con la cantidad de productos del carrito */
+.carrito-contador {
+  display: inline-block;
+  min-width: 1.5rem;       /* ancho mínimo para que con un dígito se vea redondo */
+  padding: 0 var(--espacio-xs);
+  background-color: var(--color-naranja-claro);
+  color: var(--color-texto);
+  border-radius: 999px;    /* un radio muy grande deja los extremos redondos */
+  font-size: var(--tamano-texto-chico);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Sobre el fondo verde, el contorno de foco naranja casi no se ve:
+   aquí se usa el naranja claro */
+.encabezado a:focus-visible,
+.encabezado button:focus-visible {
+  outline-color: var(--color-naranja-claro);
+}

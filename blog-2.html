@@ -210,7 +210,7 @@
         </div>
 
         <!-- Columna 4: newsletter. novalidate apaga la validación del
-             navegador: la validación la hará JavaScript (tienda-comun.js) -->
+             navegador: la validación la hace JavaScript (tienda-comun.js) -->
         <div class="col-12 col-md-6 col-lg-3">
           <h2 class="pie-titulo">Newsletter</h2>
           <form id="formularioNewsletter" novalidate>
@@ -221,7 +221,7 @@
             <div class="invalid-feedback" id="errorCorreoNewsletter"></div>
             <button type="submit" class="btn boton-principal mt-2">Suscribirme</button>
             <!-- Aquí JavaScript escribirá la confirmación de la suscripción -->
-            <p class="mt-2 mb-0" id="mensajeNewsletter"></p>
+            <p class="mt-2 mb-0" id="mensajeNewsletter" role="status"></p>
           </form>
         </div>
 
@@ -254,8 +254,9 @@
        copia las semillas a localStorage apenas se carga -->
   <script src="js/core/storage.js"></script>
   <script src="js/core/utils.js"></script>
+  <script src="js/core/validaciones.js"></script>
 
-  <!-- 4. Script común de la tienda: tarjetas de producto -->
+  <!-- 4. Script común de la tienda: tarjetas de producto y newsletter -->
   <script src="js/tienda/tienda-comun.js"></script>
 </body>
 </html>

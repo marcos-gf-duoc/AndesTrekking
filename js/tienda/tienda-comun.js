@@ -1,11 +1,13 @@
 /*
   Archivo: js/tienda/tienda-comun.js
   Qué es: funciones compartidas por las páginas de la tienda pública.
-          Por ahora arma las tarjetas de producto; más adelante tendrá también
-          el contador del carrito, los enlaces de sesión y la newsletter.
-  Quién lo usa: index.html, productos.html y producto.html.
-  Orden de carga: va DESPUÉS de js/core/utils.js, porque usa formatearPrecio
-          y escaparHtml, y ANTES del script propio de cada página.
+          Arma las tarjetas de producto y maneja la newsletter del footer;
+          más adelante tendrá también el contador del carrito y los
+          enlaces de sesión.
+  Quién lo usa: todas las páginas de la tienda (todas tienen el footer).
+  Orden de carga: va DESPUÉS de los archivos de js/core/ (usa storage.js,
+          utils.js y validaciones.js) y ANTES del script propio de cada
+          página.
 */
 
 // Carpetas de las imágenes, escritas una sola vez. Las rutas son relativas
@@ -108,3 +110,110 @@ function mostrarTarjetasProductos(listaProductos, idContenedor) {
 
   contenedor.innerHTML = html;
 }
+
+// ==========================================================
+// Newsletter del footer
+// El formulario está escrito en el footer de cada página.
+// ==========================================================
+
+// Recibe: nada.
+// Hace: valida el correo escrito en la newsletter y muestra el resultado en
+//       el campo (rojo con mensaje, o verde).
+// Devuelve: true si el correo es válido; false si tiene error.
+function validarCampoNewsletter() {
+  const campo = document.getElementById("correoNewsletter");
+  const mensajeError = validarCorreo(campo.value, true); // true: es obligatorio
+  return mostrarResultadoCampo("correoNewsletter", mensajeError);
+}
+
+// Recibe: nada.
+// Hace: revisa el campo mientras el usuario escribe o cuando sale de él.
+//       Si el campo está vacío, solo quita las marcas: así no aparece un
+//       error por pasar con la tecla Tab sin querer suscribirse. El aviso
+//       de campo obligatorio aparece recién al presionar "Suscribirme".
+// Devuelve: nada.
+function revisarNewsletterAlEscribir() {
+  const campo = document.getElementById("correoNewsletter");
+
+  // Al cambiar el correo, el mensaje de la suscripción anterior ya no aplica
+  document.getElementById("mensajeNewsletter").textContent = "";
+
+  if (campo.value.trim() === "") {
+    limpiarEstadoCampo("correoNewsletter");
+    return;
+  }
+
+  validarCampoNewsletter();
+}
+
+// Recibe: un correo ya validado.
+// Hace: lo agrega a la lista de suscriptores de localStorage, salvo que ya
+//       esté en la lista.
+// Devuelve: true si lo agregó; false si ya estaba suscrito.
+function guardarSuscriptor(correo) {
+  const suscriptores = leerDeStorage(CLAVE_SUSCRIPTORES);
+
+  // indexOf devuelve -1 cuando el correo no está en el arreglo
+  if (suscriptores.indexOf(correo) !== -1) {
+    return false;
+  }
+
+  suscriptores.push(correo);
+  guardarEnStorage(CLAVE_SUSCRIPTORES, suscriptores);
+  return true;
+}
+
+// Recibe: el evento "submit" del formulario de la newsletter.
+// Hace: detiene el envío normal del formulario (que recargaría la página),
+//       valida el correo y, si es válido, lo guarda y muestra un mensaje.
+// Devuelve: nada.
+function enviarNewsletter(evento) {
+  evento.preventDefault();
+
+  const campo = document.getElementById("correoNewsletter");
+  const mensaje = document.getElementById("mensajeNewsletter");
+
+  if (!validarCampoNewsletter()) {
+    mensaje.textContent = "";
+    enfocarPrimerCampoConError("formularioNewsletter");
+    return;
+  }
+
+  // Se guarda sin espacios y en minúsculas, para que "Ana@gmail.com" y
+  // "ana@gmail.com" cuenten como el mismo correo
+  const correo = campo.value.trim().toLowerCase();
+  const seAgrego = guardarSuscriptor(correo);
+
+  if (seAgrego) {
+    mensaje.textContent = "¡Gracias! Te suscribiste con " + correo + ".";
+  } else {
+    mensaje.textContent = "El correo " + correo + " ya estaba suscrito.";
+  }
+
+  // Deja el formulario listo para otro correo
+  campo.value = "";
+  limpiarEstadoCampo("correoNewsletter");
+}
+
+// Recibe: nada.
+// Hace: conecta el formulario de la newsletter con sus funciones:
+//       "submit" al presionar el botón o Enter, "input" al escribir y
+//       "blur" al salir del campo.
+// Devuelve: nada.
+function iniciarNewsletter() {
+  const formulario = document.getElementById("formularioNewsletter");
+
+  // Si una página no tuviera el formulario, no hay nada que conectar
+  if (formulario === null) {
+    return;
+  }
+
+  const campo = document.getElementById("correoNewsletter");
+
+  formulario.addEventListener("submit", enviarNewsletter);
+  campo.addEventListener("input", revisarNewsletterAlEscribir);
+  campo.addEventListener("blur", revisarNewsletterAlEscribir);
+}
+
+// Se ejecuta al cargar el archivo, en todas las páginas de la tienda
+iniciarNewsletter();

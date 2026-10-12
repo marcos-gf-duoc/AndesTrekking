@@ -1,0 +1,16 @@
+# Ruta: AndesTrekking/.gitignore
+# Archivos que Git NO debe seguir ni subir a GitHub
+
+# Documentos del curso (material de Duoc, no se publican)
+docs-curso/
+
+# Archivos temporales que crea Word mientras el ERS está abierto
+~$*
+
+# Configuración personal de VS Code
+.vscode/
+
+# Archivos del sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store

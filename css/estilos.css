@@ -242,3 +242,71 @@ main {
   border-color: var(--color-naranja-claro);
   color: var(--color-texto);
 }
+
+/* Botón principal deshabilitado (por ejemplo "Agotado"): gris y sin sombra,
+   para que se note que no se puede usar */
+.boton-principal:disabled {
+  background-color: var(--color-borde);
+  border-color: var(--color-borde);
+  color: var(--color-texto);
+  opacity: 1; /* Bootstrap lo deja semitransparente; aquí se ve sólido */
+}
+
+/* ==========================================================
+   6. TARJETA DE PRODUCTO
+   La usan el home, el listado de productos y los relacionados.
+   El HTML lo arma crearTarjetaProducto (js/tienda/tienda-comun.js).
+   ========================================================== */
+.tarjeta-producto {
+  height: 100%;             /* todas las tarjetas de una fila miden lo mismo */
+  display: flex;
+  flex-direction: column;   /* foto, nombre, precio y botón, uno bajo otro */
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+  overflow: hidden;         /* recorta la foto en las esquinas redondeadas */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Al pasar el mouse, la tarjeta sube un poco y su sombra crece */
+.tarjeta-producto:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(31, 53, 44, 0.2);
+}
+
+/* Enlace al detalle: envuelve la foto y el nombre */
+.tarjeta-producto-enlace {
+  display: block;
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.tarjeta-producto-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;      /* todas las fotos con la misma proporción */
+  object-fit: cover;        /* si la foto no calza, se recorta sin deformarse */
+}
+
+.tarjeta-producto-nombre {
+  margin: 0;
+  padding: var(--espacio-md) var(--espacio-md) var(--espacio-sm);
+  font-size: 1.05rem;
+}
+
+.tarjeta-producto-enlace:hover .tarjeta-producto-nombre {
+  color: var(--color-naranja);
+}
+
+.tarjeta-producto-precio {
+  margin: 0;
+  margin-top: auto;         /* empuja el precio y el botón al fondo de la tarjeta */
+  padding: 0 var(--espacio-md) var(--espacio-sm);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.tarjeta-producto .boton-anadir {
+  margin: 0 var(--espacio-md) var(--espacio-md);
+}

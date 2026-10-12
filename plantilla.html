@@ -152,7 +152,7 @@
        4. Script común de la zona (js/tienda/tienda-comun.js)
        5. Script de la página
        El orden importa: cada archivo usa lo que definieron los anteriores.
-       Los pasos 4 y 5 se agregan cuando existan esos archivos. -->
+       El paso 5 se agrega en cada página que tenga script propio. -->
 
   <!-- 1. Bootstrap: menú desplegable del celular, modales, etc. -->
   <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
@@ -168,5 +168,8 @@
        copia las semillas a localStorage apenas se carga -->
   <script src="js/core/storage.js"></script>
   <script src="js/core/utils.js"></script>
+
+  <!-- 4. Script común de la tienda: tarjetas de producto -->
+  <script src="js/tienda/tienda-comun.js"></script>
 </body>
 </html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--
+  Archivo: plantilla.html
+  Qué es: página base de la tienda AndesTrekking. No es una página del sitio:
+          sirve de molde para copiar al crear cada página pública
+          (index.html, productos.html, contacto.html, etc.).
+  Cómo se usa: copiar el archivo, cambiar el <title>, la descripción y el
+          contenido del <main>. El header y el footer se dejan iguales.
+  Nota: se elimina cuando exista index.html (rama feature/catalogo).
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Hace que la página se adapte al ancho de la pantalla del celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AndesTrekking: tienda online de trekking, senderismo y outdoor.">
+  <title>Plantilla | AndesTrekking</title>
+
+  <!-- Estilos, en este orden: Bootstrap, íconos y al final los propios,
+       para que estilos.css tenga prioridad sobre Bootstrap -->
+  <link rel="stylesheet" href="assets/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+  <!-- HEADER: logo, menú de navegación, carrito y enlaces de sesión -->
+  <header>
+  </header>
+
+  <!-- MAIN: contenido propio de cada página -->
+  <main class="container py-4">
+    <!-- Contenido de ejemplo: se reemplaza al copiar la plantilla -->
+    <h1>Título de la página</h1>
+    <p>
+      <i class="bi bi-compass" aria-hidden="true"></i>
+      Texto de ejemplo con un <a href="#">enlace de prueba</a>.
+    </p>
+  </main>
+
+  <!-- FOOTER: nombre, categorías, medios de pago y newsletter -->
+  <footer>
+  </footer>
+
+  <!-- Scripts, siempre al final del body y en este orden:
+       1. Bootstrap bundle
+       2. js/data/*
+       3. js/core/*
+       4. Script común de la zona (js/tienda/tienda-comun.js)
+       5. Script de la página
+       Por ahora solo existe el primero. -->
+  <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+</body>
+</html>

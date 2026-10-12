@@ -2,7 +2,8 @@
 <!--
   Archivo: index.html
   Qué es: página de inicio (home) de la tienda AndesTrekking.
-          Por ahora muestra el hero de presentación de la tienda.
+          Muestra el hero de presentación y los productos destacados.
+  Script propio: js/tienda/home.js (dibuja los productos destacados).
 -->
 <html lang="es">
 <head>
@@ -95,6 +96,13 @@
       </div>
     </section>
 
+    <!-- PRODUCTOS DESTACADOS: la grilla empieza vacía y home.js
+         la llena con las tarjetas de los productos -->
+    <section class="seccion" aria-labelledby="tituloDestacados">
+      <h2 class="seccion-titulo" id="tituloDestacados">Productos destacados</h2>
+      <div class="row g-4" id="grillaDestacados"></div>
+    </section>
+
   </main>
 
   <!-- FOOTER: nombre, categorías, medios de pago y newsletter -->
@@ -163,7 +171,7 @@
        4. Script común de la zona (js/tienda/tienda-comun.js)
        5. Script de la página
        El orden importa: cada archivo usa lo que definieron los anteriores.
-       El paso 5 se agrega en cada página que tenga script propio. -->
+       El paso 5 es el script propio de cada página. -->
 
   <!-- 1. Bootstrap: menú desplegable del celular, modales, etc. -->
   <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
@@ -182,5 +190,8 @@
 
   <!-- 4. Script común de la tienda: tarjetas de producto -->
   <script src="js/tienda/tienda-comun.js"></script>
+
+  <!-- 5. Script propio de esta página: productos destacados -->
+  <script src="js/tienda/home.js"></script>
 </body>
 </html>

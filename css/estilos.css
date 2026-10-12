@@ -346,3 +346,16 @@ main {
     font-size: 3rem;
   }
 }
+
+/* ==========================================================
+   8. SECCIONES DE CONTENIDO
+   Bloques con título dentro del main (por ejemplo "Productos destacados").
+   ========================================================== */
+.seccion {
+  padding: var(--espacio-lg) 0;
+}
+
+.seccion-titulo {
+  font-size: 1.75rem;
+  margin-bottom: var(--espacio-md);
+}

@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <!--
-  Archivo: plantilla.html
-  Qué es: página base de la tienda AndesTrekking. No es una página del sitio:
-          sirve de molde para copiar al crear cada página pública
-          (index.html, productos.html, contacto.html, etc.).
-  Cómo se usa: copiar el archivo, cambiar el <title>, la descripción y el
-          contenido del <main>. El header y el footer se dejan iguales.
-  Nota: se elimina cuando exista index.html (rama feature/catalogo).
+  Archivo: index.html
+  Qué es: página de inicio (home) de la tienda AndesTrekking.
+          Muestra el hero de presentación y los productos destacados.
+  Script propio: js/tienda/home.js (dibuja los productos destacados).
 -->
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <!-- Hace que la página se adapte al ancho de la pantalla del celular -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="AndesTrekking: tienda online de trekking, senderismo y outdoor.">
-  <title>Plantilla | AndesTrekking</title>
+  <meta name="description" content="AndesTrekking: tienda online de trekking, senderismo y outdoor. Mochilas, calzado, carpas, ropa técnica y accesorios.">
+  <title>Inicio | AndesTrekking</title>
 
   <!-- Estilos, en este orden: Bootstrap, íconos y al final los propios,
        para que estilos.css tenga prioridad sobre Bootstrap -->
@@ -49,7 +46,7 @@
                En cada página, el enlace de esa página lleva además
                class="nav-link active" y aria-current="page" -->
           <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Inicio</a></li>
             <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
             <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
             <li class="nav-item"><a class="nav-link" href="blogs.html">Blogs</a></li>
@@ -78,12 +75,34 @@
 
   <!-- MAIN: contenido propio de cada página -->
   <main class="container py-4">
-    <!-- Contenido de ejemplo: se reemplaza al copiar la plantilla -->
-    <h1>Título de la página</h1>
-    <p>
-      <i class="bi bi-compass" aria-hidden="true"></i>
-      Texto de ejemplo con un <a href="#">enlace de prueba</a>.
-    </p>
+
+    <!-- HERO: presentación de la tienda. Texto a la izquierda y foto a la
+         derecha en pantallas grandes; uno bajo el otro en el celular -->
+    <section class="hero" aria-labelledby="tituloHero">
+      <div class="row align-items-center g-4">
+        <div class="col-12 col-lg-6">
+          <h1 class="hero-titulo" id="tituloHero">Equípate para tu próxima cumbre</h1>
+          <p class="hero-texto">
+            En AndesTrekking encuentras mochilas, calzado, carpas y todo lo
+            que necesitas para recorrer los senderos de Chile con seguridad.
+          </p>
+          <a class="btn btn-lg boton-principal" href="productos.html">Ver productos</a>
+        </div>
+        <div class="col-12 col-lg-6">
+          <img class="hero-imagen" src="assets/img/general/hero.webp"
+               alt="Excursionista frente a un lago turquesa y montañas nevadas en la Patagonia"
+               width="1000" height="750">
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS DESTACADOS: la grilla empieza vacía y home.js
+         la llena con las tarjetas de los productos -->
+    <section class="seccion" aria-labelledby="tituloDestacados">
+      <h2 class="seccion-titulo" id="tituloDestacados">Productos destacados</h2>
+      <div class="row g-4" id="grillaDestacados"></div>
+    </section>
+
   </main>
 
   <!-- FOOTER: nombre, categorías, medios de pago y newsletter -->
@@ -100,16 +119,16 @@
           <p>Equipamiento para trekking, senderismo y vida al aire libre.</p>
         </div>
 
-        <!-- Columna 2: categorías de productos -->
+        <!-- Columna 2: categorías. Cada una enlaza al listado filtrado -->
         <div class="col-12 col-md-6 col-lg-3">
           <h2 class="pie-titulo">Categorías</h2>
           <ul class="pie-lista">
-            <li>Mochilas</li>
-            <li>Calzado</li>
-            <li>Carpas y Refugio</li>
-            <li>Ropa Técnica</li>
-            <li>Accesorios</li>
-            <li>Navegación y Seguridad</li>
+            <li><a href="productos.html?categoria=Mochilas">Mochilas</a></li>
+            <li><a href="productos.html?categoria=Calzado">Calzado</a></li>
+            <li><a href="productos.html?categoria=Carpas%20y%20Refugio">Carpas y Refugio</a></li>
+            <li><a href="productos.html?categoria=Ropa%20T%C3%A9cnica">Ropa Técnica</a></li>
+            <li><a href="productos.html?categoria=Accesorios">Accesorios</a></li>
+            <li><a href="productos.html?categoria=Navegaci%C3%B3n%20y%20Seguridad">Navegación y Seguridad</a></li>
           </ul>
         </div>
 
@@ -152,7 +171,7 @@
        4. Script común de la zona (js/tienda/tienda-comun.js)
        5. Script de la página
        El orden importa: cada archivo usa lo que definieron los anteriores.
-       Los pasos 4 y 5 se agregan cuando existan esos archivos. -->
+       El paso 5 es el script propio de cada página. -->
 
   <!-- 1. Bootstrap: menú desplegable del celular, modales, etc. -->
   <script src="assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
@@ -168,5 +187,11 @@
        copia las semillas a localStorage apenas se carga -->
   <script src="js/core/storage.js"></script>
   <script src="js/core/utils.js"></script>
+
+  <!-- 4. Script común de la tienda: tarjetas de producto -->
+  <script src="js/tienda/tienda-comun.js"></script>
+
+  <!-- 5. Script propio de esta página: productos destacados -->
+  <script src="js/tienda/home.js"></script>
 </body>
 </html>

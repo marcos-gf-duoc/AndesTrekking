@@ -202,6 +202,18 @@ main {
   margin-bottom: var(--espacio-xs);
 }
 
+/* Enlaces de las listas del footer (categorías): blancos y sin subrayado,
+   porque el naranja de los enlaces normales no se lee sobre el verde oscuro */
+.pie-lista a {
+  color: var(--color-blanco);
+  text-decoration: none;
+}
+
+.pie-lista a:hover {
+  color: var(--color-naranja-claro);
+  text-decoration: underline;
+}
+
 /* Línea final con el texto de derechos */
 .pie-derechos {
   margin-top: var(--espacio-lg);
@@ -219,6 +231,7 @@ main {
 }
 
 /* Foco sobre fondo verde: contorno naranja claro, igual que en el header */
+.pie a:focus-visible,
 .pie input:focus-visible,
 .pie button:focus-visible {
   outline-color: var(--color-naranja-claro);
@@ -241,4 +254,260 @@ main {
   background-color: var(--color-naranja-claro);
   border-color: var(--color-naranja-claro);
   color: var(--color-texto);
+}
+
+/* Botón principal deshabilitado (por ejemplo "Agotado"): gris y sin sombra,
+   para que se note que no se puede usar */
+.boton-principal:disabled {
+  background-color: var(--color-borde);
+  border-color: var(--color-borde);
+  color: var(--color-texto);
+  opacity: 1; /* Bootstrap lo deja semitransparente; aquí se ve sólido */
+}
+
+/* ==========================================================
+   6. TARJETA DE PRODUCTO
+   La usan el home, el listado de productos y los relacionados.
+   El HTML lo arma crearTarjetaProducto (js/tienda/tienda-comun.js).
+   ========================================================== */
+.tarjeta-producto {
+  height: 100%;             /* todas las tarjetas de una fila miden lo mismo */
+  display: flex;
+  flex-direction: column;   /* foto, nombre, precio y botón, uno bajo otro */
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+  overflow: hidden;         /* recorta la foto en las esquinas redondeadas */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Al pasar el mouse, la tarjeta sube un poco y su sombra crece */
+.tarjeta-producto:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(31, 53, 44, 0.2);
+}
+
+/* Enlace al detalle: envuelve la foto y el nombre */
+.tarjeta-producto-enlace {
+  display: block;
+  color: var(--color-texto);
+  text-decoration: none;
+}
+
+.tarjeta-producto-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;      /* todas las fotos con la misma proporción */
+  object-fit: cover;        /* si la foto no calza, se recorta sin deformarse */
+}
+
+.tarjeta-producto-nombre {
+  margin: 0;
+  padding: var(--espacio-md) var(--espacio-md) var(--espacio-sm);
+  font-size: 1.05rem;
+}
+
+.tarjeta-producto-enlace:hover .tarjeta-producto-nombre {
+  color: var(--color-naranja);
+}
+
+.tarjeta-producto-precio {
+  margin: 0;
+  margin-top: auto;         /* empuja el precio y el botón al fondo de la tarjeta */
+  padding: 0 var(--espacio-md) var(--espacio-sm);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.tarjeta-producto .boton-anadir {
+  margin: 0 var(--espacio-md) var(--espacio-md);
+}
+
+/* ==========================================================
+   7. HERO DEL HOME
+   Bloque de presentación de index.html: texto y foto.
+   ========================================================== */
+.hero {
+  padding: var(--espacio-md) 0 var(--espacio-lg);
+}
+
+.hero-titulo {
+  font-size: 2.2rem;
+  margin-bottom: var(--espacio-md);
+}
+
+.hero-texto {
+  font-size: 1.15rem;
+  color: var(--color-texto-suave);
+  margin-bottom: var(--espacio-lg);
+}
+
+.hero-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+/* En pantallas grandes (desde 992px, el mismo corte "lg" de Bootstrap)
+   el título crece, porque tiene más espacio */
+@media (min-width: 992px) {
+  .hero-titulo {
+    font-size: 3rem;
+  }
+}
+
+/* ==========================================================
+   8. SECCIONES DE CONTENIDO
+   Bloques con título dentro del main (por ejemplo "Productos destacados").
+   ========================================================== */
+.seccion {
+  padding: var(--espacio-lg) 0;
+}
+
+.seccion-titulo {
+  font-size: 1.75rem;
+  margin-bottom: var(--espacio-md);
+}
+
+/* ==========================================================
+   9. FILTRO POR CATEGORÍA (productos.html)
+   Fila de botones redondeados; cada uno es un enlace.
+   ========================================================== */
+.filtro-categorias {
+  display: flex;
+  flex-wrap: wrap;          /* si no caben en una línea, bajan a la siguiente */
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-lg);
+}
+
+.filtro-categoria {
+  padding: var(--espacio-xs) var(--espacio-md);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-verde-bosque);
+  border-radius: 999px;
+  color: var(--color-verde-bosque);
+  text-decoration: none;
+}
+
+/* Botón con el mouse encima y botón de la categoría elegida */
+.filtro-categoria:hover,
+.filtro-categoria.activo {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}
+
+/* Subtítulo sobre la grilla: categoría y cantidad de productos */
+.filtro-resumen {
+  font-size: 1.25rem;
+  margin-bottom: var(--espacio-md);
+}
+
+/* ==========================================================
+   10. DETALLE DE PRODUCTO (producto.html)
+   ========================================================== */
+
+/* Ruta de navegación: Inicio > Categoría > Producto */
+.ruta-navegacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--espacio-lg);
+  font-size: var(--tamano-texto-chico);
+}
+
+/* Agrega el signo ">" antes de cada elemento, menos del primero
+   ("li + li" significa: un li que viene después de otro li) */
+.ruta-navegacion li + li::before {
+  content: ">";
+  margin-right: var(--espacio-sm);
+  color: var(--color-texto-suave);
+}
+
+.detalle-imagen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+/* Fila de miniaturas bajo la foto principal */
+.detalle-miniaturas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  margin-top: var(--espacio-sm);
+}
+
+/* Cada miniatura es un botón con una foto dentro */
+.detalle-miniatura {
+  width: 6rem;
+  padding: 0;
+  background: none;
+  border: 3px solid transparent; /* borde invisible: reserva el espacio del borde activo */
+  border-radius: var(--radio-borde);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.detalle-miniatura img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* Miniatura de la foto que se está viendo */
+.detalle-miniatura.activa {
+  border-color: var(--color-naranja);
+}
+
+.detalle-categoria {
+  margin-bottom: var(--espacio-xs);
+  color: var(--color-tierra);
+  font-size: var(--tamano-texto-chico);
+  font-weight: 700;
+  text-transform: uppercase; /* muestra el texto en mayúsculas */
+  letter-spacing: 1px;
+}
+
+.detalle-precio {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/* Cantidad y botón, alineados por abajo */
+.detalle-compra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--espacio-md);
+  margin-top: var(--espacio-lg);
+}
+
+.detalle-cantidad {
+  width: 6rem;
+}
+
+/* ==========================================================
+   11. AVISO DE PÁGINA
+   Mensaje centrado que ocupa el lugar del contenido, por ejemplo
+   cuando el producto buscado no existe.
+   ========================================================== */
+.aviso-pagina {
+  text-align: center;
+}
+
+/* :empty aplica cuando el elemento no tiene contenido: así el aviso
+   no ocupa espacio mientras no se usa */
+.aviso-pagina:not(:empty) {
+  padding: var(--espacio-xl) 0;
 }

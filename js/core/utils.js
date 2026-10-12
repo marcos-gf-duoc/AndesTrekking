@@ -46,3 +46,21 @@ function obtenerParametroUrl(nombre) {
   const parametros = new URLSearchParams(window.location.search);
   return parametros.get(nombre);
 }
+
+// Recibe: un texto cualquiera (por ejemplo, el nombre de un producto).
+// Hace: reemplaza los caracteres que tienen un significado especial en HTML
+//       por su versión segura. Así, si alguien escribe <b> o <script> en un
+//       campo, la página lo muestra como texto y no lo ejecuta como código.
+// Devuelve: el texto listo para insertarlo dentro de un HTML.
+function escaparHtml(texto) {
+  let textoSeguro = String(texto); // String() convierte números u otros datos en texto
+
+  // El & va primero: si fuera al final, cambiaría los & de los reemplazos anteriores
+  textoSeguro = textoSeguro.replace(/&/g, "&amp;");
+  textoSeguro = textoSeguro.replace(/</g, "&lt;");
+  textoSeguro = textoSeguro.replace(/>/g, "&gt;");
+  textoSeguro = textoSeguro.replace(/"/g, "&quot;");
+  textoSeguro = textoSeguro.replace(/'/g, "&#39;");
+
+  return textoSeguro;
+}

@@ -3,7 +3,9 @@
   Qué es: funciones que revisan si un dato escrito por el usuario es válido.
   Quién lo usa: los formularios de la tienda (contacto, newsletter, registro,
           login) y los del panel admin (usuarios y productos).
-  Orden de carga: va con los archivos de js/core/, antes del script común.
+  Orden de carga: va con los archivos de js/core/, DESPUÉS de utils.js
+          (validarFechaNacimiento usa obtenerFechaDeHoy) y antes del
+          script común.
 
   Cómo se usan: todas las funciones reciben el valor a revisar y DEVUELVEN
   UN TEXTO:
@@ -222,6 +224,130 @@ function validarRun(valor) {
 
   if (calcularDigitoVerificador(cuerpo) !== digitoIngresado) {
     return "El dígito verificador no es correcto.";
+  }
+
+  return "";
+}
+
+// ==========================================================
+// Contraseña, teléfono y fecha de nacimiento
+// ==========================================================
+
+// Largo permitido de la contraseña
+const LARGO_MINIMO_PASSWORD = 4;
+const LARGO_MAXIMO_PASSWORD = 10;
+
+// Recibe: el valor del campo contraseña y si es obligatoria (true) u
+//         opcional (false). Es opcional al editar un usuario: si se deja
+//         vacía, se conserva la contraseña anterior.
+// Hace: revisa que no esté vacía (solo si es obligatoria) y que tenga entre
+//       4 y 10 caracteres. No usa trim: en una contraseña los espacios
+//       también son caracteres.
+// Devuelve: el mensaje de error, o "" si la contraseña es válida.
+function validarPassword(valor, esObligatoria) {
+  if (valor === "") {
+    if (esObligatoria) {
+      return "Ingresa una contraseña.";
+    }
+    return ""; // vacía y opcional: es válida
+  }
+
+  if (valor.length < LARGO_MINIMO_PASSWORD || valor.length > LARGO_MAXIMO_PASSWORD) {
+    return "La contraseña debe tener entre " + LARGO_MINIMO_PASSWORD + " y " + LARGO_MAXIMO_PASSWORD + " caracteres.";
+  }
+
+  return "";
+}
+
+// Recibe: el valor del campo "confirmar contraseña" y el valor del campo
+//         contraseña.
+// Hace: revisa que ambos sean iguales. Si los dos están vacíos no hay nada
+//       que confirmar (pasa al editar un usuario sin cambiar su contraseña).
+// Devuelve: el mensaje de error, o "" si coinciden.
+function validarConfirmacionPassword(valor, passwordOriginal) {
+  if (valor === "" && passwordOriginal === "") {
+    return "";
+  }
+
+  if (valor === "") {
+    return "Confirma la contraseña.";
+  }
+
+  if (valor !== passwordOriginal) {
+    return "Las contraseñas no coinciden.";
+  }
+
+  return "";
+}
+
+// Recibe: el valor del campo teléfono, que es opcional.
+// Hace: si tiene algo escrito, revisa que sean exactamente 9 dígitos y que
+//       el primero sea un 9 (formato de un celular chileno).
+// Devuelve: el mensaje de error, o "" si está vacío o es válido.
+function validarTelefono(valor) {
+  const telefono = valor.trim();
+
+  if (telefono === "") {
+    return "";
+  }
+
+  if (!esSoloDigitos(telefono) || telefono.length !== 9 || telefono[0] !== "9") {
+    return "El teléfono debe tener 9 dígitos y empezar con 9.";
+  }
+
+  return "";
+}
+
+// Recibe: una fecha como texto.
+// Hace: revisa que tenga la forma AAAA-MM-DD y que exista en el calendario
+//       (por ejemplo, rechaza el 30 de febrero).
+// Devuelve: true si es una fecha real con ese formato; false si no.
+function esFechaReal(fecha) {
+  // Forma: 10 caracteres, con guiones en las posiciones 4 y 7
+  if (fecha.length !== 10 || fecha[4] !== "-" || fecha[7] !== "-") {
+    return false;
+  }
+
+  const textoAnio = fecha.slice(0, 4);
+  const textoMes = fecha.slice(5, 7);
+  const textoDia = fecha.slice(8, 10);
+
+  if (!esSoloDigitos(textoAnio) || !esSoloDigitos(textoMes) || !esSoloDigitos(textoDia)) {
+    return false;
+  }
+
+  const anio = Number(textoAnio);
+  const mes = Number(textoMes);
+  const dia = Number(textoDia);
+
+  // Se crea la fecha y se compara con lo ingresado. Si el día no existe,
+  // JavaScript lo "corre" al mes siguiente (30 de febrero pasa a ser 2 de
+  // marzo) y entonces el mes o el día ya no coinciden.
+  const fechaCreada = new Date(anio, mes - 1, dia);
+
+  return fechaCreada.getFullYear() === anio && fechaCreada.getMonth() === mes - 1 && fechaCreada.getDate() === dia;
+}
+
+// Recibe: el valor del campo fecha de nacimiento, que es opcional. El campo
+//         type="date" entrega la fecha como AAAA-MM-DD.
+// Hace: si tiene una fecha, revisa que sea real y que no sea futura.
+//       Usa obtenerFechaDeHoy (js/core/utils.js).
+// Devuelve: el mensaje de error, o "" si está vacía o es válida.
+function validarFechaNacimiento(valor) {
+  const fecha = valor.trim();
+
+  if (fecha === "") {
+    return "";
+  }
+
+  if (!esFechaReal(fecha)) {
+    return "Ingresa una fecha válida.";
+  }
+
+  // Con el formato AAAA-MM-DD, comparar los textos equivale a comparar las
+  // fechas: "2030-01-01" es mayor que "2026-10-12"
+  if (fecha > obtenerFechaDeHoy()) {
+    return "La fecha de nacimiento no puede ser futura.";
   }
 
   return "";

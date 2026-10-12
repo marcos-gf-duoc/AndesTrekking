@@ -705,3 +705,29 @@ main {
 .mensaje-exito:empty {
   margin: 0;
 }
+
+/* Formulario con más campos (registro): caja más ancha */
+.formulario-ancho {
+  max-width: 54rem;
+}
+
+/* Grupo de campos relacionados (fieldset) dentro de un formulario */
+.formulario-grupo {
+  margin-bottom: var(--espacio-lg);
+}
+
+/* Título de cada grupo (legend) */
+.formulario-grupo legend {
+  margin-bottom: var(--espacio-md);
+  padding-bottom: var(--espacio-xs);
+  border-bottom: 1px solid var(--color-borde);
+  color: var(--color-verde-bosque);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Línea final del formulario, por ejemplo "¿Ya tienes cuenta?" */
+.formulario-pie {
+  margin: var(--espacio-md) 0 0;
+  font-size: var(--tamano-texto-chico);
+}

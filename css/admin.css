@@ -348,6 +348,9 @@
 .panel-volver {
   display: inline-block;
   margin-bottom: var(--espacio-sm);
+  /* El relleno agranda la zona donde se puede tocar con el dedo, sin
+     cambiar el tamaño del texto */
+  padding: var(--espacio-xs) 0;
   font-size: var(--tamano-texto-chico);
 }
 

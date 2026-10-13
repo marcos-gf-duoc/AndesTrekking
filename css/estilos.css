@@ -225,13 +225,12 @@ main {
   margin: 0;
 }
 
-.pie-lista li {
-  margin-bottom: var(--espacio-xs);
-}
 
 /* Enlaces de las listas del footer (categorías): blancos y sin subrayado,
    porque el naranja de los enlaces normales no se lee sobre el verde oscuro */
 .pie-lista a {
+  display: inline-block;    /* permite que el relleno vertical tenga efecto */
+  padding: var(--espacio-xs) 0; /* agranda la zona de toque de cada enlace */
   color: var(--color-blanco);
   text-decoration: none;
 }
@@ -465,6 +464,12 @@ main {
 
 /* Agrega el signo ">" antes de cada elemento, menos del primero
    ("li + li" significa: un li que viene después de otro li) */
+/* El relleno agranda la zona de toque de los enlaces de la ruta */
+.ruta-navegacion a {
+  display: inline-block;
+  padding: var(--espacio-xs) 0;
+}
+
 .ruta-navegacion li + li::before {
   content: ">";
   margin-right: var(--espacio-sm);
@@ -681,6 +686,9 @@ main {
 .articulo-volver {
   display: inline-block;
   margin-bottom: var(--espacio-md);
+  /* El relleno agranda la zona donde se puede tocar con el dedo, sin
+     cambiar el tamaño del texto */
+  padding: var(--espacio-xs) 0;
   font-size: var(--tamano-texto-chico);
 }
 
@@ -720,6 +728,13 @@ main {
 .articulo-fuentes h2 {
   margin-top: 0;
   font-size: 1.1rem;
+}
+
+/* Cada fuente es un enlace en su propia línea: el relleno agranda la
+   zona de toque y separa una de otra */
+.articulo-fuentes li a {
+  display: inline-block;
+  padding: var(--espacio-xs) 0;
 }
 
 /* ==========================================================
@@ -972,7 +987,8 @@ main {
 /* Botón Eliminar: con aspecto de enlace, en el color de error */
 .carrito-boton-eliminar {
   margin-top: var(--espacio-xs);
-  padding: 0;
+  /* El relleno vertical agranda la zona donde se puede tocar con el dedo */
+  padding: var(--espacio-xs) 0;
   background: none;
   border: 0;
   color: var(--color-error);

@@ -162,3 +162,61 @@
   margin-bottom: var(--espacio-sm);
   font-size: 1.3rem;
 }
+
+/* ==========================================================
+   4. TABLAS DEL PANEL
+   La clase "table" de Bootstrap da la base (bordes y espacios);
+   aquí van los colores y los detalles propios.
+   ========================================================== */
+
+/* Caja de la tabla. overflow-x: auto agrega una barra de desplazamiento
+   horizontal solo cuando la tabla no cabe en la pantalla */
+.panel-tabla-contenedor {
+  overflow-x: auto;
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+.panel-tabla {
+  margin-bottom: 0;         /* Bootstrap deja un margen bajo las tablas */
+}
+
+/* Fila de títulos */
+.panel-tabla thead th {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+  white-space: nowrap;      /* los títulos no se parten en dos líneas */
+}
+
+/* Primera columna (el código o identificador): no se parte en dos líneas
+   aunque la pantalla sea angosta */
+.panel-tabla td:first-child {
+  white-space: nowrap;
+}
+
+/* Columnas de números (precio, stock): alineadas a la derecha, para que
+   las cifras se comparen con facilidad */
+.panel-tabla .celda-numero {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Fila de un producto con stock menor o igual a su stock crítico */
+.panel-tabla .fila-stock-critico td {
+  background-color: #FDF1E3;                    /* naranja muy claro */
+}
+
+/* Etiqueta "Stock crítico" junto al número: el aviso no depende solo
+   del color de la fila */
+.etiqueta-critico {
+  display: inline-block;
+  margin-left: var(--espacio-sm);
+  padding: 0 var(--espacio-sm);
+  background-color: var(--color-naranja);
+  border-radius: 999px;
+  color: var(--color-blanco);
+  font-size: var(--tamano-texto-chico);
+  font-weight: 700;
+}

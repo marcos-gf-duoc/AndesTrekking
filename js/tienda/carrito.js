@@ -96,6 +96,150 @@ function mostrarAvisosDelCarrito(avisos) {
 }
 
 // ==========================================================
+// Cambios de cantidad: botones −, + y Eliminar
+// ==========================================================
+
+// Recibe: el código de un producto y su cantidad nueva.
+// Hace: guarda esa cantidad en el carrito. Si la cantidad nueva es 0, quita
+//       el producto del carrito.
+// Devuelve: nada.
+function cambiarCantidadEnCarrito(codigo, cantidadNueva) {
+  const carritoNuevo = [];
+
+  leerCarrito().forEach(function (item) {
+    if (item.codigo !== codigo) {
+      carritoNuevo.push(item); // los demás productos quedan igual
+      return;
+    }
+
+    if (cantidadNueva > 0) {
+      carritoNuevo.push({ codigo: codigo, cantidad: cantidadNueva });
+    }
+    // con cantidad 0 el producto simplemente no se copia: queda fuera
+  });
+
+  guardarCarrito(carritoNuevo);
+}
+
+// Recibe: el código de un producto y el nombre de una acción ("menos",
+//         "mas" o "eliminar").
+// Hace: después de volver a dibujar la lista, pone el foco del teclado en
+//       el mismo botón que se acababa de usar. Sin esto, quien navega con
+//       el teclado perdería su lugar cada vez que cambia una cantidad,
+//       porque al redibujar se crean botones nuevos.
+// Devuelve: nada.
+function devolverFocoAlBoton(codigo, accion) {
+  const botones = document.querySelectorAll("#listaCarrito button");
+
+  for (let i = 0; i < botones.length; i++) {
+    if (botones[i].dataset.codigo === codigo && botones[i].dataset.accion === accion) {
+      botones[i].focus();
+      return;
+    }
+  }
+}
+
+// Recibe: un producto del carrito.
+// Hace: responde al botón +. Sube la cantidad en 1, salvo que ya esté en
+//       el máximo: la cantidad no puede superar el stock. En ese caso
+//       muestra un aviso y no cambia nada.
+// Devuelve: nada.
+function aumentarCantidad(producto) {
+  const cantidadActual = obtenerCantidadEnCarrito(producto.codigo);
+
+  if (cantidadActual >= producto.stock) {
+    mostrarAvisoFlotante("No hay más stock de " + producto.nombre + ": el máximo es " +
+      escribirUnidades(producto.stock) + ".");
+    return;
+  }
+
+  cambiarCantidadEnCarrito(producto.codigo, cantidadActual + 1);
+  mostrarCarrito();
+  devolverFocoAlBoton(producto.codigo, "mas");
+}
+
+// Recibe: un producto del carrito.
+// Hace: responde al botón −. Baja la cantidad en 1. Si con eso llegaría a
+//       0, pide confirmación antes de quitar el producto del carrito; si
+//       el usuario cancela, la cantidad queda en 1.
+// Devuelve: nada.
+function disminuirCantidad(producto) {
+  const cantidadActual = obtenerCantidadEnCarrito(producto.codigo);
+
+  if (cantidadActual <= 1) {
+    quitarProductoConConfirmacion(producto);
+    return;
+  }
+
+  cambiarCantidadEnCarrito(producto.codigo, cantidadActual - 1);
+  mostrarCarrito();
+  devolverFocoAlBoton(producto.codigo, "menos");
+}
+
+// Recibe: un producto del carrito.
+// Hace: pide confirmación y, si el usuario acepta, quita el producto del
+//       carrito y vuelve a dibujar la página. La usan el botón "Eliminar"
+//       y el botón − cuando la cantidad llegaría a 0.
+// Devuelve: nada.
+function quitarProductoConConfirmacion(producto) {
+  // confirm devuelve true solo si el usuario presiona Aceptar
+  if (!confirm("¿Quitar " + producto.nombre + " del carrito?")) {
+    return;
+  }
+
+  cambiarCantidadEnCarrito(producto.codigo, 0);
+  mostrarCarrito();
+  mostrarAvisoFlotante("Se quitó " + producto.nombre + " del carrito.");
+}
+
+// Recibe: el texto visible del botón, su acción ("menos", "mas" o
+//         "eliminar"), el producto, una clase CSS y la etiqueta para
+//         lectores de pantalla.
+// Hace: crea un botón del carrito. Guarda el código y la acción en
+//       atributos data-, que sirven para volver a encontrarlo después de
+//       redibujar la lista.
+// Devuelve: el botón creado (todavía sin conectar a ninguna función).
+function crearBotonCarrito(texto, accion, producto, clase, etiqueta) {
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = clase;
+  boton.textContent = texto;
+  boton.dataset.codigo = producto.codigo;
+  boton.dataset.accion = accion;
+  boton.setAttribute("aria-label", etiqueta);
+  return boton;
+}
+
+// Recibe: un elemento del carrito { codigo, cantidad } y su producto.
+// Hace: crea el control de cantidad: el botón −, el número y el botón +.
+// Devuelve: el control creado.
+function crearControlCantidad(item, producto) {
+  const control = document.createElement("div");
+  control.className = "carrito-cantidad";
+
+  const botonMenos = crearBotonCarrito("−", "menos", producto, "carrito-boton-cantidad",
+    "Quitar una unidad de " + producto.nombre);
+  botonMenos.addEventListener("click", function () {
+    disminuirCantidad(producto);
+  });
+
+  const numero = crearElementoConTexto("span", "carrito-cantidad-numero", String(item.cantidad));
+  // Los lectores de pantalla leen "Cantidad: 2" en vez de solo "2"
+  numero.setAttribute("aria-label", "Cantidad: " + item.cantidad);
+
+  const botonMas = crearBotonCarrito("+", "mas", producto, "carrito-boton-cantidad",
+    "Agregar una unidad de " + producto.nombre);
+  botonMas.addEventListener("click", function () {
+    aumentarCantidad(producto);
+  });
+
+  control.appendChild(botonMenos);
+  control.appendChild(numero);
+  control.appendChild(botonMas);
+  return control;
+}
+
+// ==========================================================
 // Dibujo de la lista de productos
 // ==========================================================
 
@@ -113,7 +257,8 @@ function crearElementoConTexto(etiqueta, clase, texto) {
 // Recibe: un elemento del carrito { codigo, cantidad } y su producto.
 // Hace: crea el <li> que muestra ese producto en el carrito: foto, nombre
 //       (ambos enlazan al detalle), descripción corta, precio unitario,
-//       cantidad y subtotal (precio por cantidad).
+//       botones − y + con la cantidad, subtotal (precio por cantidad) y
+//       botón "Eliminar".
 // Devuelve: el <li> creado.
 function crearItemCarrito(item, producto) {
   const enlaceDetalle = "producto.html?codigo=" + encodeURIComponent(producto.codigo);
@@ -149,13 +294,21 @@ function crearItemCarrito(item, producto) {
   info.appendChild(crearElementoConTexto("p", "carrito-item-precio", "Precio unitario: " + formatearPrecio(producto.precio)));
   fila.appendChild(info);
 
-  // Cantidad y subtotal
+  // Cantidad con sus botones, subtotal y botón Eliminar
   const totales = document.createElement("div");
   totales.className = "carrito-item-totales";
-  totales.appendChild(crearElementoConTexto("p", "carrito-item-cantidad", "Cantidad: " + item.cantidad));
+  totales.appendChild(crearControlCantidad(item, producto));
 
   const subtotal = producto.precio * item.cantidad;
   totales.appendChild(crearElementoConTexto("p", "carrito-item-subtotal", "Subtotal: " + formatearPrecio(subtotal)));
+
+  const botonEliminar = crearBotonCarrito("Eliminar", "eliminar", producto, "carrito-boton-eliminar",
+    "Eliminar " + producto.nombre + " del carrito");
+  botonEliminar.addEventListener("click", function () {
+    quitarProductoConConfirmacion(producto);
+  });
+  totales.appendChild(botonEliminar);
+
   fila.appendChild(totales);
 
   return fila;

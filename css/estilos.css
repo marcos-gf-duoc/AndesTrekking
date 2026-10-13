@@ -892,9 +892,55 @@ main {
   font-size: var(--tamano-texto-chico);
 }
 
-.carrito-item-precio,
-.carrito-item-cantidad {
+.carrito-item-precio {
   margin: 0;
+}
+
+/* Control de cantidad: botón −, número y botón + en una fila */
+.carrito-cantidad {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+}
+
+/* Botones − y +: cuadrados, con el signo centrado */
+.carrito-boton-cantidad {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-verde-bosque);
+  border-radius: var(--radio-borde);
+  color: var(--color-verde-bosque);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.carrito-boton-cantidad:hover {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}
+
+.carrito-cantidad-numero {
+  min-width: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Botón Eliminar: con aspecto de enlace, en el color de error */
+.carrito-boton-eliminar {
+  margin-top: var(--espacio-xs);
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--color-error);
+  font-size: var(--tamano-texto-chico);
+  text-decoration: underline;
+}
+
+.carrito-boton-eliminar:hover {
+  color: var(--color-texto);
 }
 
 /* Bloque de la cantidad y el subtotal, alineado a la derecha */

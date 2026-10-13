@@ -2,7 +2,8 @@
   Archivo: js/admin/admin-comun.js
   Qué es: funciones compartidas por todas las páginas del panel de
           administración: protección por rol, menú vertical, saludo,
-          cierre de sesión, avisos, celdas de tabla y paginación.
+          cierre de sesión, avisos, celdas de tabla, paginación y
+          conexión de los campos de formulario.
   Quién lo usa: todas las páginas de la carpeta admin/.
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa auth.js y
           utils.js) y ANTES del script propio de cada página.
@@ -128,7 +129,9 @@ function mostrarSaludoPanel(sesion) {
 // lleva solo el código; el texto se define aquí (decisión D-13).
 const TEXTOS_DE_AVISOS_PANEL = {
   "producto-creado": "El producto se creó correctamente.",
-  "producto-actualizado": "Los cambios del producto se guardaron."
+  "producto-actualizado": "Los cambios del producto se guardaron.",
+  "usuario-creado": "El usuario se creó correctamente.",
+  "usuario-actualizado": "Los cambios del usuario se guardaron."
 };
 
 // Recibe: el texto de un aviso.
@@ -316,6 +319,20 @@ function mostrarTextoPaginacion(paginaActual, cantidadElementos, palabraSingular
   }
 
   texto.textContent = "Mostrando " + primero + " a " + ultimo + " de " + cantidadElementos + " " + palabra;
+}
+
+// ==========================================================
+// Formularios del panel
+// ==========================================================
+
+// Recibe: el id de un campo y la función que lo revisa.
+// Hace: deja el campo conectado para revisarse en tiempo real: mientras el
+//       usuario escribe o elige ("input") y cuando sale del campo ("blur").
+// Devuelve: nada.
+function revisarEnTiempoReal(idCampo, funcionRevisar) {
+  const campo = document.getElementById(idCampo);
+  campo.addEventListener("input", funcionRevisar);
+  campo.addEventListener("blur", funcionRevisar);
 }
 
 // ==========================================================

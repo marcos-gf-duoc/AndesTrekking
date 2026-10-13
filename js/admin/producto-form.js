@@ -422,16 +422,6 @@ function mostrarProductoAEditarNoEncontrado() {
 // 5. Inicio de la página
 // ==========================================================
 
-// Recibe: el id de un campo y la función que lo revisa.
-// Hace: deja el campo conectado para revisarse en tiempo real: mientras el
-//       usuario escribe o elige ("input") y cuando sale del campo ("blur").
-// Devuelve: nada.
-function revisarEnTiempoReal(idCampo, funcionRevisar) {
-  const campo = document.getElementById(idCampo);
-  campo.addEventListener("input", funcionRevisar);
-  campo.addEventListener("blur", funcionRevisar);
-}
-
 // Recibe: nada.
 // Hace: prepara la página. Primero iniciarPanel, con el Administrador como
 //       único rol permitido. La opción del menú que se marca es "productos",

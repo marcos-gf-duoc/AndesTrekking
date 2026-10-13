@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+  Archivo: admin/producto-form.html
+  Qué es: formulario de producto del panel. Sirve para dos cosas:
+          - Nuevo producto: se abre sin parámetros (producto-form.html).
+          - Editar producto: se abre con el código en la URL
+            (producto-form.html?codigo=MOC-001).
+  Quién puede verla: solo el Administrador.
+  Script propio: js/admin/producto-form.js
+  Rutas: esta página está dentro de la carpeta admin/. Para llegar a los
+          archivos de la raíz (css, js, assets) las rutas empiezan con "../".
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Hace que la página se adapte al ancho de la pantalla del celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Producto | Panel AndesTrekking</title>
+
+  <!-- Estilos, en este orden: Bootstrap, íconos, los comunes del sitio
+       y al final los propios del panel -->
+  <link rel="stylesheet" href="../assets/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+  <!-- El panel parte oculto (atributo hidden). admin-comun.js lo muestra
+       solo después de comprobar que el usuario tiene permiso -->
+  <div class="panel-contenedor" id="panel" hidden>
+
+    <!-- MENÚ VERTICAL. aside es la etiqueta para un bloque lateral -->
+    <aside class="panel-lateral">
+      <a class="panel-marca" href="index.html">AndesTrekking</a>
+      <p class="panel-etiqueta">Panel de administración</p>
+
+      <!-- Aquí JavaScript escribe el nombre y el rol del usuario -->
+      <p class="panel-saludo" id="saludoPanel"></p>
+
+      <!-- La lista parte vacía: js/admin/admin-comun.js agrega solo las
+           opciones que el rol del usuario puede usar -->
+      <nav aria-label="Menú del panel">
+        <ul class="panel-menu" id="menuPanel"></ul>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO propio de cada página del panel -->
+    <main class="panel-contenido">
+      <a class="panel-volver" href="productos.html">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
+      </a>
+
+      <!-- El título cambia a "Editar producto" cuando la URL trae un código -->
+      <h1 class="panel-titulo" id="tituloFormulario">Nuevo producto</h1>
+
+      <!-- Caja de avisos: se usa si el producto a editar no existe -->
+      <p class="mensaje-aviso" id="avisoPanel" role="status" hidden></p>
+
+      <!-- novalidate apaga los avisos del navegador: toda la validación la
+           hace JavaScript (js/admin/producto-form.js). Cada campo tiene
+           debajo un div "invalid-feedback" para su mensaje de error, con el
+           id "error" + el id del campo. -->
+      <form class="formulario formulario-ancho" id="formularioProducto" novalidate>
+
+        <!-- Alerta de stock crítico: parte oculta. Aparece cuando el stock
+             es menor o igual al stock crítico -->
+        <p class="mensaje-aviso" id="alertaStockFormulario" role="status" hidden></p>
+
+        <div class="row g-3">
+
+          <!-- Código: obligatorio, mínimo 3 caracteres, único.
+               En modo Editar queda bloqueado -->
+          <div class="col-12 col-md-4">
+            <label for="codigoProducto" class="form-label">Código</label>
+            <input type="text" class="form-control" id="codigoProducto"
+                   autocomplete="off" aria-describedby="ayudaCodigoProducto">
+            <div class="invalid-feedback" id="errorCodigoProducto"></div>
+            <div class="form-text" id="ayudaCodigoProducto">Mínimo 3 caracteres. No se puede cambiar después.</div>
+          </div>
+
+          <!-- Nombre: obligatorio, máximo 100 caracteres -->
+          <div class="col-12 col-md-8">
+            <label for="nombreProducto" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombreProducto"
+                   autocomplete="off" maxlength="100">
+            <div class="invalid-feedback" id="errorNombreProducto"></div>
+          </div>
+
+          <!-- Descripción: opcional, máximo 500 caracteres, con contador -->
+          <div class="col-12">
+            <label for="descripcionProducto" class="form-label">
+              Descripción <span class="etiqueta-opcional">(opcional)</span>
+            </label>
+            <textarea class="form-control" id="descripcionProducto" rows="3"
+                      maxlength="500" aria-describedby="contadorDescripcionProducto"></textarea>
+            <div class="invalid-feedback" id="errorDescripcionProducto"></div>
+            <div class="form-text contador" id="contadorDescripcionProducto">0/500</div>
+          </div>
+
+          <!-- Precio: obligatorio, número mayor o igual a 0, admite decimales.
+               Es type="text" a propósito: así JavaScript recibe exactamente lo
+               que se escribió y puede dar un mensaje específico.
+               inputmode="decimal" muestra el teclado numérico en el celular -->
+          <div class="col-12 col-md-4">
+            <label for="precioProducto" class="form-label">Precio</label>
+            <input type="text" class="form-control" id="precioProducto"
+                   autocomplete="off" inputmode="decimal" aria-describedby="ayudaPrecioProducto">
+            <div class="invalid-feedback" id="errorPrecioProducto"></div>
+            <div class="form-text" id="ayudaPrecioProducto">En pesos, sin puntos de miles. 0 significa gratis.</div>
+          </div>
+
+          <!-- Stock: obligatorio, entero mayor o igual a 0 -->
+          <div class="col-12 col-md-4">
+            <label for="stockProducto" class="form-label">Stock</label>
+            <input type="text" class="form-control" id="stockProducto"
+                   autocomplete="off" inputmode="numeric">
+            <div class="invalid-feedback" id="errorStockProducto"></div>
+          </div>
+
+          <!-- Stock crítico: opcional, entero mayor o igual a 0 -->
+          <div class="col-12 col-md-4">
+            <label for="stockCriticoProducto" class="form-label">
+              Stock crítico <span class="etiqueta-opcional">(opcional)</span>
+            </label>
+            <input type="text" class="form-control" id="stockCriticoProducto"
+                   autocomplete="off" inputmode="numeric" aria-describedby="ayudaStockCriticoProducto">
+            <div class="invalid-feedback" id="errorStockCriticoProducto"></div>
+            <div class="form-text" id="ayudaStockCriticoProducto">Avisa cuando el stock es igual o menor.</div>
+          </div>
+
+          <!-- Categoría: obligatoria. producto-form.js agrega las opciones
+               desde CATEGORIAS (js/data/productos.js) -->
+          <div class="col-12 col-md-6">
+            <label for="categoriaProducto" class="form-label">Categoría</label>
+            <select class="form-select" id="categoriaProducto">
+              <option value="">Selecciona una categoría</option>
+            </select>
+            <div class="invalid-feedback" id="errorCategoriaProducto"></div>
+          </div>
+
+          <!-- Imagen: opcional. producto-form.js agrega las opciones desde
+               IMAGENES_PRODUCTOS (js/data/productos.js) -->
+          <div class="col-12 col-md-6">
+            <label for="imagenProducto" class="form-label">
+              Imagen <span class="etiqueta-opcional">(opcional)</span>
+            </label>
+            <select class="form-select" id="imagenProducto">
+              <option value="">Sin imagen</option>
+            </select>
+            <div class="invalid-feedback" id="errorImagenProducto"></div>
+          </div>
+
+          <!-- Vista previa de la imagen elegida. Parte con la imagen de
+               reemplazo, que es la que se usa cuando no hay imagen -->
+          <div class="col-12">
+            <p class="form-label">Vista previa</p>
+            <img class="panel-vista-previa" id="vistaPreviaImagen"
+                 src="../assets/img/general/placeholder.webp"
+                 alt="Vista previa: el producto no tiene imagen">
+          </div>
+
+        </div>
+
+        <div class="formulario-botones">
+          <button type="submit" class="btn boton-principal">Guardar</button>
+          <!-- Cancelar es un enlace: solo vuelve al listado, sin guardar -->
+          <a class="btn boton-secundario" href="productos.html">Cancelar</a>
+        </div>
+      </form>
+    </main>
+
+  </div>
+
+  <!-- Scripts, siempre al final del body y en este orden:
+       1. Bootstrap bundle
+       2. js/data/*
+       3. js/core/*
+       4. Script común de la zona (js/admin/admin-comun.js)
+       5. Script de la página
+       El orden importa: cada archivo usa lo que definieron los anteriores. -->
+
+  <!-- 1. Bootstrap -->
+  <script src="../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+  <!-- 2. Datos iniciales (semillas) -->
+  <script src="../js/data/productos.js"></script>
+  <script src="../js/data/usuarios.js"></script>
+  <script src="../js/data/ordenes.js"></script>
+  <script src="../js/data/cupones.js"></script>
+  <script src="../js/data/regiones.js"></script>
+
+  <!-- 3. Lógica compartida. storage.js va después de los datos porque
+       copia las semillas a localStorage apenas se carga -->
+  <script src="../js/core/storage.js"></script>
+  <script src="../js/core/utils.js"></script>
+  <script src="../js/core/validaciones.js"></script>
+  <script src="../js/core/auth.js"></script>
+
+  <!-- 4. Script común del panel: protección, menú, saludo y cerrar sesión -->
+  <script src="../js/admin/admin-comun.js"></script>
+
+  <!-- 5. Script propio de esta página: formulario de producto -->
+  <script src="../js/admin/producto-form.js"></script>
+</body>
+</html>

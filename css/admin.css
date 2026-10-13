@@ -368,3 +368,43 @@
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-borde);
 }
+
+/* ==========================================================
+   8. FORMULARIOS DEL PANEL
+   La caja y los campos usan las clases de estilos.css (formulario,
+   formulario-ancho) y de Bootstrap (form-control, form-select).
+   ========================================================== */
+
+/* Vista previa de la imagen elegida en el formulario de producto */
+.panel-vista-previa {
+  display: block;
+  width: 100%;
+  max-width: 16rem;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+}
+
+/* Fila de botones al final de un formulario */
+.formulario-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  margin-top: var(--espacio-lg);
+}
+
+/* Botón secundario (Cancelar): mismo tamaño que el principal, pero con
+   borde y sin relleno, para que la acción principal destaque más */
+.boton-secundario {
+  background-color: var(--color-blanco);
+  border-color: var(--color-verde-bosque);
+  color: var(--color-verde-bosque);
+}
+
+.boton-secundario:hover,
+.boton-secundario:focus {
+  background-color: var(--color-verde-bosque);
+  border-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}

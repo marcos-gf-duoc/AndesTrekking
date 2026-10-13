@@ -4,6 +4,7 @@
   Quién lo usa: storage.js copia PRODUCTOS_INICIALES a localStorage
           (clave at_productos) la primera vez que se abre el sitio.
           CATEGORIAS se usa en los filtros y en el formulario de productos.
+          IMAGENES_PRODUCTOS se usa en el formulario de productos.
   Nota: este archivo solo tiene datos, no tiene funciones.
 */
 
@@ -16,6 +17,29 @@ const CATEGORIAS = [
   "Ropa Técnica",
   "Accesorios",
   "Navegación y Seguridad"
+];
+
+// Imágenes disponibles para los productos: nombres de los archivos que
+// están en la carpeta assets/img/productos/. El formulario de productos
+// del panel las ofrece en un select.
+// JavaScript no puede leer el contenido de una carpeta, por eso la lista se
+// escribe a mano: si se agrega una foto a la carpeta, hay que sumarla aquí.
+const IMAGENES_PRODUCTOS = [
+  "bastones-araucaria.webp",
+  "botas-patagonia-mid.webp",
+  "botella-glaciar.webp",
+  "carpa-refugio-1.webp",
+  "carpa-refugio-2.webp",
+  "chaqueta-ventisquero.webp",
+  "guia-senderos.webp",
+  "linterna-lucero-1.webp",
+  "linterna-lucero-2.webp",
+  "mochila-aconcagua-65.webp",
+  "mochila-cumbre-22.webp",
+  "mochila-torres-40.webp",
+  "saco-cordillera.webp",
+  "sandalias-rio-claro.webp",
+  "zapatillas-sendero-trail.webp"
 ];
 
 // Productos iniciales. Cada producto tiene:

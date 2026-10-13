@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<!--
+  Archivo: admin/usuario-form.html
+  Qué es: formulario de usuario del panel. Sirve para dos cosas:
+          - Nuevo usuario: se abre sin parámetros (usuario-form.html).
+          - Editar usuario: se abre con el RUN en la URL
+            (usuario-form.html?run=19011001K).
+          Tiene los mismos campos que el registro de la tienda, más el
+          campo "Tipo de usuario".
+  Quién puede verla: solo el Administrador.
+  Script propio: js/admin/usuario-form.js
+  Rutas: esta página está dentro de la carpeta admin/. Para llegar a los
+          archivos de la raíz (css, js, assets) las rutas empiezan con "../".
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Hace que la página se adapte al ancho de la pantalla del celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usuario | Panel AndesTrekking</title>
+
+  <!-- Estilos, en este orden: Bootstrap, íconos, los comunes del sitio
+       y al final los propios del panel -->
+  <link rel="stylesheet" href="../assets/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+  <!-- El panel parte oculto (atributo hidden). admin-comun.js lo muestra
+       solo después de comprobar que el usuario tiene permiso -->
+  <div class="panel-contenedor" id="panel" hidden>
+
+    <!-- MENÚ VERTICAL. aside es la etiqueta para un bloque lateral -->
+    <aside class="panel-lateral">
+      <a class="panel-marca" href="index.html">AndesTrekking</a>
+      <p class="panel-etiqueta">Panel de administración</p>
+
+      <!-- Aquí JavaScript escribe el nombre y el rol del usuario -->
+      <p class="panel-saludo" id="saludoPanel"></p>
+
+      <!-- La lista parte vacía: js/admin/admin-comun.js agrega solo las
+           opciones que el rol del usuario puede usar -->
+      <nav aria-label="Menú del panel">
+        <ul class="panel-menu" id="menuPanel"></ul>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO propio de cada página del panel -->
+    <main class="panel-contenido">
+      <a class="panel-volver" href="usuarios.html">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
+      </a>
+
+      <!-- El título cambia a "Editar usuario" cuando la URL trae un RUN -->
+      <h1 class="panel-titulo" id="tituloFormulario">Nuevo usuario</h1>
+
+      <!-- Caja de avisos: se usa si el usuario a editar no existe -->
+      <p class="mensaje-aviso" id="avisoPanel" role="status" hidden></p>
+
+      <!-- novalidate apaga los avisos del navegador: toda la validación la
+           hace JavaScript (js/admin/usuario-form.js). Cada campo tiene
+           debajo un div "invalid-feedback" para su mensaje de error, con el
+           id "error" + el id del campo. -->
+      <form class="formulario formulario-ancho" id="formularioUsuario" novalidate>
+
+        <!-- GRUPO 1: datos personales -->
+        <fieldset class="formulario-grupo">
+          <legend>Datos personales</legend>
+          <div class="row g-3">
+
+            <!-- RUN: en modo Editar queda bloqueado -->
+            <div class="col-12 col-md-6">
+              <label for="runUsuario" class="form-label">RUN</label>
+              <input type="text" class="form-control" id="runUsuario"
+                     autocomplete="off" maxlength="9" aria-describedby="ayudaRunUsuario">
+              <div class="invalid-feedback" id="errorRunUsuario"></div>
+              <div class="form-text" id="ayudaRunUsuario">Sin puntos ni guion. Ejemplo: 19011001K</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="fechaNacimientoUsuario" class="form-label">
+                Fecha de nacimiento <span class="etiqueta-opcional">(opcional)</span>
+              </label>
+              <input type="date" class="form-control" id="fechaNacimientoUsuario" autocomplete="off">
+              <div class="invalid-feedback" id="errorFechaNacimientoUsuario"></div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="nombreUsuario" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombreUsuario"
+                     autocomplete="off" maxlength="50">
+              <div class="invalid-feedback" id="errorNombreUsuario"></div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="apellidosUsuario" class="form-label">Apellidos</label>
+              <input type="text" class="form-control" id="apellidosUsuario"
+                     autocomplete="off" maxlength="100">
+              <div class="invalid-feedback" id="errorApellidosUsuario"></div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="telefonoUsuario" class="form-label">
+                Teléfono <span class="etiqueta-opcional">(opcional)</span>
+              </label>
+              <input type="tel" class="form-control" id="telefonoUsuario"
+                     autocomplete="off" inputmode="numeric" maxlength="9"
+                     aria-describedby="ayudaTelefonoUsuario">
+              <div class="invalid-feedback" id="errorTelefonoUsuario"></div>
+              <div class="form-text" id="ayudaTelefonoUsuario">9 dígitos, empezando con 9. Ejemplo: 912345678</div>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <!-- GRUPO 2: cuenta. Aquí está el campo que no existe en el registro
+             de la tienda: el tipo de usuario -->
+        <fieldset class="formulario-grupo">
+          <legend>Cuenta</legend>
+          <div class="row g-3">
+
+            <!-- Tipo de usuario: obligatorio. Define qué puede hacer en el sitio -->
+            <div class="col-12 col-md-6">
+              <label for="tipoUsuario" class="form-label">Tipo de usuario</label>
+              <select class="form-select" id="tipoUsuario" aria-describedby="ayudaTipoUsuario">
+                <option value="">Selecciona un tipo</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Vendedor">Vendedor</option>
+                <option value="Cliente">Cliente</option>
+              </select>
+              <div class="invalid-feedback" id="errorTipoUsuario"></div>
+              <div class="form-text" id="ayudaTipoUsuario">El Administrador gestiona todo; el Vendedor consulta productos y órdenes.</div>
+            </div>
+
+            <!-- Columna vacía en pantallas medianas, para que el correo y su
+                 confirmación queden en la misma fila -->
+            <div class="col-md-6 d-none d-md-block"></div>
+
+            <div class="col-12 col-md-6">
+              <label for="correoUsuario" class="form-label">Correo</label>
+              <input type="email" class="form-control" id="correoUsuario"
+                     autocomplete="off" maxlength="100" aria-describedby="ayudaCorreoUsuario">
+              <div class="invalid-feedback" id="errorCorreoUsuario"></div>
+              <div class="form-text" id="ayudaCorreoUsuario">Aceptamos @duoc.cl, @profesor.duoc.cl y @gmail.com.</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="confirmarCorreoUsuario" class="form-label">Confirmar correo</label>
+              <input type="email" class="form-control" id="confirmarCorreoUsuario"
+                     autocomplete="off" maxlength="100">
+              <div class="invalid-feedback" id="errorConfirmarCorreoUsuario"></div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="passwordUsuario" class="form-label">Contraseña</label>
+              <!-- new-password evita que el navegador rellene este campo con
+                   la contraseña guardada de quien está usando el panel -->
+              <input type="password" class="form-control" id="passwordUsuario"
+                     autocomplete="new-password" maxlength="10" aria-describedby="ayudaPasswordUsuario">
+              <div class="invalid-feedback" id="errorPasswordUsuario"></div>
+              <div class="form-text" id="ayudaPasswordUsuario">Entre 4 y 10 caracteres.</div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="confirmarPasswordUsuario" class="form-label">Confirmar contraseña</label>
+              <input type="password" class="form-control" id="confirmarPasswordUsuario"
+                     autocomplete="new-password" maxlength="10">
+              <div class="invalid-feedback" id="errorConfirmarPasswordUsuario"></div>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <!-- GRUPO 3: dirección. usuario-form.js llena los select con las
+             regiones y comunas de js/data/regiones.js -->
+        <fieldset class="formulario-grupo">
+          <legend>Dirección</legend>
+          <div class="row g-3">
+
+            <div class="col-12 col-md-6">
+              <label for="regionUsuario" class="form-label">Región</label>
+              <select class="form-select" id="regionUsuario">
+                <option value="">Selecciona una región</option>
+              </select>
+              <div class="invalid-feedback" id="errorRegionUsuario"></div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label for="comunaUsuario" class="form-label">Comuna</label>
+              <!-- Parte deshabilitado: se activa al elegir una región -->
+              <select class="form-select" id="comunaUsuario" disabled>
+                <option value="">Primero selecciona una región</option>
+              </select>
+              <div class="invalid-feedback" id="errorComunaUsuario"></div>
+            </div>
+
+            <div class="col-12">
+              <label for="direccionUsuario" class="form-label">Dirección</label>
+              <input type="text" class="form-control" id="direccionUsuario"
+                     autocomplete="off" maxlength="300">
+              <div class="invalid-feedback" id="errorDireccionUsuario"></div>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <div class="formulario-botones">
+          <button type="submit" class="btn boton-principal">Guardar</button>
+          <!-- Cancelar es un enlace: solo vuelve al listado, sin guardar -->
+          <a class="btn boton-secundario" href="usuarios.html">Cancelar</a>
+        </div>
+      </form>
+    </main>
+
+  </div>
+
+  <!-- Scripts, siempre al final del body y en este orden:
+       1. Bootstrap bundle
+       2. js/data/*
+       3. js/core/*
+       4. Script común de la zona (js/admin/admin-comun.js)
+       5. Script de la página
+       El orden importa: cada archivo usa lo que definieron los anteriores. -->
+
+  <!-- 1. Bootstrap -->
+  <script src="../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+  <!-- 2. Datos iniciales (semillas) -->
+  <script src="../js/data/productos.js"></script>
+  <script src="../js/data/usuarios.js"></script>
+  <script src="../js/data/ordenes.js"></script>
+  <script src="../js/data/cupones.js"></script>
+  <script src="../js/data/regiones.js"></script>
+
+  <!-- 3. Lógica compartida. storage.js va después de los datos porque
+       copia las semillas a localStorage apenas se carga -->
+  <script src="../js/core/storage.js"></script>
+  <script src="../js/core/utils.js"></script>
+  <script src="../js/core/validaciones.js"></script>
+  <script src="../js/core/auth.js"></script>
+
+  <!-- 4. Script común del panel: protección, menú, saludo y cerrar sesión -->
+  <script src="../js/admin/admin-comun.js"></script>
+
+  <!-- 5. Script propio de esta página: formulario de usuario -->
+  <script src="../js/admin/usuario-form.js"></script>
+</body>
+</html>

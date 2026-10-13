@@ -120,6 +120,23 @@ function buscarProductoPorCodigo(codigo) {
   return null;
 }
 
+// Recibe: el RUN de un usuario, sin puntos ni guion (por ejemplo "19011001K").
+// Hace: lo busca entre los usuarios guardados en localStorage. Compara en
+//       mayúsculas, para que "19011001k" encuentre a "19011001K".
+// Devuelve: el usuario encontrado, o null si ningún usuario tiene ese RUN.
+function buscarUsuarioPorRun(run) {
+  const runBuscado = run.trim().toUpperCase();
+  const usuarios = leerDeStorage(CLAVE_USUARIOS);
+
+  for (let i = 0; i < usuarios.length; i++) {
+    if (usuarios[i].run === runBuscado) {
+      return usuarios[i];
+    }
+  }
+
+  return null;
+}
+
 // Se ejecuta al cargar este archivo, es decir, en cada página del sitio:
 // así los datos existen antes de que el script de la página los necesite.
 cargarSemillas();

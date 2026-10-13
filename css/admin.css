@@ -318,6 +318,17 @@
   color: var(--color-blanco);
 }
 
+/* Etiqueta "Tu cuenta": marca la fila del usuario con la sesión iniciada,
+   en el lugar donde iría su botón Eliminar */
+.etiqueta-cuenta {
+  display: inline-block;
+  padding: 0.15rem var(--espacio-sm);
+  background-color: var(--color-verde-bosque);
+  border-radius: 999px;
+  color: var(--color-blanco);
+  font-size: var(--tamano-texto-chico);
+}
+
 /* Variante para acciones que borran datos */
 .panel-boton-chico.peligro {
   border-color: var(--color-error);

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--
+  Archivo: admin/usuario-detalle.html
+  Qué es: muestra los datos de un usuario, en solo lectura. No muestra la
+          contraseña.
+  Cómo se abre: con el RUN en la URL, por ejemplo
+          usuario-detalle.html?run=19011001K
+  Quién puede verla: solo el Administrador.
+  Script propio: js/admin/usuario-detalle.js
+  Rutas: esta página está dentro de la carpeta admin/. Para llegar a los
+          archivos de la raíz (css, js, assets) las rutas empiezan con "../".
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Hace que la página se adapte al ancho de la pantalla del celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usuario | Panel AndesTrekking</title>
+
+  <!-- Estilos, en este orden: Bootstrap, íconos, los comunes del sitio
+       y al final los propios del panel -->
+  <link rel="stylesheet" href="../assets/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+  <!-- El panel parte oculto (atributo hidden). admin-comun.js lo muestra
+       solo después de comprobar que el usuario tiene permiso -->
+  <div class="panel-contenedor" id="panel" hidden>
+
+    <!-- MENÚ VERTICAL. aside es la etiqueta para un bloque lateral -->
+    <aside class="panel-lateral">
+      <a class="panel-marca" href="index.html">AndesTrekking</a>
+      <p class="panel-etiqueta">Panel de administración</p>
+
+      <!-- Aquí JavaScript escribe el nombre y el rol del usuario -->
+      <p class="panel-saludo" id="saludoPanel"></p>
+
+      <!-- La lista parte vacía: js/admin/admin-comun.js agrega solo las
+           opciones que el rol del usuario puede usar -->
+      <nav aria-label="Menú del panel">
+        <ul class="panel-menu" id="menuPanel"></ul>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO propio de cada página del panel -->
+    <main class="panel-contenido">
+      <a class="panel-volver" href="usuarios.html">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
+      </a>
+
+      <!-- usuario-detalle.js escribe aquí el nombre completo del usuario -->
+      <h1 class="panel-titulo" id="tituloDetalle">Usuario</h1>
+
+      <!-- Caja de avisos: se usa si el usuario no existe -->
+      <p class="mensaje-aviso" id="avisoPanel" role="status" hidden></p>
+
+      <section class="panel-caja panel-caja-ancha" id="detalleUsuario" aria-label="Datos del usuario">
+
+        <!-- Dos columnas de datos. dl es una lista de pares: dt es el nombre
+             del dato y dd es su valor. Los dd parten vacíos y los llena
+             usuario-detalle.js -->
+        <div class="row g-4">
+
+          <div class="col-12 col-md-6">
+            <dl class="panel-datos">
+              <dt>RUN</dt>
+              <dd id="datoRun"></dd>
+              <dt>Nombre</dt>
+              <dd id="datoNombre"></dd>
+              <dt>Apellidos</dt>
+              <dd id="datoApellidos"></dd>
+              <dt>Correo</dt>
+              <dd id="datoCorreo"></dd>
+              <dt>Tipo de usuario</dt>
+              <dd id="datoTipo"></dd>
+            </dl>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <dl class="panel-datos">
+              <dt>Teléfono</dt>
+              <dd id="datoTelefono"></dd>
+              <dt>Fecha de nacimiento</dt>
+              <dd id="datoFechaNacimiento"></dd>
+              <dt>Región</dt>
+              <dd id="datoRegion"></dd>
+              <dt>Comuna</dt>
+              <dd id="datoComuna"></dd>
+              <dt>Dirección</dt>
+              <dd id="datoDireccion"></dd>
+            </dl>
+          </div>
+
+        </div>
+
+        <!-- Aquí se agrega el botón "Editar" -->
+        <div id="accionesDetalle"></div>
+      </section>
+    </main>
+
+  </div>
+
+  <!-- Scripts, siempre al final del body y en este orden:
+       1. Bootstrap bundle
+       2. js/data/*
+       3. js/core/*
+       4. Script común de la zona (js/admin/admin-comun.js)
+       5. Script de la página
+       El orden importa: cada archivo usa lo que definieron los anteriores. -->
+
+  <!-- 1. Bootstrap -->
+  <script src="../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+  <!-- 2. Datos iniciales (semillas) -->
+  <script src="../js/data/productos.js"></script>
+  <script src="../js/data/usuarios.js"></script>
+  <script src="../js/data/ordenes.js"></script>
+  <script src="../js/data/cupones.js"></script>
+  <script src="../js/data/regiones.js"></script>
+
+  <!-- 3. Lógica compartida. storage.js va después de los datos porque
+       copia las semillas a localStorage apenas se carga -->
+  <script src="../js/core/storage.js"></script>
+  <script src="../js/core/utils.js"></script>
+  <script src="../js/core/validaciones.js"></script>
+  <script src="../js/core/auth.js"></script>
+
+  <!-- 4. Script común del panel: protección, menú, saludo y cerrar sesión -->
+  <script src="../js/admin/admin-comun.js"></script>
+
+  <!-- 5. Script propio de esta página: datos del usuario -->
+  <script src="../js/admin/usuario-detalle.js"></script>
+</body>
+</html>

@@ -84,6 +84,27 @@ function obtenerFechaDeHoy() {
   return anio + "-" + mesDosDigitos + "-" + diaDosDigitos;
 }
 
+// Recibe: una fecha guardada con el formato AAAA-MM-DD ("1998-01-25").
+// Hace: la reordena al formato que se usa en Chile, DD-MM-AAAA. Solo cambia
+//       cómo se muestra: los datos se siguen guardando como AAAA-MM-DD,
+//       que permite comparar y ordenar fechas como textos.
+// Devuelve: la fecha para mostrar ("25-01-1998"). Si recibe un texto vacío
+//           o con otra forma, lo devuelve tal cual.
+function formatearFecha(fechaGuardada) {
+  // split("-") separa el texto en año, mes y día
+  const partes = fechaGuardada.split("-");
+
+  if (partes.length !== 3) {
+    return fechaGuardada;
+  }
+
+  const anio = partes[0];
+  const mes = partes[1];
+  const dia = partes[2];
+
+  return dia + "-" + mes + "-" + anio;
+}
+
 // Recibe: la ruta de una página (por ejemplo "index.html").
 // Hace: lleva el navegador a esa página, igual que si el usuario hiciera
 //       clic en un enlace.
@@ -161,6 +182,20 @@ function crearOpcion(texto, valor) {
   opcion.textContent = texto;
   opcion.value = valor;
   return opcion;
+}
+
+// Recibe: el nombre de una región.
+// Hace: la busca en REGIONES (js/data/regiones.js).
+// Devuelve: la región encontrada (con su arreglo de comunas), o null si
+//           el nombre no corresponde a ninguna.
+function buscarRegionPorNombre(nombreRegion) {
+  for (let i = 0; i < REGIONES.length; i++) {
+    if (REGIONES[i].nombre === nombreRegion) {
+      return REGIONES[i];
+    }
+  }
+
+  return null;
 }
 
 // Recibe: el id de un formulario.

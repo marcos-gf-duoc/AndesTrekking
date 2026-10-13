@@ -84,6 +84,14 @@ function obtenerFechaDeHoy() {
   return anio + "-" + mesDosDigitos + "-" + diaDosDigitos;
 }
 
+// Recibe: la ruta de una página (por ejemplo "index.html").
+// Hace: lleva el navegador a esa página, igual que si el usuario hiciera
+//       clic en un enlace.
+// Devuelve: nada.
+function irAPagina(ruta) {
+  window.location.href = ruta;
+}
+
 // ==========================================================
 // Funciones para formularios
 // Muestran en la página el resultado de las validaciones

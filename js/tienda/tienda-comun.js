@@ -1,13 +1,14 @@
 /*
   Archivo: js/tienda/tienda-comun.js
   Qué es: funciones compartidas por las páginas de la tienda pública.
-          Arma las tarjetas de producto y maneja la newsletter del footer;
-          más adelante tendrá también el contador del carrito y los
-          enlaces de sesión.
-  Quién lo usa: todas las páginas de la tienda (todas tienen el footer).
+          Arma las tarjetas de producto, maneja la newsletter del footer
+          y muestra la sesión en el header y los avisos que llegan por
+          la URL. Más adelante tendrá también el contador del carrito.
+  Quién lo usa: todas las páginas de la tienda (todas tienen el header
+          y el footer).
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa storage.js,
-          utils.js y validaciones.js) y ANTES del script propio de cada
-          página.
+          utils.js, validaciones.js y auth.js) y ANTES del script propio
+          de cada página.
 */
 
 // Carpetas de las imágenes, escritas una sola vez. Las rutas son relativas
@@ -217,3 +218,125 @@ function iniciarNewsletter() {
 
 // Se ejecuta al cargar el archivo, en todas las páginas de la tienda
 iniciarNewsletter();
+
+// ==========================================================
+// Sesión en el header
+// El header de cada página trae escritos "Iniciar sesión" y "Registrarse".
+// Si hay una sesión iniciada, se reemplazan por el saludo, el acceso al
+// panel (solo Administrador y Vendedor) y "Cerrar sesión".
+// Usa obtenerSesion y cerrarSesion, de js/core/auth.js.
+// ==========================================================
+
+// Recibe: un elemento ya creado (un texto, un enlace o un botón).
+// Hace: lo envuelve en un <li class="nav-item"> y lo agrega al final del
+//       menú de sesión del header.
+// Devuelve: nada.
+function agregarItemAlMenuSesion(elemento) {
+  const item = document.createElement("li");
+  item.className = "nav-item";
+  item.appendChild(elemento);
+
+  document.getElementById("menuSesion").appendChild(item);
+}
+
+// Recibe: nada.
+// Hace: cierra la sesión y vuelve al inicio de la tienda. El carrito se
+//       conserva, porque no depende del usuario.
+// Devuelve: nada.
+function cerrarSesionDesdeTienda() {
+  cerrarSesion();
+  irAPagina("index.html");
+}
+
+// Recibe: nada.
+// Hace: adapta el header según la sesión. Sin sesión no cambia nada.
+//       Con sesión:
+//       1. quita "Iniciar sesión" y "Registrarse";
+//       2. agrega "Hola, {nombre}";
+//       3. agrega "Panel" si el usuario es Administrador o Vendedor;
+//       4. agrega el botón "Cerrar sesión".
+// Devuelve: nada.
+function mostrarSesionEnHeader() {
+  const sesion = obtenerSesion();
+
+  if (sesion === null) {
+    return;
+  }
+
+  document.getElementById("itemIniciarSesion").remove();
+  document.getElementById("itemRegistrarse").remove();
+
+  // Saludo. Se escribe con textContent: el nombre se muestra como texto
+  const saludo = document.createElement("span");
+  saludo.className = "navbar-text encabezado-saludo";
+  saludo.textContent = "Hola, " + sesion.nombre;
+  agregarItemAlMenuSesion(saludo);
+
+  // Acceso al panel de administración, solo para quienes pueden entrar
+  if (sesion.tipo === ROL_ADMINISTRADOR || sesion.tipo === ROL_VENDEDOR) {
+    const enlacePanel = document.createElement("a");
+    enlacePanel.className = "nav-link";
+    enlacePanel.href = "admin/index.html";
+    enlacePanel.textContent = "Panel";
+    agregarItemAlMenuSesion(enlacePanel);
+  }
+
+  // "Cerrar sesión" es un botón y no un enlace, porque no lleva a otra
+  // página: ejecuta una acción. La clase nav-link le da el mismo aspecto
+  // que los enlaces del menú.
+  const botonCerrar = document.createElement("button");
+  botonCerrar.type = "button";
+  botonCerrar.className = "nav-link";
+  botonCerrar.textContent = "Cerrar sesión";
+  botonCerrar.addEventListener("click", cerrarSesionDesdeTienda);
+  agregarItemAlMenuSesion(botonCerrar);
+}
+
+// Se ejecuta al cargar el archivo, en todas las páginas de la tienda
+mostrarSesionEnHeader();
+
+// ==========================================================
+// Avisos que llegan por la URL
+// Cuando una página redirige a otra, puede dejarle un aviso con un código
+// en la URL, por ejemplo index.html?aviso=permisos. La URL lleva solo el
+// código; el texto que se muestra está escrito aquí. Así nadie puede hacer
+// aparecer un texto cualquiera en el sitio cambiando la dirección.
+// ==========================================================
+
+// Texto de cada aviso, según su código
+const TEXTOS_DE_AVISOS = {
+  sesion: "Debes iniciar sesión para continuar.",
+  permisos: "No tienes permisos para entrar a esa página.",
+  restablecido: "Los datos de demostración se restablecieron. Inicia sesión de nuevo."
+};
+
+// Recibe: nada.
+// Hace: lee el parámetro "aviso" de la URL. Si es un código conocido,
+//       crea una caja con su texto y la pone al comienzo del <main>.
+//       Si no hay parámetro, o el código no existe, no hace nada.
+// Devuelve: nada.
+function mostrarAvisoDeUrl() {
+  const codigo = obtenerParametroUrl("aviso");
+
+  if (codigo === null) {
+    return;
+  }
+
+  const texto = TEXTOS_DE_AVISOS[codigo];
+
+  // Con un código desconocido, texto no es un string: se ignora
+  if (typeof texto !== "string") {
+    return;
+  }
+
+  const caja = document.createElement("p");
+  caja.className = "mensaje-aviso";
+  caja.setAttribute("role", "status"); // los lectores de pantalla lo anuncian
+  caja.textContent = texto;
+
+  // prepend agrega la caja como primer elemento del <main>
+  document.querySelector("main").prepend(caja);
+}
+
+// Se ejecuta al cargar el archivo, en todas las páginas de la tienda
+mostrarAvisoDeUrl();

@@ -731,3 +731,55 @@ main {
   margin: var(--espacio-md) 0 0;
   font-size: var(--tamano-texto-chico);
 }
+
+/* Formulario con pocos campos (login): caja más angosta */
+.formulario-angosto {
+  max-width: 26rem;
+}
+
+/* Caja de error general de un formulario, por ejemplo
+   "Correo o contraseña incorrectos" en el login */
+.mensaje-error {
+  margin: 0 0 var(--espacio-md);
+  padding: var(--espacio-sm) var(--espacio-md);
+  background-color: #FBEAE8;                    /* rojo muy claro */
+  border-left: 5px solid var(--color-error);
+  border-radius: var(--radio-borde);
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+/* Mientras está vacía no se muestra */
+.mensaje-error:empty {
+  display: none;
+}
+
+/* Saludo "Hola, {nombre}" que aparece en el header con la sesión iniciada.
+   Va después del header original porque se agregó en una etapa posterior. */
+.encabezado .encabezado-saludo {
+  display: block;                  /* como los enlaces del menú, para alinearse con ellos */
+  padding: var(--espacio-sm) 0;
+  color: var(--color-naranja-claro);
+  font-weight: 600;
+}
+
+/* En pantallas grandes el menú va en una fila: el saludo lleva el mismo
+   espacio lateral que los enlaces vecinos */
+@media (min-width: 992px) {
+  .encabezado .encabezado-saludo {
+    padding-left: var(--espacio-sm);
+    padding-right: var(--espacio-sm);
+  }
+}
+
+/* Caja de aviso al comienzo de una página, por ejemplo
+   "No tienes permisos para entrar a esa página" */
+.mensaje-aviso {
+  margin: 0 0 var(--espacio-md);
+  padding: var(--espacio-sm) var(--espacio-md);
+  background-color: #FDF1E3;                      /* naranja muy claro */
+  border-left: 5px solid var(--color-naranja);
+  border-radius: var(--radio-borde);
+  color: var(--color-texto);
+  font-weight: 600;
+}

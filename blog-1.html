@@ -55,8 +55,9 @@
             <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
           </ul>
 
-          <!-- Carrito y enlaces de sesión. Más adelante, tienda-comun.js
-               actualizará el contador y cambiará los enlaces si hay sesión -->
+          <!-- Carrito y enlaces de sesión. Si hay una sesión iniciada,
+               tienda-comun.js reemplaza los dos últimos por el saludo,
+               el acceso al panel y "Cerrar sesión" -->
           <ul class="navbar-nav" id="menuSesion">
             <li class="nav-item">
               <a class="nav-link" href="carrito.html">
@@ -66,8 +67,8 @@
                 <span class="visually-hidden">productos</span>
               </a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
-            <li class="nav-item"><a class="nav-link" href="registro.html">Registrarse</a></li>
+            <li class="nav-item" id="itemIniciarSesion"><a class="nav-link" href="login.html">Iniciar sesión</a></li>
+            <li class="nav-item" id="itemRegistrarse"><a class="nav-link" href="registro.html">Registrarse</a></li>
           </ul>
 
         </div>
@@ -247,8 +248,9 @@
   <script src="js/core/storage.js"></script>
   <script src="js/core/utils.js"></script>
   <script src="js/core/validaciones.js"></script>
+  <script src="js/core/auth.js"></script>
 
-  <!-- 4. Script común de la tienda: tarjetas de producto y newsletter -->
+  <!-- 4. Script común de la tienda: tarjetas, newsletter y sesión -->
   <script src="js/tienda/tienda-comun.js"></script>
 </body>
 </html>

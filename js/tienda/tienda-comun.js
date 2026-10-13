@@ -2,8 +2,8 @@
   Archivo: js/tienda/tienda-comun.js
   Qué es: funciones compartidas por las páginas de la tienda pública.
           Arma las tarjetas de producto, maneja la newsletter del footer
-          y muestra la sesión en el header. Más adelante tendrá también
-          el contador del carrito.
+          y muestra la sesión en el header y los avisos que llegan por
+          la URL. Más adelante tendrá también el contador del carrito.
   Quién lo usa: todas las páginas de la tienda (todas tienen el header
           y el footer).
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa storage.js,
@@ -294,3 +294,49 @@ function mostrarSesionEnHeader() {
 
 // Se ejecuta al cargar el archivo, en todas las páginas de la tienda
 mostrarSesionEnHeader();
+
+// ==========================================================
+// Avisos que llegan por la URL
+// Cuando una página redirige a otra, puede dejarle un aviso con un código
+// en la URL, por ejemplo index.html?aviso=permisos. La URL lleva solo el
+// código; el texto que se muestra está escrito aquí. Así nadie puede hacer
+// aparecer un texto cualquiera en el sitio cambiando la dirección.
+// ==========================================================
+
+// Texto de cada aviso, según su código
+const TEXTOS_DE_AVISOS = {
+  sesion: "Debes iniciar sesión para continuar.",
+  permisos: "No tienes permisos para entrar a esa página.",
+  restablecido: "Los datos de demostración se restablecieron. Inicia sesión de nuevo."
+};
+
+// Recibe: nada.
+// Hace: lee el parámetro "aviso" de la URL. Si es un código conocido,
+//       crea una caja con su texto y la pone al comienzo del <main>.
+//       Si no hay parámetro, o el código no existe, no hace nada.
+// Devuelve: nada.
+function mostrarAvisoDeUrl() {
+  const codigo = obtenerParametroUrl("aviso");
+
+  if (codigo === null) {
+    return;
+  }
+
+  const texto = TEXTOS_DE_AVISOS[codigo];
+
+  // Con un código desconocido, texto no es un string: se ignora
+  if (typeof texto !== "string") {
+    return;
+  }
+
+  const caja = document.createElement("p");
+  caja.className = "mensaje-aviso";
+  caja.setAttribute("role", "status"); // los lectores de pantalla lo anuncian
+  caja.textContent = texto;
+
+  // prepend agrega la caja como primer elemento del <main>
+  document.querySelector("main").prepend(caja);
+}
+
+// Se ejecuta al cargar el archivo, en todas las páginas de la tienda
+mostrarAvisoDeUrl();

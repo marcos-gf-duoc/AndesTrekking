@@ -771,3 +771,15 @@ main {
     padding-right: var(--espacio-sm);
   }
 }
+
+/* Caja de aviso al comienzo de una página, por ejemplo
+   "No tienes permisos para entrar a esa página" */
+.mensaje-aviso {
+  margin: 0 0 var(--espacio-md);
+  padding: var(--espacio-sm) var(--espacio-md);
+  background-color: #FDF1E3;                      /* naranja muy claro */
+  border-left: 5px solid var(--color-naranja);
+  border-radius: var(--radio-borde);
+  color: var(--color-texto);
+  font-weight: 600;
+}

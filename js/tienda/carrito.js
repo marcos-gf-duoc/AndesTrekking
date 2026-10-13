@@ -4,6 +4,7 @@
   Quién lo usa: solo carrito.html.
   Orden de carga: va al final, DESPUÉS de js/tienda/tienda-comun.js (usa
           sus funciones de carrito: leerCarrito, guardarCarrito, etc.).
+          Usa también CUPONES (js/data/cupones.js).
 
   El carrito guardado solo tiene { codigo, cantidad }. Para mostrarlo, este
   script busca cada producto en localStorage y toma de ahí el nombre, la
@@ -317,7 +318,8 @@ function crearItemCarrito(item, producto) {
 // Recibe: nada.
 // Hace: dibuja la página según el carrito guardado. Si está vacío, muestra
 //       el mensaje de carrito vacío y oculta la lista. Si tiene productos,
-//       dibuja uno por uno. También actualiza el contador del header.
+//       dibuja uno por uno. También actualiza el contador del header y el
+//       resumen con los totales, que cambian con cada producto.
 // Devuelve: nada.
 function mostrarCarrito() {
   const carrito = leerCarrito();
@@ -326,6 +328,7 @@ function mostrarCarrito() {
 
   lista.innerHTML = "";
   actualizarContadorCarrito();
+  mostrarResumen();
 
   if (carrito.length === 0) {
     lista.hidden = true;
@@ -348,17 +351,190 @@ function mostrarCarrito() {
 }
 
 // ==========================================================
+// Totales y cupón de descuento
+// ==========================================================
+
+// Recibe: un monto en pesos.
+// Hace: le da formato de dinero. Para los totales no sirve usar siempre
+//       formatearPrecio, porque esa función escribe "Gratis" cuando el
+//       valor es 0 (pensada para el precio de un producto): un descuento
+//       de 0 debe verse como "$0".
+// Devuelve: el texto del monto, por ejemplo "$259.980" o "$0".
+function formatearMonto(monto) {
+  if (monto === 0) {
+    return "$0";
+  }
+
+  return formatearPrecio(monto);
+}
+
+// Recibe: un código de cupón tal como se escribió.
+// Hace: lo busca en CUPONES. Antes le quita los espacios y lo pasa a
+//       mayúsculas: así "andes10", " Andes10 " y "ANDES10" valen lo mismo.
+// Devuelve: el cupón { codigo, porcentaje }, o null si no existe.
+function buscarCupon(codigoEscrito) {
+  const codigo = codigoEscrito.trim().toUpperCase();
+
+  for (let i = 0; i < CUPONES.length; i++) {
+    if (CUPONES[i].codigo === codigo) {
+      return CUPONES[i];
+    }
+  }
+
+  return null;
+}
+
+// Recibe: nada.
+// Hace: lee el código de cupón guardado en localStorage (clave at_cupon) y
+//       comprueba que siga siendo un cupón válido.
+// Devuelve: el cupón aplicado, o null si no hay ninguno.
+function obtenerCuponAplicado() {
+  const codigoGuardado = leerDeStorage(CLAVE_CUPON);
+
+  // typeof revisa que lo guardado sea un texto y no otro tipo de dato
+  if (typeof codigoGuardado !== "string") {
+    return null;
+  }
+
+  return buscarCupon(codigoGuardado);
+}
+
+// Recibe: nada.
+// Hace: calcula los montos de la compra con lo que hay en el carrito:
+//         subtotal  = suma de precio x cantidad de cada producto
+//         descuento = subtotal x porcentaje del cupón / 100
+//         total     = subtotal - descuento
+//       El descuento se redondea al peso con Math.round, porque el peso
+//       chileno no usa decimales.
+// Devuelve: un objeto { subtotal, porcentaje, descuento, total }.
+function calcularTotales() {
+  let subtotal = 0;
+
+  leerCarrito().forEach(function (item) {
+    const producto = buscarProductoPorCodigo(item.codigo);
+
+    if (producto !== null) {
+      subtotal = subtotal + producto.precio * item.cantidad;
+    }
+  });
+
+  let porcentaje = 0;
+  const cupon = obtenerCuponAplicado();
+  if (cupon !== null) {
+    porcentaje = cupon.porcentaje;
+  }
+
+  const descuento = Math.round(subtotal * porcentaje / 100);
+
+  return {
+    subtotal: subtotal,
+    porcentaje: porcentaje,
+    descuento: descuento,
+    total: subtotal - descuento
+  };
+}
+
+// Recibe: nada.
+// Hace: actualiza la columna del resumen: muestra el formulario del cupón o
+//       el cupón aplicado, escribe el subtotal, el descuento y el total, y
+//       deshabilita el botón Pagar si el carrito está vacío.
+// Devuelve: nada.
+function mostrarResumen() {
+  const totales = calcularTotales();
+  const cupon = obtenerCuponAplicado();
+
+  // Con un cupón aplicado se oculta el formulario y se muestra el cupón;
+  // sin cupón, al revés
+  document.getElementById("formularioCupon").hidden = cupon !== null;
+  document.getElementById("cuponAplicado").hidden = cupon === null;
+
+  if (cupon !== null) {
+    document.getElementById("textoCuponAplicado").textContent =
+      "Cupón " + cupon.codigo + " aplicado: " + cupon.porcentaje + "% de descuento.";
+  }
+
+  document.getElementById("subtotalCarrito").textContent = formatearMonto(totales.subtotal);
+  document.getElementById("totalCarrito").textContent = formatearMonto(totales.total);
+
+  // El descuento se muestra con signo menos, porque se resta
+  let textoDescuento = formatearMonto(totales.descuento);
+  if (totales.descuento > 0) {
+    textoDescuento = "−" + textoDescuento;
+  }
+  document.getElementById("descuentoCarrito").textContent = textoDescuento;
+
+  // Sin productos no hay nada que pagar
+  document.getElementById("botonPagar").disabled = leerCarrito().length === 0;
+}
+
+// Recibe: el evento "submit" del formulario del cupón.
+// Hace: detiene el envío normal y revisa el código escrito. Si está vacío
+//       o no corresponde a ningún cupón, muestra el error bajo el campo.
+//       Si es válido, lo guarda en localStorage (en mayúsculas) y
+//       actualiza el resumen. Solo puede haber un cupón a la vez.
+// Devuelve: nada.
+function aplicarCupon(evento) {
+  evento.preventDefault();
+
+  const campo = document.getElementById("codigoCupon");
+
+  if (campo.value.trim() === "") {
+    mostrarResultadoCampo("codigoCupon", "Ingresa el código del cupón.");
+    campo.focus();
+    return;
+  }
+
+  const cupon = buscarCupon(campo.value);
+
+  if (cupon === null) {
+    mostrarResultadoCampo("codigoCupon", "El cupón no es válido.");
+    campo.focus();
+    return;
+  }
+
+  guardarEnStorage(CLAVE_CUPON, cupon.codigo);
+
+  campo.value = "";
+  limpiarEstadoCampo("codigoCupon");
+  mostrarResumen();
+  mostrarAvisoFlotante("Cupón " + cupon.codigo + " aplicado: " + cupon.porcentaje + "% de descuento.");
+}
+
+// Recibe: nada.
+// Hace: quita el cupón aplicado (guarda null en at_cupon) y actualiza el
+//       resumen, que vuelve a mostrar el formulario.
+// Devuelve: nada.
+function quitarCupon() {
+  guardarEnStorage(CLAVE_CUPON, null);
+  mostrarResumen();
+  mostrarAvisoFlotante("Se quitó el cupón de descuento.");
+}
+
+// Recibe: nada.
+// Hace: borra el error del campo del cupón cuando el usuario vuelve a
+//       escribir, porque ese mensaje correspondía al intento anterior.
+// Devuelve: nada.
+function limpiarErrorCupon() {
+  limpiarEstadoCampo("codigoCupon");
+}
+
+// ==========================================================
 // Inicio de la página
 // ==========================================================
 
 // Recibe: nada.
 // Hace: prepara la página: primero revisa y corrige el carrito, muestra los
-//       avisos de lo que cambió y después dibuja los productos.
+//       avisos de lo que cambió, dibuja los productos con el resumen y
+//       conecta el formulario del cupón y el botón para quitarlo.
 // Devuelve: nada.
 function iniciarCarrito() {
   const avisos = revisarCarrito();
   mostrarAvisosDelCarrito(avisos);
   mostrarCarrito();
+
+  document.getElementById("formularioCupon").addEventListener("submit", aplicarCupon);
+  document.getElementById("codigoCupon").addEventListener("input", limpiarErrorCupon);
+  document.getElementById("botonQuitarCupon").addEventListener("click", quitarCupon);
 }
 
 // Se ejecuta al cargar el archivo, con la página ya dibujada

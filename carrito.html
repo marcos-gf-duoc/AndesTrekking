@@ -2,8 +2,10 @@
 <!--
   Archivo: carrito.html
   Qué es: "Mi carrito de compras". Muestra los productos que el cliente
-          añadió, con su cantidad y su subtotal.
-  Script propio: js/tienda/carrito.js (revisa y dibuja el carrito).
+          añadió, con su cantidad y su subtotal, y el resumen de la compra
+          con el cupón de descuento y el total.
+  Script propio: js/tienda/carrito.js (revisa y dibuja el carrito, calcula
+          los totales y maneja el cupón).
 -->
 <html lang="es">
 <head>
@@ -84,14 +86,66 @@
            corregir el carrito al cargar (por ejemplo, por falta de stock) -->
       <p class="mensaje-aviso" id="avisoCarrito" role="status" hidden></p>
 
-      <!-- LISTA: carrito.js agrega aquí un <li> por cada producto -->
-      <ul class="carrito-lista" id="listaCarrito"></ul>
+      <!-- Dos columnas: los productos a la izquierda y el resumen a la
+           derecha. En pantallas chicas el resumen baja debajo de la lista -->
+      <div class="row g-4">
 
-      <!-- CARRITO VACÍO: parte oculto y se muestra cuando no hay productos -->
-      <div class="carrito-vacio" id="carritoVacio" hidden>
-        <p class="texto-destacado">Tu carrito está vacío.</p>
-        <p>Recorre el catálogo y añade los productos que necesites.</p>
-        <a class="btn boton-principal" href="productos.html">Ver productos</a>
+        <div class="col-12 col-lg-8">
+          <!-- LISTA: carrito.js agrega aquí un <li> por cada producto -->
+          <ul class="carrito-lista" id="listaCarrito"></ul>
+
+          <!-- CARRITO VACÍO: parte oculto y se muestra cuando no hay productos -->
+          <div class="carrito-vacio" id="carritoVacio" hidden>
+            <p class="texto-destacado">Tu carrito está vacío.</p>
+            <p>Recorre el catálogo y añade los productos que necesites.</p>
+            <a class="btn boton-principal" href="productos.html">Ver productos</a>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <!-- RESUMEN: cupón, totales y botón Pagar. aside es la etiqueta
+               para un bloque que acompaña al contenido principal -->
+          <aside class="carrito-resumen" aria-labelledby="tituloResumen">
+            <h2 class="carrito-resumen-titulo" id="tituloResumen">Resumen de la compra</h2>
+
+            <!-- CUPÓN: formulario para escribir un código. novalidate apaga
+                 los avisos del navegador: la validación la hace carrito.js.
+                 Se oculta cuando ya hay un cupón aplicado -->
+            <form id="formularioCupon" novalidate>
+              <label for="codigoCupon" class="form-label">Cupón de descuento</label>
+              <div class="carrito-cupon-fila">
+                <input type="text" class="form-control" id="codigoCupon"
+                       autocomplete="off" maxlength="20">
+                <button type="submit" class="btn boton-secundario">Aplicar</button>
+                <!-- Aquí carrito.js escribe el error si el cupón no es válido -->
+                <div class="invalid-feedback" id="errorCodigoCupon"></div>
+              </div>
+            </form>
+
+            <!-- CUPÓN APLICADO: parte oculto. Muestra el cupón en uso y
+                 permite quitarlo -->
+            <div class="carrito-cupon-aplicado" id="cuponAplicado" hidden>
+              <p id="textoCuponAplicado"></p>
+              <button type="button" class="carrito-boton-eliminar" id="botonQuitarCupon">Quitar cupón</button>
+            </div>
+
+            <!-- TOTALES: dl es una lista de pares; dt es el nombre del dato
+                 y dd su valor. carrito.js escribe los montos -->
+            <dl class="carrito-totales">
+              <dt>Subtotal</dt>
+              <dd id="subtotalCarrito"></dd>
+              <dt>Descuento</dt>
+              <dd id="descuentoCarrito"></dd>
+              <dt class="carrito-total">Total</dt>
+              <dd class="carrito-total" id="totalCarrito"></dd>
+            </dl>
+
+            <!-- PAGAR: queda deshabilitado si el carrito está vacío.
+                 Su funcionamiento (crear la orden) se agrega más adelante -->
+            <button type="button" class="btn btn-lg boton-principal carrito-boton-pagar" id="botonPagar">Pagar</button>
+          </aside>
+        </div>
+
       </div>
     </section>
 
@@ -185,7 +239,7 @@
   <!-- 4. Script común de la tienda: tarjetas, newsletter y sesión -->
   <script src="js/tienda/tienda-comun.js"></script>
 
-  <!-- 5. Script propio de esta página: productos del carrito -->
+  <!-- 5. Script propio de esta página: productos, totales y cupón -->
   <script src="js/tienda/carrito.js"></script>
 </body>
 </html>

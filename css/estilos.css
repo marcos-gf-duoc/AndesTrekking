@@ -257,6 +257,21 @@ main {
   color: var(--color-texto);
 }
 
+/* Botón secundario (Cancelar, Aplicar): mismo tamaño que el principal, pero con
+   borde y sin relleno, para que la acción principal destaque más */
+.boton-secundario {
+  background-color: var(--color-blanco);
+  border-color: var(--color-verde-bosque);
+  color: var(--color-verde-bosque);
+}
+
+.boton-secundario:hover,
+.boton-secundario:focus {
+  background-color: var(--color-verde-bosque);
+  border-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}
+
 /* Botón principal deshabilitado (por ejemplo "Agotado"): gris y sin sombra,
    para que se note que no se puede usar */
 .boton-principal:disabled {
@@ -970,4 +985,83 @@ main {
   border: 2px dashed var(--color-borde);      /* borde de línea punteada */
   border-radius: var(--radio-borde);
   text-align: center;
+}
+
+/* Resumen de la compra: caja a la derecha de la lista */
+.carrito-resumen {
+  padding: var(--espacio-lg);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+.carrito-resumen-titulo {
+  margin-bottom: var(--espacio-md);
+  font-size: 1.3rem;
+}
+
+/* Campo del cupón y su botón en una fila. El mensaje de error ocupa el
+   100% del ancho, así que baja a una línea propia */
+.carrito-cupon-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+}
+
+.carrito-cupon-fila .form-control {
+  flex: 1;                  /* el campo ocupa el espacio que deja el botón */
+  min-width: 8rem;
+}
+
+.carrito-cupon-fila .invalid-feedback {
+  width: 100%;
+  margin-top: 0;
+}
+
+/* Bloque del cupón ya aplicado */
+.carrito-cupon-aplicado {
+  padding: var(--espacio-sm) var(--espacio-md);
+  background-color: #FDF1E3;                    /* naranja muy claro */
+  border-left: 5px solid var(--color-naranja);
+  border-radius: var(--radio-borde);
+}
+
+.carrito-cupon-aplicado p {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Totales en dos columnas: el nombre a la izquierda y el monto a la
+   derecha. grid arma la cuadrícula; "1fr auto" significa que la primera
+   columna ocupa lo que sobra y la segunda mide lo que necesita su texto */
+.carrito-totales {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: var(--espacio-sm);   /* espacio entre filas; sin espacio entre
+                                   columnas, para que la línea del total
+                                   se vea continua */
+  margin: var(--espacio-lg) 0;
+}
+
+.carrito-totales dt {
+  font-weight: 400;
+}
+
+.carrito-totales dd {
+  margin: 0;
+  padding-left: var(--espacio-md);
+  text-align: right;
+}
+
+/* Fila del total: más grande, en negrita y separada por una línea */
+.carrito-totales .carrito-total {
+  padding-top: var(--espacio-sm);
+  border-top: 1px solid var(--color-borde);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.carrito-boton-pagar {
+  width: 100%;
 }

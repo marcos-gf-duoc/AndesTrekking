@@ -404,18 +404,3 @@
   gap: var(--espacio-sm);
   margin-top: var(--espacio-lg);
 }
-
-/* Botón secundario (Cancelar): mismo tamaño que el principal, pero con
-   borde y sin relleno, para que la acción principal destaque más */
-.boton-secundario {
-  background-color: var(--color-blanco);
-  border-color: var(--color-verde-bosque);
-  color: var(--color-verde-bosque);
-}
-
-.boton-secundario:hover,
-.boton-secundario:focus {
-  background-color: var(--color-verde-bosque);
-  border-color: var(--color-verde-bosque);
-  color: var(--color-blanco);
-}

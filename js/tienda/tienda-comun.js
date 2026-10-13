@@ -1,9 +1,9 @@
 /*
   Archivo: js/tienda/tienda-comun.js
   Qué es: funciones compartidas por las páginas de la tienda pública.
-          Arma las tarjetas de producto, maneja la newsletter del footer
-          y muestra la sesión en el header y los avisos que llegan por
-          la URL. Más adelante tendrá también el contador del carrito.
+          Arma las tarjetas de producto, maneja la newsletter del footer,
+          muestra la sesión en el header y los avisos que llegan por la
+          URL, y tiene la lógica del carrito de compras.
   Quién lo usa: todas las páginas de la tienda (todas tienen el header
           y el footer).
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa storage.js,
@@ -325,3 +325,136 @@ function mostrarAvisoDeUrl() {
 
 // Se ejecuta al cargar el archivo, en todas las páginas de la tienda
 mostrarAvisoDeUrl();
+
+// ==========================================================
+// Carrito de compras
+// El carrito se guarda en localStorage (clave at_carrito) como un arreglo
+// de objetos { codigo, cantidad }. Solo guarda el código: el nombre, el
+// precio y el stock se leen siempre del producto, para que estén al día.
+// ==========================================================
+
+// Recibe: nada.
+// Hace: lee el carrito guardado en localStorage.
+// Devuelve: un arreglo de { codigo, cantidad } (vacío si no hay productos).
+function leerCarrito() {
+  return leerDeStorage(CLAVE_CARRITO);
+}
+
+// Recibe: un arreglo de { codigo, cantidad }.
+// Hace: lo guarda en localStorage, reemplazando el carrito anterior.
+// Devuelve: nada.
+function guardarCarrito(carrito) {
+  guardarEnStorage(CLAVE_CARRITO, carrito);
+}
+
+// Recibe: nada.
+// Hace: suma las cantidades de todos los productos del carrito. Es el
+//       número que muestra el contador del header: unidades, no productos
+//       distintos (2 mochilas y 1 linterna son 3).
+// Devuelve: el total de unidades.
+function contarUnidadesCarrito() {
+  let totalUnidades = 0;
+
+  leerCarrito().forEach(function (item) {
+    totalUnidades = totalUnidades + item.cantidad;
+  });
+
+  return totalUnidades;
+}
+
+// Recibe: el código de un producto.
+// Hace: busca ese producto dentro del carrito.
+// Devuelve: cuántas unidades de ese producto hay en el carrito (0 si no está).
+function obtenerCantidadEnCarrito(codigo) {
+  const carrito = leerCarrito();
+
+  for (let i = 0; i < carrito.length; i++) {
+    if (carrito[i].codigo === codigo) {
+      return carrito[i].cantidad;
+    }
+  }
+
+  return 0;
+}
+
+// Recibe: una cantidad.
+// Hace: elige entre singular y plural.
+// Devuelve: un texto como "1 unidad" o "3 unidades".
+function escribirUnidades(cantidad) {
+  if (cantidad === 1) {
+    return "1 unidad";
+  }
+
+  return cantidad + " unidades";
+}
+
+// Recibe: el código de un producto y la cantidad que se quiere añadir.
+// Hace: añade el producto al carrito respetando el stock:
+//       - La cantidad debe ser un número entero mayor que 0.
+//       - Lo que ya está en el carrito cuenta: con stock 12 y 10 unidades
+//         en el carrito, solo se pueden añadir 2 más.
+//       - Si se pide más de lo disponible, añade solo lo que queda y lo
+//         avisa en el mensaje.
+//       Si el producto ya estaba en el carrito, aumenta su cantidad; si no,
+//       lo agrega al final.
+// Devuelve: un objeto con dos datos:
+//       cantidadAgregada  unidades que realmente se añadieron (0 si ninguna)
+//       mensaje           texto para mostrarle al usuario
+function agregarAlCarrito(codigo, cantidadPedida) {
+  const producto = buscarProductoPorCodigo(codigo);
+
+  if (producto === null) {
+    return { cantidadAgregada: 0, mensaje: "Este producto ya no está disponible." };
+  }
+
+  if (!Number.isInteger(cantidadPedida) || cantidadPedida < 1) {
+    return { cantidadAgregada: 0, mensaje: "La cantidad debe ser un número entero mayor que 0." };
+  }
+
+  if (producto.stock === 0) {
+    return { cantidadAgregada: 0, mensaje: producto.nombre + " está agotado." };
+  }
+
+  const carrito = leerCarrito();
+  const cantidadEnCarrito = obtenerCantidadEnCarrito(codigo);
+  const unidadesDisponibles = producto.stock - cantidadEnCarrito;
+
+  if (unidadesDisponibles <= 0) {
+    return {
+      cantidadAgregada: 0,
+      mensaje: "Ya tienes en el carrito todo el stock de " + producto.nombre + " (" + escribirUnidades(producto.stock) + ")."
+    };
+  }
+
+  // Si se pide más de lo que queda, se añade solo lo disponible
+  let cantidadAAgregar = cantidadPedida;
+  let seLimito = false;
+  if (cantidadAAgregar > unidadesDisponibles) {
+    cantidadAAgregar = unidadesDisponibles;
+    seLimito = true;
+  }
+
+  // Si el producto ya está en el carrito se suma a su cantidad;
+  // si no está, se agrega como un elemento nuevo
+  let yaEstaba = false;
+  carrito.forEach(function (item) {
+    if (item.codigo === codigo) {
+      item.cantidad = item.cantidad + cantidadAAgregar;
+      yaEstaba = true;
+    }
+  });
+
+  if (!yaEstaba) {
+    carrito.push({ codigo: codigo, cantidad: cantidadAAgregar });
+  }
+
+  guardarCarrito(carrito);
+
+  let mensaje = "Se añadió " + producto.nombre + " al carrito (" + escribirUnidades(cantidadAAgregar) + ").";
+  if (seLimito) {
+    mensaje = "Solo se añadieron " + escribirUnidades(cantidadAAgregar) + " de " + producto.nombre +
+      ": es todo el stock disponible.";
+  }
+
+  return { cantidadAgregada: cantidadAAgregar, mensaje: mensaje };
+}

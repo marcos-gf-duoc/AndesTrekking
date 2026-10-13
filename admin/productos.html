@@ -3,7 +3,8 @@
   Archivo: admin/productos.html
   Qué es: listado de productos del panel de administración, en una tabla
           con paginación. Resalta los productos con stock crítico.
-  Quién puede verla: Administrador y Vendedor (el Vendedor, solo lectura).
+  Quién puede verla: Administrador y Vendedor. El Vendedor la ve en solo
+          lectura: sin los botones Nuevo, Editar ni Eliminar.
   Script propio: js/admin/productos.js
   Rutas: esta página está dentro de la carpeta admin/. Para llegar a los
           archivos de la raíz (css, js, assets) las rutas empiezan con "../".
@@ -47,8 +48,17 @@
     <main class="panel-contenido">
       <h1 class="panel-titulo">Productos</h1>
 
-      <!-- productos.js escribe aquí cuántos productos hay -->
-      <p id="resumenProductos"></p>
+      <!-- Caja de avisos: parte oculta. Se usa para confirmar acciones,
+           por ejemplo "Se eliminó el producto" -->
+      <p class="mensaje-aviso" id="avisoPanel" role="status" hidden></p>
+
+      <!-- Fila sobre la tabla: el resumen a la izquierda y, a la derecha,
+           el botón "Nuevo producto", que productos.js agrega solo si el
+           usuario es Administrador -->
+      <div class="panel-barra">
+        <p class="panel-barra-texto" id="resumenProductos"></p>
+        <div id="accionesListado"></div>
+      </div>
 
       <!-- El contenedor permite desplazar la tabla hacia los lados en
            pantallas angostas, sin que se desborde la página -->
@@ -64,6 +74,7 @@
               <th scope="col">Categoría</th>
               <th scope="col" class="celda-numero">Precio</th>
               <th scope="col" class="celda-numero">Stock</th>
+              <th scope="col">Acciones</th>
             </tr>
           </thead>
           <!-- El cuerpo parte vacío: productos.js agrega una fila por producto -->
@@ -111,7 +122,7 @@
   <!-- 4. Script común del panel: protección, menú, saludo y cerrar sesión -->
   <script src="../js/admin/admin-comun.js"></script>
 
-  <!-- 5. Script propio de esta página: tabla de productos y paginación -->
+  <!-- 5. Script propio de esta página: tabla, paginación y acciones -->
   <script src="../js/admin/productos.js"></script>
 </body>
 </html>

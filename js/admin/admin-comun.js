@@ -1,8 +1,8 @@
 /*
   Archivo: js/admin/admin-comun.js
   Qué es: funciones compartidas por todas las páginas del panel de
-          administración: protección por rol, menú vertical, saludo y
-          cierre de sesión.
+          administración: protección por rol, menú vertical, saludo,
+          cierre de sesión y avisos.
   Quién lo usa: todas las páginas de la carpeta admin/.
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa auth.js y
           utils.js) y ANTES del script propio de cada página.
@@ -112,12 +112,61 @@ function mostrarSaludoPanel(sesion) {
   saludo.textContent = "Hola, " + sesion.nombre + " (" + sesion.tipo + ")";
 }
 
+// ==========================================================
+// Avisos del panel
+// Cada página del panel puede tener un elemento con id "avisoPanel", que
+// parte oculto. Sirve para confirmar una acción ("Se eliminó el producto")
+// y para los avisos que llegan por la URL al volver de un formulario.
+// ==========================================================
+
+// Texto de cada aviso que puede llegar por la URL (?aviso=código). La URL
+// lleva solo el código; el texto se define aquí (decisión D-13).
+const TEXTOS_DE_AVISOS_PANEL = {
+  "producto-creado": "El producto se creó correctamente.",
+  "producto-actualizado": "Los cambios del producto se guardaron."
+};
+
+// Recibe: el texto de un aviso.
+// Hace: lo escribe en la caja de avisos de la página y la muestra. Si la
+//       página no tiene esa caja, no hace nada.
+// Devuelve: nada.
+function mostrarAvisoPanel(texto) {
+  const caja = document.getElementById("avisoPanel");
+
+  if (caja === null) {
+    return;
+  }
+
+  caja.textContent = texto;
+  caja.hidden = false;
+}
+
+// Recibe: nada.
+// Hace: lee el parámetro "aviso" de la URL y, si es un código conocido,
+//       muestra su texto. Con un código desconocido no hace nada.
+// Devuelve: nada.
+function mostrarAvisoDeUrlPanel() {
+  const codigo = obtenerParametroUrl("aviso");
+
+  if (codigo === null) {
+    return;
+  }
+
+  const texto = TEXTOS_DE_AVISOS_PANEL[codigo];
+
+  if (typeof texto !== "string") {
+    return;
+  }
+
+  mostrarAvisoPanel(texto);
+}
+
 // Recibe: el arreglo de roles que pueden ver la página y la clave de su
 //         opción en el menú.
 // Hace: es lo primero que ejecuta cada página del panel:
 //       1. Protege la página (protegerPagina, de auth.js). Si el usuario no
 //          puede verla, ya quedó redirigido y no se hace nada más.
-//       2. Arma el menú y el saludo.
+//       2. Arma el menú y el saludo, y muestra el aviso de la URL si lo hay.
 //       3. Muestra el panel, que en el HTML parte oculto con el atributo
 //          "hidden" para que no se vea ni un instante sin permiso.
 // Devuelve: true si la página se puede mostrar; false si el usuario fue
@@ -131,6 +180,7 @@ function iniciarPanel(rolesPermitidos, claveActiva) {
 
   mostrarMenuPanel(sesion, claveActiva);
   mostrarSaludoPanel(sesion);
+  mostrarAvisoDeUrlPanel();
 
   document.getElementById("panel").hidden = false;
   return true;

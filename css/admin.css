@@ -275,3 +275,56 @@
   color: var(--color-texto-suave);
   cursor: not-allowed;
 }
+
+/* ==========================================================
+   6. ACCIONES DE LOS LISTADOS
+   ========================================================== */
+
+/* Fila sobre la tabla: un texto a la izquierda y un botón a la derecha */
+.panel-barra {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+}
+
+.panel-barra-texto {
+  margin: 0;
+}
+
+/* Celda con los botones de acción de una fila */
+.panel-tabla .celda-acciones {
+  white-space: nowrap;      /* los botones quedan en una sola línea */
+}
+
+/* Botón pequeño para las acciones de cada fila (Ver, Editar, Eliminar).
+   Sirve para enlaces (<a>) y para botones (<button>) */
+.panel-boton-chico {
+  display: inline-block;
+  margin-right: var(--espacio-xs);
+  padding: 0.15rem var(--espacio-sm);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-verde-bosque);
+  border-radius: var(--radio-borde);
+  color: var(--color-verde-bosque);
+  font-size: var(--tamano-texto-chico);
+  text-decoration: none;
+}
+
+.panel-boton-chico:hover {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}
+
+/* Variante para acciones que borran datos */
+.panel-boton-chico.peligro {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.panel-boton-chico.peligro:hover {
+  background-color: var(--color-error);
+  color: var(--color-blanco);
+}

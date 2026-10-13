@@ -3,7 +3,8 @@
   Qué es: script propio del listado de productos del panel de administración.
   Quién lo usa: solo admin/productos.html.
   Orden de carga: va al final, DESPUÉS de js/admin/admin-comun.js.
-  Quién puede ver la página: Administrador y Vendedor.
+  Quién puede ver la página: Administrador y Vendedor. El Vendedor la ve
+          en solo lectura: sin Nuevo, Editar ni Eliminar.
 
   Paginación: la tabla no muestra todos los productos a la vez, sino de a
   PRODUCTOS_POR_PAGINA. Los botones bajo la tabla cambian de página sin
@@ -18,6 +19,10 @@ const PRODUCTOS_POR_PAGINA = 5;
 // puedan usarlas al hacer clic. Se declaran con let porque cambian.
 let productosDelListado = [];
 let paginaActual = 1;
+
+// Indica si quien mira la página es Administrador. Se define al iniciar la
+// página y decide qué acciones se dibujan: el Vendedor solo puede "Ver".
+let usuarioEsAdministrador = false;
 
 // Recibe: un producto.
 // Hace: revisa si su stock está en nivel crítico, es decir, si es menor o
@@ -45,7 +50,7 @@ function crearCelda(texto, clase) {
 
 // Recibe: un producto.
 // Hace: crea la fila de la tabla (<tr>) con sus celdas: código, nombre,
-//       categoría, precio y stock. Si el producto tiene stock crítico,
+//       categoría, precio, stock y acciones. Si tiene stock crítico,
 //       resalta la fila y agrega la etiqueta "Stock crítico" junto al
 //       número: así el aviso no depende solo del color.
 // Devuelve: la fila creada.
@@ -69,8 +74,117 @@ function crearFilaProducto(producto) {
   }
 
   fila.appendChild(celdaStock);
+  fila.appendChild(crearCeldaAcciones(producto));
 
   return fila;
+}
+
+// Recibe: el texto del enlace, la página a la que lleva (sin el código),
+//         el producto y una clase CSS adicional (puede ser "").
+// Hace: crea un enlace de acción de la tabla, con el código del producto en
+//       la URL. aria-label agrega el nombre del producto: sin eso, un
+//       lector de pantalla leería varios enlaces iguales que dicen "Ver".
+// Devuelve: el enlace creado.
+function crearEnlaceAccion(texto, pagina, producto, claseExtra) {
+  const enlace = document.createElement("a");
+  enlace.className = "panel-boton-chico " + claseExtra;
+  enlace.href = pagina + "?codigo=" + encodeURIComponent(producto.codigo);
+  enlace.textContent = texto;
+  enlace.setAttribute("aria-label", texto + " " + producto.nombre);
+  return enlace;
+}
+
+// Recibe: un producto.
+// Hace: crea la celda de acciones de su fila. Todos ven "Ver". Solo el
+//       Administrador ve además "Editar" y "Eliminar": para el Vendedor
+//       esos elementos no se crean (no basta con ocultarlos).
+// Devuelve: la celda creada.
+function crearCeldaAcciones(producto) {
+  const celda = document.createElement("td");
+  celda.className = "celda-acciones";
+
+  celda.appendChild(crearEnlaceAccion("Ver", "producto-detalle.html", producto, ""));
+
+  if (!usuarioEsAdministrador) {
+    return celda;
+  }
+
+  celda.appendChild(crearEnlaceAccion("Editar", "producto-form.html", producto, ""));
+
+  // Eliminar es un botón porque ejecuta una acción, no lleva a otra página
+  const botonEliminar = document.createElement("button");
+  botonEliminar.type = "button";
+  botonEliminar.className = "panel-boton-chico peligro";
+  botonEliminar.textContent = "Eliminar";
+  botonEliminar.setAttribute("aria-label", "Eliminar " + producto.nombre);
+  botonEliminar.addEventListener("click", function () {
+    eliminarProducto(producto);
+  });
+  celda.appendChild(botonEliminar);
+
+  return celda;
+}
+
+// Recibe: el producto que se quiere eliminar.
+// Hace: pide confirmación y, si el usuario acepta, quita el producto de
+//       localStorage y vuelve a dibujar el listado con un aviso.
+//       Vuelve a revisar el rol aunque el botón solo se le dibuja al
+//       Administrador: una función que borra datos no debe confiar en que
+//       nadie la llame desde otro lugar.
+// Devuelve: nada.
+function eliminarProducto(producto) {
+  if (!usuarioEsAdministrador) {
+    return;
+  }
+
+  const pregunta = "¿Eliminar el producto «" + producto.nombre + "» (" + producto.codigo + ")? " +
+    "Esta acción no se puede deshacer.";
+
+  // confirm devuelve true solo si el usuario presiona Aceptar
+  if (!confirm(pregunta)) {
+    return;
+  }
+
+  // Se arma un arreglo nuevo con todos los productos menos el eliminado
+  const productosRestantes = [];
+  leerDeStorage(CLAVE_PRODUCTOS).forEach(function (otroProducto) {
+    if (otroProducto.codigo !== producto.codigo) {
+      productosRestantes.push(otroProducto);
+    }
+  });
+
+  guardarEnStorage(CLAVE_PRODUCTOS, productosRestantes);
+
+  // Se actualiza lo que está en pantalla. mostrarPagina ajusta la página
+  // si la última quedó vacía.
+  productosDelListado = productosRestantes;
+  mostrarResumenProductos(productosDelListado);
+  mostrarPagina(paginaActual);
+  mostrarAvisoPanel("Se eliminó el producto «" + producto.nombre + "».");
+}
+
+// Recibe: nada.
+// Hace: si el usuario es Administrador, agrega sobre la tabla el botón
+//       "Nuevo producto", que lleva al formulario vacío. Al Vendedor no
+//       se le agrega nada.
+// Devuelve: nada.
+function mostrarBotonNuevoProducto() {
+  if (!usuarioEsAdministrador) {
+    return;
+  }
+
+  const enlace = document.createElement("a");
+  enlace.className = "btn boton-principal";
+  enlace.href = "producto-form.html";
+
+  const icono = document.createElement("i");
+  icono.className = "bi bi-plus-lg";
+  icono.setAttribute("aria-hidden", "true");
+
+  enlace.appendChild(icono);
+  enlace.appendChild(document.createTextNode(" Nuevo producto"));
+
+  document.getElementById("accionesListado").appendChild(enlace);
 }
 
 // Recibe: un arreglo de productos.
@@ -84,7 +198,7 @@ function mostrarTablaProductos(productos) {
   if (productos.length === 0) {
     const fila = document.createElement("tr");
     const celda = crearCelda("No hay productos registrados.");
-    celda.colSpan = 5; // la celda ocupa las 5 columnas de la tabla
+    celda.colSpan = 6; // la celda ocupa las 6 columnas de la tabla
     fila.appendChild(celda);
     cuerpoTabla.appendChild(fila);
     return;
@@ -256,7 +370,11 @@ function iniciarProductosAdmin() {
     return;
   }
 
+  // El rol se revisa una vez y se recuerda para dibujar las acciones
+  usuarioEsAdministrador = obtenerSesion().tipo === ROL_ADMINISTRADOR;
+
   productosDelListado = leerDeStorage(CLAVE_PRODUCTOS);
+  mostrarBotonNuevoProducto();
   mostrarResumenProductos(productosDelListado);
   mostrarPagina(1);
 }

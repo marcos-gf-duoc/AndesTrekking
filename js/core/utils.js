@@ -184,6 +184,20 @@ function crearOpcion(texto, valor) {
   return opcion;
 }
 
+// Recibe: el nombre de una región.
+// Hace: la busca en REGIONES (js/data/regiones.js).
+// Devuelve: la región encontrada (con su arreglo de comunas), o null si
+//           el nombre no corresponde a ninguna.
+function buscarRegionPorNombre(nombreRegion) {
+  for (let i = 0; i < REGIONES.length; i++) {
+    if (REGIONES[i].nombre === nombreRegion) {
+      return REGIONES[i];
+    }
+  }
+
+  return null;
+}
+
 // Recibe: el id de un formulario.
 // Hace: busca el primer campo marcado con error dentro de ese formulario
 //       y pone el cursor en él, para que el usuario lo corrija.

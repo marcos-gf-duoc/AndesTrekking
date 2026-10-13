@@ -4,8 +4,8 @@
   Quién lo usa: solo registro.html.
   Orden de carga: va al final, DESPUÉS de js/tienda/tienda-comun.js.
           Usa REGIONES (js/data/regiones.js) y las funciones de
-          js/core/storage.js, utils.js (entre ellas crearOpcion) y
-          validaciones.js.
+          js/core/storage.js, utils.js (entre ellas crearOpcion y
+          buscarRegionPorNombre) y validaciones.js.
 
   Tiene cuatro partes:
     1. Selects de Región y Comuna.
@@ -29,20 +29,6 @@ function cargarRegiones() {
     // El texto visible y el valor guardado son el mismo: el nombre
     selectRegion.appendChild(crearOpcion(region.nombre, region.nombre));
   });
-}
-
-// Recibe: el nombre de una región.
-// Hace: la busca en REGIONES.
-// Devuelve: la región encontrada (con su arreglo de comunas), o null si
-//           el nombre no corresponde a ninguna.
-function buscarRegionPorNombre(nombreRegion) {
-  for (let i = 0; i < REGIONES.length; i++) {
-    if (REGIONES[i].nombre === nombreRegion) {
-      return REGIONES[i];
-    }
-  }
-
-  return null;
 }
 
 // Recibe: nada.

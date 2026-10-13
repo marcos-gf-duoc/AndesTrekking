@@ -329,6 +329,19 @@ main {
   box-shadow: 0 6px 16px rgba(31, 53, 44, 0.2);
 }
 
+/* Hay personas a las que el movimiento en pantalla les causa mareo y
+   activan "reducir movimiento" en su sistema. Para ellas la tarjeta no se
+   desplaza ni se anima: solo cambia la sombra, de inmediato */
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-producto {
+    transition: none;
+  }
+
+  .tarjeta-producto:hover {
+    transform: none;
+  }
+}
+
 /* Enlace al detalle: envuelve la foto y el nombre */
 .tarjeta-producto-enlace {
   display: block;

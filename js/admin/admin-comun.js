@@ -15,6 +15,11 @@
 // Roles que pueden ver casi todo el panel, para no repetir la lista
 const ROLES_ADMIN_Y_VENDEDOR = [ROL_ADMINISTRADOR, ROL_VENDEDOR];
 
+// Rutas de las imágenes vistas desde la carpeta admin/. Llevan "../" porque
+// las imágenes están en la raíz del proyecto, una carpeta más arriba.
+const CARPETA_IMAGENES_PANEL = "../assets/img/productos/";
+const IMAGEN_DE_REEMPLAZO_PANEL = "../assets/img/general/placeholder.webp";
+
 // Opciones del menú vertical, en el orden en que aparecen. Cada una tiene:
 //   clave   nombre interno, para saber cuál marcar como página actual
 //   texto   lo que lee el usuario

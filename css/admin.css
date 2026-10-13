@@ -328,3 +328,43 @@
   background-color: var(--color-error);
   color: var(--color-blanco);
 }
+
+/* ==========================================================
+   7. DETALLE DE UN REGISTRO (producto, usuario, orden)
+   ========================================================== */
+
+/* Enlace para volver al listado, sobre el título */
+.panel-volver {
+  display: inline-block;
+  margin-bottom: var(--espacio-sm);
+  font-size: var(--tamano-texto-chico);
+}
+
+/* Variante más ancha de la caja, para páginas con dos columnas */
+.panel-caja-ancha {
+  max-width: 60rem;
+}
+
+/* Lista de datos: el nombre del dato (dt) en chico y en mayúsculas,
+   y debajo su valor (dd) */
+.panel-datos dt {
+  color: var(--color-tierra);
+  font-size: var(--tamano-texto-chico);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.panel-datos dd {
+  margin-bottom: var(--espacio-md);
+}
+
+/* Foto dentro del detalle de un producto */
+.panel-detalle-foto {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--espacio-sm);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+}

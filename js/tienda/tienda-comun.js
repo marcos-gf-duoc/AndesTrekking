@@ -458,3 +458,37 @@ function agregarAlCarrito(codigo, cantidadPedida) {
 
   return { cantidadAgregada: cantidadAAgregar, mensaje: mensaje };
 }
+
+// Recibe: nada.
+// Hace: escribe en el círculo del header el total de unidades del carrito.
+//       También ajusta el texto oculto que sigue al número ("producto" o
+//       "productos"), que es lo que leen los lectores de pantalla:
+//       "Carrito 1 producto".
+//       Se llama al cargar cada página y cada vez que cambia el carrito.
+// Devuelve: nada.
+function actualizarContadorCarrito() {
+  const contador = document.getElementById("contadorCarrito");
+
+  // Si una página no tuviera el contador, no hay nada que actualizar
+  if (contador === null) {
+    return;
+  }
+
+  const totalUnidades = contarUnidadesCarrito();
+  contador.textContent = totalUnidades;
+
+  // nextElementSibling es el elemento que viene justo después del contador
+  // en el HTML: el <span class="visually-hidden">
+  const textoOculto = contador.nextElementSibling;
+
+  if (textoOculto !== null) {
+    if (totalUnidades === 1) {
+      textoOculto.textContent = "producto";
+    } else {
+      textoOculto.textContent = "productos";
+    }
+  }
+}
+
+// Se ejecuta al cargar el archivo, en todas las páginas de la tienda
+actualizarContadorCarrito();

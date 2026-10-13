@@ -110,9 +110,20 @@
 
         <h2 class="h5">Productos comprados</h2>
 
+        <!-- Pista: avisa que la tabla se puede deslizar. Parte oculta;
+             admin-comun.js la muestra solo si la tabla no cabe -->
+        <p class="panel-tabla-pista" hidden>
+          <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+          Desliza la tabla hacia los lados para ver todas las columnas.
+        </p>
+
         <!-- El contenedor permite desplazar la tabla hacia los lados en
-             pantallas angostas, sin que se desborde la página -->
-        <div class="panel-tabla-contenedor">
+             pantallas angostas, sin que se desborde la página. role y
+             aria-label le dan un nombre para los lectores de pantalla.
+             Cuando la tabla no cabe, admin-comun.js le agrega tabindex,
+             para llegar con Tab y desplazarla con las flechas -->
+        <div class="panel-tabla-contenedor" role="region"
+             aria-label="Tabla de productos de la orden, se puede desplazar hacia los lados">
           <table class="table panel-tabla">
             <!-- caption describe la tabla para los lectores de pantalla -->
             <caption class="visually-hidden">Productos de la orden, con sus cantidades y totales</caption>

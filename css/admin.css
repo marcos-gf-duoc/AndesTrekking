@@ -179,8 +179,26 @@
   box-shadow: var(--sombra-suave);
 }
 
+/* El contenedor se puede enfocar con Tab (para desplazar la tabla con las
+   flechas del teclado), así que también muestra el foco */
+.panel-tabla-contenedor:focus-visible {
+  outline: 3px solid var(--color-naranja);
+  outline-offset: 2px;
+}
+
 .panel-tabla {
   margin-bottom: 0;         /* Bootstrap deja un margen bajo las tablas */
+  /* Ancho mínimo: en una pantalla angosta la tabla no se aprieta hasta
+     partir cada nombre en varias líneas; en vez de eso, se desliza */
+  min-width: 52rem;
+}
+
+/* Pista sobre la tabla: avisa que se puede deslizar hacia los lados.
+   admin-comun.js la muestra solo cuando la tabla no cabe */
+.panel-tabla-pista {
+  margin: 0 0 var(--espacio-sm);
+  color: var(--color-texto-suave);
+  font-size: var(--tamano-texto-chico);
 }
 
 /* Fila de títulos */

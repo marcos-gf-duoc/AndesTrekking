@@ -355,20 +355,6 @@ function mostrarCarrito() {
 // Totales y cupón de descuento
 // ==========================================================
 
-// Recibe: un monto en pesos.
-// Hace: le da formato de dinero. Para los totales no sirve usar siempre
-//       formatearPrecio, porque esa función escribe "Gratis" cuando el
-//       valor es 0 (pensada para el precio de un producto): un descuento
-//       de 0 debe verse como "$0".
-// Devuelve: el texto del monto, por ejemplo "$259.980" o "$0".
-function formatearMonto(monto) {
-  if (monto === 0) {
-    return "$0";
-  }
-
-  return formatearPrecio(monto);
-}
-
 // Recibe: un código de cupón tal como se escribió.
 // Hace: lo busca en CUPONES. Antes le quita los espacios y lo pasa a
 //       mayúsculas: así "andes10", " Andes10 " y "ANDES10" valen lo mismo.

@@ -37,6 +37,20 @@ function formatearPrecio(precio) {
   return formateador.format(precio);
 }
 
+// Recibe: un monto en pesos.
+// Hace: le da formato de dinero. Para los totales no sirve usar siempre
+//       formatearPrecio, porque esa función escribe "Gratis" cuando el
+//       valor es 0 (pensada para el precio de un producto): un descuento
+//       de 0 debe verse como "$0".
+// Devuelve: el texto del monto, por ejemplo "$259.980" o "$0".
+function formatearMonto(monto) {
+  if (monto === 0) {
+    return "$0";
+  }
+
+  return formatearPrecio(monto);
+}
+
 // Recibe: el nombre de un parámetro de la URL (por ejemplo "codigo").
 // Hace: lo busca en la dirección de la página actual. En
 //       producto.html?codigo=MOC-001 el parámetro "codigo" vale "MOC-001".

@@ -369,6 +369,27 @@
   margin-bottom: var(--espacio-md);
 }
 
+/* Formulario para cambiar el estado de una orden: una franja separada
+   de los datos por una línea arriba */
+.panel-cambio-estado {
+  margin-bottom: var(--espacio-lg);
+  padding-top: var(--espacio-md);
+  border-top: 1px solid var(--color-borde);
+}
+
+/* El selector y el botón van en la misma línea. flex-wrap deja que el
+   mensaje de error, que ocupa todo el ancho, baje a la línea siguiente */
+.panel-cambio-estado-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+}
+
+.panel-cambio-estado-fila .form-select {
+  width: auto;              /* Bootstrap lo deja al 100 % del ancho */
+  min-width: 12rem;
+}
+
 /* Foto dentro del detalle de un producto */
 .panel-detalle-foto {
   display: block;

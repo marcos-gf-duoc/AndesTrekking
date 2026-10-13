@@ -2,7 +2,7 @@
 <!--
   Archivo: admin/orden-detalle.html
   Qué es: muestra una orden de compra: sus datos, los productos comprados
-          y los totales.
+          y los totales. También permite cambiar el estado de la orden.
   Cómo se abre: con el número de la orden en la URL, por ejemplo
           orden-detalle.html?id=ORD-1001
   Quién puede verla: Administrador y Vendedor.
@@ -54,7 +54,8 @@
       <!-- orden-detalle.js escribe aquí el número de la orden -->
       <h1 class="panel-titulo" id="tituloDetalle">Orden</h1>
 
-      <!-- Caja de avisos: se usa si la orden no existe -->
+      <!-- Caja de avisos: se usa si la orden no existe y para confirmar
+           el cambio de estado -->
       <p class="mensaje-aviso" id="avisoPanel" role="status" hidden></p>
 
       <section class="panel-caja panel-caja-ancha" id="detalleOrden" aria-label="Datos de la orden">
@@ -87,6 +88,18 @@
           </div>
 
         </div>
+
+        <!-- CAMBIO DE ESTADO: orden-detalle.js llena el selector con los
+             estados posibles y guarda el elegido. novalidate apaga la
+             validación del navegador: la validación es de JavaScript -->
+        <form class="panel-cambio-estado" id="formularioEstado" novalidate>
+          <label for="estadoOrden" class="form-label">Cambiar estado</label>
+          <div class="panel-cambio-estado-fila">
+            <select class="form-select" id="estadoOrden"></select>
+            <button type="submit" class="btn boton-principal">Guardar</button>
+            <div class="invalid-feedback" id="errorEstadoOrden"></div>
+          </div>
+        </form>
 
         <h2 class="h5">Productos comprados</h2>
 

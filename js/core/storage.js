@@ -101,6 +101,25 @@ function restablecerDatosDemo() {
   cargarSemillas();
 }
 
+// ==========================================================
+// Búsquedas que usan tanto la tienda como el panel admin
+// ==========================================================
+
+// Recibe: el código de un producto (por ejemplo "MOC-001").
+// Hace: lo busca entre los productos guardados en localStorage.
+// Devuelve: el producto encontrado, o null si ningún producto tiene ese código.
+function buscarProductoPorCodigo(codigo) {
+  const productos = leerDeStorage(CLAVE_PRODUCTOS);
+
+  for (let i = 0; i < productos.length; i++) {
+    if (productos[i].codigo === codigo) {
+      return productos[i];
+    }
+  }
+
+  return null;
+}
+
 // Se ejecuta al cargar este archivo, es decir, en cada página del sitio:
 // así los datos existen antes de que el script de la página los necesite.
 cargarSemillas();

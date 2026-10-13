@@ -89,7 +89,7 @@ El sitio parte con 14 productos, 7 usuarios y 20 órdenes de ejemplo. Para volve
 │   ├── tienda/   Scripts de cada página de la tienda
 │   └── admin/    Scripts de cada página del panel
 ├── assets/       Imágenes y librerías locales
-└── docs/         Documentación (ERS y créditos de imágenes)
+└── docs/         Documentación (ERS, planilla de requisitos y créditos de imágenes)
 ```
 
 ## Fuera del alcance de esta entrega
@@ -101,6 +101,7 @@ El sitio parte con 14 productos, 7 usuarios y 20 órdenes de ejemplo. Para volve
 ## Documentación
 
 - Especificación de Requisitos de Software (ERS v1): `docs/ERS_AndesTrekking_v1.docx`
+- Planilla de requerimientos (42 requisitos): `docs/Planilla_Requerimientos_AndesTrekking.xlsx`
 - Créditos de imágenes: `docs/creditos-imagenes.md`
 
 ## Herramientas de apoyo

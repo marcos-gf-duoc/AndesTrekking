@@ -2,7 +2,7 @@
 
 > Archivo de contexto para Claude Code. Se lee al inicio de cada sesión.
 > Es un documento vivo: se actualizará al cerrar cada etapa del proyecto.
-> Última actualización: cierre de la entrega 1. Sitio completo (ramas 1 a 11 unidas a `main`); en curso la rama `docs/ers-y-readme`.
+> Última actualización: cierre de la entrega 1. Sitio completo (ramas 1 a 11 unidas a `main`); documentación (README, ERS y planilla) en la rama `docs/ers-y-readme`.
 
 ---
 
@@ -138,7 +138,8 @@ andestrekking/
 │       ├── bootstrap/         # bootstrap.min.css + bootstrap.bundle.min.js (local)
 │       └── bootstrap-icons/   # bootstrap-icons.min.css + carpeta fonts/ (local)
 ├── docs/
-│   ├── ERS_AndesTrekking_v1.docx   # ERS v1 (se genera en la rama docs/ers-y-readme)
+│   ├── ERS_AndesTrekking_v1.docx   # ERS v1, sobre la plantilla del Anexo 4
+│   ├── Planilla_Requerimientos_AndesTrekking.xlsx   # 42 requisitos, sobre la plantilla del Anexo 2
 │   ├── creditos-imagenes.md        # fuente y licencia de cada imagen descargada
 │   └── guion-defensa.md            # material de estudio del autor, IGNORADO por Git
 └── docs-curso/                # PDFs del curso, IGNORADO por Git (no se publica)
@@ -445,8 +446,8 @@ Casos de prueba:
 
 - [x] (a) Estructura de carpetas y flujo de navegación
 - [x] (b) Plan de trabajo y estrategia de Git (ver sección 13)
-- [ ] (c) Requisitos (planilla)
-- [ ] (d) ERS v1
+- [x] (c) Requisitos (planilla en `docs/`)
+- [x] (d) ERS v1 (en `docs/`)
 - [x] (e) HTML y CSS base
 - [x] (f) Validaciones JS
 - [x] (g) Carrito con localStorage

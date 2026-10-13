@@ -5,7 +5,8 @@
   Quién lo usa: el login, el header de la tienda y todas las páginas del
           panel admin.
   Orden de carga: va con los archivos de js/core/, DESPUÉS de storage.js
-          (usa leerDeStorage, guardarEnStorage y las claves).
+          (usa leerDeStorage, guardarEnStorage y las claves) y de utils.js
+          (usa irAPagina).
 
   ADVERTENCIA: esto es una simulación, no seguridad real. No hay servidor:
   los usuarios y sus contraseñas están en localStorage, en texto plano, y
@@ -86,4 +87,49 @@ function obtenerSesion() {
 // Devuelve: nada.
 function cerrarSesion() {
   localStorage.removeItem(CLAVE_SESION);
+}
+
+// ==========================================================
+// Protección de las páginas del panel admin
+// ==========================================================
+
+// Recibe: un arreglo con los roles que pueden ver la página, por ejemplo
+//         [ROL_ADMINISTRADOR] o [ROL_ADMINISTRADOR, ROL_VENDEDOR].
+// Hace: revisa la sesión y, si el usuario no puede ver la página, lo
+//       redirige:
+//       1. Sin sesión: al login de la tienda, con el aviso "sesion".
+//       2. Cliente (o un rol desconocido): al inicio de la tienda, con el
+//          aviso "permisos". Los clientes no entran al panel.
+//       3. Vendedor en una página que no le corresponde: al inicio del
+//          panel.
+//       Se llama al comienzo de cada página de la carpeta admin/. Por eso
+//       las rutas a la tienda llevan "../" (subir una carpeta) y la ruta
+//       al inicio del panel es "index.html" (la misma carpeta).
+//       El aviso viaja como un código en la URL (?aviso=...); el texto que
+//       ve el usuario lo decide la página de destino (tienda-comun.js).
+// Devuelve: true si el usuario puede ver la página; false si fue
+//           redirigido. Con false, la página no debe mostrar su contenido.
+function protegerPagina(rolesPermitidos) {
+  const sesion = obtenerSesion();
+
+  if (sesion === null) {
+    irAPagina("../login.html?aviso=sesion");
+    return false;
+  }
+
+  const esAdministrador = sesion.tipo === ROL_ADMINISTRADOR;
+  const esVendedor = sesion.tipo === ROL_VENDEDOR;
+
+  if (!esAdministrador && !esVendedor) {
+    irAPagina("../index.html?aviso=permisos");
+    return false;
+  }
+
+  // indexOf devuelve -1 cuando el rol no está en la lista de permitidos
+  if (rolesPermitidos.indexOf(sesion.tipo) === -1) {
+    irAPagina("index.html");
+    return false;
+  }
+
+  return true;
 }

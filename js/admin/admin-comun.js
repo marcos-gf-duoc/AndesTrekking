@@ -2,7 +2,7 @@
   Archivo: js/admin/admin-comun.js
   Qué es: funciones compartidas por todas las páginas del panel de
           administración: protección por rol, menú vertical, saludo,
-          cierre de sesión y avisos.
+          cierre de sesión, avisos, celdas de tabla y paginación.
   Quién lo usa: todas las páginas de la carpeta admin/.
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa auth.js y
           utils.js) y ANTES del script propio de cada página.
@@ -165,6 +165,162 @@ function mostrarAvisoDeUrlPanel() {
 
   mostrarAvisoPanel(texto);
 }
+
+// ==========================================================
+// Tablas y paginación
+// Funciones generales para los listados del panel (productos, usuarios y
+// órdenes). Cada listado guarda su propia lista y su página actual, y
+// usa estas funciones para calcular y dibujar.
+// Los ids "textoPaginacion" y "botonesPaginacion" son los mismos en todas
+// las páginas con listado.
+// ==========================================================
+
+// Cantidad de filas que muestra cada página de una tabla
+const ELEMENTOS_POR_PAGINA = 5;
+
+// Recibe: el texto de una celda y, opcionalmente, una clase CSS.
+// Hace: crea una celda de tabla (<td>). El texto se escribe con textContent,
+//       así que se muestra tal cual aunque tenga símbolos de HTML.
+// Devuelve: la celda creada.
+function crearCelda(texto, clase) {
+  const celda = document.createElement("td");
+  celda.textContent = texto;
+
+  // clase es opcional: si no se entrega, vale undefined y no se aplica
+  if (clase !== undefined) {
+    celda.className = clase;
+  }
+
+  return celda;
+}
+
+// Recibe: la cantidad total de elementos de un listado.
+// Hace: calcula cuántas páginas se necesitan. Math.ceil redondea hacia
+//       arriba: 14 elementos de a 5 dan 2,8, es decir, 3 páginas.
+// Devuelve: el total de páginas (como mínimo 1, aunque no haya elementos).
+function calcularTotalPaginas(cantidadElementos) {
+  const totalPaginas = Math.ceil(cantidadElementos / ELEMENTOS_POR_PAGINA);
+
+  if (totalPaginas < 1) {
+    return 1;
+  }
+
+  return totalPaginas;
+}
+
+// Recibe: el número de página pedido y la cantidad total de elementos.
+// Hace: si el número se sale del rango, lo lleva al límite más cercano:
+//       menos de 1 pasa a 1, y más que la última página pasa a la última.
+// Devuelve: un número de página válido.
+function ajustarNumeroDePagina(numeroPagina, cantidadElementos) {
+  const totalPaginas = calcularTotalPaginas(cantidadElementos);
+
+  if (numeroPagina < 1) {
+    return 1;
+  }
+
+  if (numeroPagina > totalPaginas) {
+    return totalPaginas;
+  }
+
+  return numeroPagina;
+}
+
+// Recibe: el arreglo completo de un listado y un número de página.
+// Hace: calcula en qué posición empieza esa página y corta el arreglo.
+//       Página 1: posiciones 0 a 4. Página 2: posiciones 5 a 9. Etcétera.
+// Devuelve: un arreglo nuevo con los elementos de esa página.
+function obtenerElementosDePagina(lista, numeroPagina) {
+  const posicionInicial = (numeroPagina - 1) * ELEMENTOS_POR_PAGINA;
+  const posicionFinal = posicionInicial + ELEMENTOS_POR_PAGINA;
+
+  // slice copia desde posicionInicial hasta antes de posicionFinal
+  return lista.slice(posicionInicial, posicionFinal);
+}
+
+// Recibe: el texto del botón, la página a la que lleva, si va
+//         deshabilitado, si corresponde a la página actual y la función
+//         que se debe llamar al hacer clic.
+// Hace: crea un botón de paginación dentro de un <li>. Al hacer clic,
+//       llama a la función recibida y le entrega el número de página.
+// Devuelve: el <li> creado.
+function crearBotonPagina(texto, paginaDestino, estaDeshabilitado, esPaginaActual, funcionAlCambiar) {
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "panel-paginacion-boton";
+  boton.textContent = texto;
+  boton.disabled = estaDeshabilitado;
+
+  if (esPaginaActual) {
+    boton.classList.add("activa");
+    boton.setAttribute("aria-current", "page"); // avisa a los lectores de pantalla
+  }
+
+  boton.addEventListener("click", function () {
+    funcionAlCambiar(paginaDestino);
+  });
+
+  const item = document.createElement("li");
+  item.appendChild(boton);
+  return item;
+}
+
+// Recibe: la página que se está viendo, el total de páginas y la función
+//         del listado que muestra una página (por ejemplo mostrarPagina).
+// Hace: dibuja los botones "Anterior", uno por cada página y "Siguiente".
+//       "Anterior" queda deshabilitado en la primera página y "Siguiente"
+//       en la última. Si hay una sola página, no dibuja ningún botón.
+// Devuelve: nada.
+function mostrarBotonesPaginacion(paginaActual, totalPaginas, funcionAlCambiar) {
+  const lista = document.getElementById("botonesPaginacion");
+  lista.innerHTML = "";
+
+  if (totalPaginas <= 1) {
+    return;
+  }
+
+  lista.appendChild(crearBotonPagina("Anterior", paginaActual - 1, paginaActual === 1, false, funcionAlCambiar));
+
+  for (let numero = 1; numero <= totalPaginas; numero++) {
+    lista.appendChild(crearBotonPagina(String(numero), numero, false, numero === paginaActual, funcionAlCambiar));
+  }
+
+  lista.appendChild(crearBotonPagina("Siguiente", paginaActual + 1, paginaActual === totalPaginas, false, funcionAlCambiar));
+}
+
+// Recibe: la página que se está viendo, el total de elementos y el nombre
+//         de lo que se lista, en singular y en plural ("producto",
+//         "productos").
+// Hace: escribe bajo la tabla qué elementos se están viendo, por ejemplo
+//       "Mostrando 6 a 10 de 14 productos".
+// Devuelve: nada.
+function mostrarTextoPaginacion(paginaActual, cantidadElementos, palabraSingular, palabraPlural) {
+  const texto = document.getElementById("textoPaginacion");
+
+  if (cantidadElementos === 0) {
+    texto.textContent = "";
+    return;
+  }
+
+  const primero = (paginaActual - 1) * ELEMENTOS_POR_PAGINA + 1;
+  let ultimo = paginaActual * ELEMENTOS_POR_PAGINA;
+
+  // En la última página puede haber menos elementos
+  if (ultimo > cantidadElementos) {
+    ultimo = cantidadElementos;
+  }
+
+  let palabra = palabraPlural;
+  if (cantidadElementos === 1) {
+    palabra = palabraSingular;
+  }
+
+  texto.textContent = "Mostrando " + primero + " a " + ultimo + " de " + cantidadElementos + " " + palabra;
+}
+
+// ==========================================================
+// Inicio de cada página del panel
+// ==========================================================
 
 // Recibe: el arreglo de roles que pueden ver la página y la clave de su
 //         opción en el menú.

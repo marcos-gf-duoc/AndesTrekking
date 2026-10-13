@@ -1,0 +1,148 @@
+/*
+  Archivo: css/admin.css
+  Qué es: hoja de estilos del panel de administración. Define el layout
+          (menú vertical + contenido) y los componentes propios del panel.
+  Quién lo usa: solo las páginas de la carpeta admin/.
+  Orden de carga: va DESPUÉS de bootstrap.min.css y de estilos.css. Usa las
+          variables de color y espaciado definidas en estilos.css (:root),
+          así el panel mantiene la misma identidad visual que la tienda.
+*/
+
+/* ==========================================================
+   1. LAYOUT DEL PANEL
+   Móvil primero: el menú va arriba y el contenido abajo.
+   Desde 992px: el menú pasa a una columna a la izquierda.
+   ========================================================== */
+
+/* Contenedor de las dos zonas. El body ya es una columna flexible de al
+   menos el alto de la pantalla (estilos.css): flex: 1 hace que el panel
+   ocupe todo ese alto. */
+.panel-contenedor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;   /* en el celular: una zona bajo la otra */
+}
+
+/* Zona del menú */
+.panel-lateral {
+  padding: var(--espacio-md);
+  background-color: var(--color-verde-oscuro);
+  color: var(--color-blanco);
+}
+
+/* Zona del contenido de cada página */
+.panel-contenido {
+  flex: 1;                  /* ocupa todo el espacio que deja el menú */
+  min-width: 0;             /* permite que una tabla ancha no desborde la página */
+  padding: var(--espacio-lg) var(--espacio-md);
+}
+
+@media (min-width: 992px) {
+  .panel-contenedor {
+    flex-direction: row;    /* menú a la izquierda, contenido a la derecha */
+  }
+
+  .panel-lateral {
+    width: 15rem;
+    flex-shrink: 0;         /* el menú no se achica aunque falte espacio */
+    padding: var(--espacio-lg) var(--espacio-md);
+  }
+
+  .panel-contenido {
+    padding: var(--espacio-lg);
+  }
+}
+
+/* ==========================================================
+   2. MENÚ VERTICAL
+   Las opciones las genera js/admin/admin-comun.js según el rol.
+   ========================================================== */
+
+/* Nombre de la tienda arriba del menú */
+.panel-marca {
+  display: block;
+  color: var(--color-blanco);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.panel-marca:hover {
+  color: var(--color-naranja-claro);
+}
+
+/* Etiqueta "Panel de administración" bajo el nombre */
+.panel-etiqueta {
+  margin: 0;
+  color: var(--color-naranja-claro);
+  font-size: var(--tamano-texto-chico);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Saludo con el nombre y el rol del usuario */
+.panel-saludo {
+  margin: var(--espacio-md) 0;
+  padding: var(--espacio-sm) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: var(--tamano-texto-chico);
+}
+
+/* Lista de opciones. En el celular van en fila y bajan de línea si no
+   caben; en pantallas grandes, una bajo otra. */
+.panel-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 992px) {
+  .panel-menu {
+    flex-direction: column;
+  }
+}
+
+/* Cada opción del menú. La misma clase sirve para los enlaces (<a>) y
+   para el botón "Cerrar sesión" (<button>): por eso se quitan el fondo
+   y el borde que el navegador le pone a los botones. */
+.panel-menu-opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  width: 100%;
+  padding: var(--espacio-sm) var(--espacio-md);
+  background: none;
+  border: 0;
+  border-radius: var(--radio-borde);
+  color: var(--color-blanco);
+  font-size: var(--tamano-texto);
+  text-align: left;
+  text-decoration: none;
+}
+
+/* Opción con el mouse encima y opción de la página actual */
+.panel-menu-opcion:hover,
+.panel-menu-opcion.activa {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-naranja-claro);
+}
+
+/* Foco sobre fondo verde: contorno naranja claro, igual que en la tienda */
+.panel-lateral a:focus-visible,
+.panel-lateral button:focus-visible {
+  outline-color: var(--color-naranja-claro);
+}
+
+/* ==========================================================
+   3. CONTENIDO
+   ========================================================== */
+
+/* Título principal de cada página del panel */
+.panel-titulo {
+  margin-bottom: var(--espacio-md);
+  font-size: 1.9rem;
+}

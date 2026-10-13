@@ -7,16 +7,26 @@
   Quién puede ver la página: solo el Administrador. Un Vendedor que escriba
           la dirección a mano es redirigido al inicio del panel.
 
-  Tiene cuatro partes:
+  Dos modos, según la URL:
+    - Nuevo:  producto-form.html              (formulario vacío)
+    - Editar: producto-form.html?codigo=XXX   (formulario con los datos)
+
+  Tiene cinco partes:
     1. Selects, vista previa y contador.
     2. Validación de cada campo (una función por campo).
     3. Guardado del producto y envío del formulario.
-    4. Inicio de la página (conexión de los eventos).
+    4. Modo Editar (carga de los datos del producto).
+    5. Inicio de la página (conexión de los eventos).
 */
 
 // Largos máximos de los campos de texto (regla del enunciado)
 const LARGO_MAXIMO_NOMBRE_PRODUCTO = 100;
 const LARGO_MAXIMO_DESCRIPCION = 500;
+
+// Producto que se está editando. Vale null en modo Nuevo. Se declara con
+// let porque se define al iniciar la página, según la URL. Varias funciones
+// la consultan para saber en qué modo está el formulario.
+let productoEnEdicion = null;
 
 // ==========================================================
 // 1. Selects, vista previa y contador
@@ -97,7 +107,12 @@ function existeCodigoProducto(codigo) {
 }
 
 // Código: obligatorio, mínimo 3 caracteres y, además, único.
+// En modo Editar no se valida: el campo está bloqueado y el código no cambia.
 function validarCodigoFormulario() {
+  if (productoEnEdicion !== null) {
+    return true;
+  }
+
   const valor = document.getElementById("codigoProducto").value;
   let mensajeError = validarCodigoProducto(valor);
 
@@ -231,16 +246,15 @@ function revisarDescripcion() {
 //       sitio los necesita como número (por ejemplo, formatearPrecio).
 // Devuelve: el producto armado (todavía sin guardar).
 function leerProductoDelFormulario() {
-  const nombreImagen = document.getElementById("imagenProducto").value;
+  let codigo = document.getElementById("codigoProducto").value.trim();
 
-  // El modelo guarda un arreglo de imágenes: vacío si no se eligió ninguna
-  let imagenes = [];
-  if (nombreImagen !== "") {
-    imagenes = [nombreImagen];
+  // En modo Editar el código es siempre el del producto original
+  if (productoEnEdicion !== null) {
+    codigo = productoEnEdicion.codigo;
   }
 
   return {
-    codigo: document.getElementById("codigoProducto").value.trim(),
+    codigo: codigo,
     nombre: document.getElementById("nombreProducto").value.trim(),
     descripcion: document.getElementById("descripcionProducto").value.trim(),
     precio: convertirANumero(document.getElementById("precioProducto").value),
@@ -248,8 +262,31 @@ function leerProductoDelFormulario() {
     // Number("") es 0: un stock crítico vacío se guarda como 0
     stockCritico: Number(document.getElementById("stockCriticoProducto").value.trim()),
     categoria: document.getElementById("categoriaProducto").value,
-    imagenes: imagenes
+    imagenes: obtenerImagenesDelFormulario()
   };
+}
+
+// Recibe: nada.
+// Hace: decide qué arreglo de imágenes tendrá el producto. El formulario
+//       maneja solo la imagen principal, pero un producto puede tener más:
+//       - Si se está editando y la imagen principal no cambió, se conservan
+//         todas las imágenes que tenía.
+//       - Si se eligió otra imagen, el producto queda solo con esa.
+//       - Con "Sin imagen", queda sin imágenes.
+// Devuelve: el arreglo de imágenes.
+function obtenerImagenesDelFormulario() {
+  const nombreImagen = document.getElementById("imagenProducto").value;
+
+  if (productoEnEdicion !== null && productoEnEdicion.imagenes.length > 0 &&
+      productoEnEdicion.imagenes[0] === nombreImagen) {
+    return productoEnEdicion.imagenes;
+  }
+
+  if (nombreImagen === "") {
+    return [];
+  }
+
+  return [nombreImagen];
 }
 
 // Recibe: un producto nuevo, ya validado.
@@ -261,11 +298,31 @@ function guardarProductoNuevo(producto) {
   guardarEnStorage(CLAVE_PRODUCTOS, productos);
 }
 
+// Recibe: un producto editado, ya validado.
+// Hace: busca en localStorage el producto con el mismo código y lo
+//       reemplaza por el nuevo, en la misma posición de la lista.
+// Devuelve: true si lo reemplazó; false si el producto ya no existe (por
+//           ejemplo, si se eliminó desde otra pestaña mientras se editaba).
+function guardarCambiosProducto(productoEditado) {
+  const productos = leerDeStorage(CLAVE_PRODUCTOS);
+
+  for (let i = 0; i < productos.length; i++) {
+    if (productos[i].codigo === productoEditado.codigo) {
+      productos[i] = productoEditado;
+      guardarEnStorage(CLAVE_PRODUCTOS, productos);
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // Recibe: el evento "submit" del formulario.
 // Hace: detiene el envío normal (que recargaría la página) y valida todos
 //       los campos. Si alguno tiene error, pone el cursor en el primero.
-//       Si todo está bien, guarda el producto y vuelve al listado con un
-//       aviso (el código del aviso viaja en la URL).
+//       Si todo está bien, guarda (agrega en modo Nuevo, reemplaza en modo
+//       Editar) y vuelve al listado con un aviso, cuyo código viaja en
+//       la URL.
 // Devuelve: nada.
 function enviarFormularioProducto(evento) {
   evento.preventDefault();
@@ -288,12 +345,81 @@ function enviarFormularioProducto(evento) {
     return;
   }
 
-  guardarProductoNuevo(leerProductoDelFormulario());
-  irAPagina("productos.html?aviso=producto-creado");
+  const producto = leerProductoDelFormulario();
+
+  if (productoEnEdicion === null) {
+    guardarProductoNuevo(producto);
+    irAPagina("productos.html?aviso=producto-creado");
+    return;
+  }
+
+  if (!guardarCambiosProducto(producto)) {
+    mostrarAvisoPanel("No se pudo guardar: el producto ya no existe. Vuelve al listado.");
+    return;
+  }
+
+  irAPagina("productos.html?aviso=producto-actualizado");
 }
 
 // ==========================================================
-// 4. Inicio de la página
+// 4. Modo Editar
+// ==========================================================
+
+// Recibe: el producto que se va a editar.
+// Hace: deja el formulario en modo Editar: cambia los títulos, escribe los
+//       datos actuales en los campos y bloquea el código, que es el
+//       identificador del producto y no se puede cambiar.
+// Devuelve: nada.
+function prepararModoEditar(producto) {
+  document.getElementById("tituloFormulario").textContent = "Editar producto";
+  document.title = "Editar " + producto.nombre + " | Panel AndesTrekking";
+
+  const campoCodigo = document.getElementById("codigoProducto");
+  campoCodigo.value = producto.codigo;
+  campoCodigo.disabled = true; // un campo deshabilitado no se puede modificar
+  document.getElementById("ayudaCodigoProducto").textContent = "El código no se puede cambiar.";
+
+  document.getElementById("nombreProducto").value = producto.nombre;
+  document.getElementById("descripcionProducto").value = producto.descripcion;
+  // El precio se muestra con coma decimal, como se escribe en Chile
+  document.getElementById("precioProducto").value = String(producto.precio).replace(".", ",");
+  document.getElementById("stockProducto").value = producto.stock;
+  document.getElementById("stockCriticoProducto").value = producto.stockCritico;
+  document.getElementById("categoriaProducto").value = producto.categoria;
+
+  if (producto.imagenes.length > 0) {
+    const imagenPrincipal = producto.imagenes[0];
+    const selectImagen = document.getElementById("imagenProducto");
+
+    // Si la imagen del producto no está en la lista de disponibles, se
+    // agrega como opción: así no se pierde al guardar
+    if (IMAGENES_PRODUCTOS.indexOf(imagenPrincipal) === -1) {
+      selectImagen.appendChild(crearOpcion(imagenPrincipal, imagenPrincipal));
+    }
+
+    selectImagen.value = imagenPrincipal;
+  }
+
+  // Con los datos ya escritos, se actualizan los apoyos visuales
+  actualizarVistaPrevia();
+  actualizarContadorDescripcion();
+  actualizarAlertaStock();
+}
+
+// Recibe: nada.
+// Hace: reemplaza el formulario por un aviso cuando el código de la URL no
+//       corresponde a ningún producto.
+// Devuelve: nada.
+function mostrarProductoAEditarNoEncontrado() {
+  document.getElementById("formularioProducto").remove();
+  document.getElementById("tituloFormulario").textContent = "Producto no encontrado";
+  document.title = "Producto no encontrado | Panel AndesTrekking";
+
+  mostrarAvisoPanel("El producto que quieres editar no existe o fue eliminado. Vuelve al listado para elegir otro.");
+}
+
+// ==========================================================
+// 5. Inicio de la página
 // ==========================================================
 
 // Recibe: el id de un campo y la función que lo revisa.
@@ -310,7 +436,8 @@ function revisarEnTiempoReal(idCampo, funcionRevisar) {
 // Hace: prepara la página. Primero iniciarPanel, con el Administrador como
 //       único rol permitido. La opción del menú que se marca es "productos",
 //       porque el formulario pertenece a esa sección. Después llena los
-//       selects y conecta cada campo y el envío con sus funciones.
+//       selects, revisa si la URL trae un código (modo Editar) y conecta
+//       cada campo y el envío con sus funciones.
 // Devuelve: nada.
 function iniciarFormularioProducto() {
   const puedeVerLaPagina = iniciarPanel([ROL_ADMINISTRADOR], "productos");
@@ -322,6 +449,21 @@ function iniciarFormularioProducto() {
   cargarCategorias();
   cargarImagenes();
   actualizarContadorDescripcion();
+
+  // Si la URL trae ?codigo=..., el formulario pasa a modo Editar
+  const codigo = obtenerParametroUrl("codigo");
+
+  if (codigo !== null) {
+    const producto = buscarProductoPorCodigo(codigo);
+
+    if (producto === null) {
+      mostrarProductoAEditarNoEncontrado();
+      return;
+    }
+
+    productoEnEdicion = producto;
+    prepararModoEditar(producto);
+  }
 
   revisarEnTiempoReal("codigoProducto", validarCodigoFormulario);
   revisarEnTiempoReal("nombreProducto", validarNombreFormulario);

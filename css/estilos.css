@@ -731,3 +731,25 @@ main {
   margin: var(--espacio-md) 0 0;
   font-size: var(--tamano-texto-chico);
 }
+
+/* Formulario con pocos campos (login): caja más angosta */
+.formulario-angosto {
+  max-width: 26rem;
+}
+
+/* Caja de error general de un formulario, por ejemplo
+   "Correo o contraseña incorrectos" en el login */
+.mensaje-error {
+  margin: 0 0 var(--espacio-md);
+  padding: var(--espacio-sm) var(--espacio-md);
+  background-color: #FBEAE8;                    /* rojo muy claro */
+  border-left: 5px solid var(--color-error);
+  border-radius: var(--radio-borde);
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+/* Mientras está vacía no se muestra */
+.mensaje-error:empty {
+  display: none;
+}

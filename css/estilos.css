@@ -498,6 +498,26 @@ main {
   width: 6rem;
 }
 
+/* Mensaje de error bajo el bloque de compra. Se escriben las dos clases
+   juntas para que esta regla pese más que la de .mensaje-error, que está
+   más abajo en el archivo y define su propio margen */
+.mensaje-error.detalle-mensaje {
+  margin-top: var(--espacio-md);
+  margin-bottom: 0;
+}
+
+/* Texto "Ya tienes 2 unidades de este producto en tu carrito" */
+.detalle-en-carrito {
+  margin: var(--espacio-md) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--tamano-texto-chico);
+}
+
+/* Mientras está vacío no ocupa espacio */
+.detalle-en-carrito:empty {
+  margin: 0;
+}
+
 /* ==========================================================
    11. AVISO DE PÁGINA
    Mensaje centrado que ocupa el lugar del contenido, por ejemplo

@@ -109,7 +109,7 @@
           <p class="detalle-precio" id="precioProducto"></p>
           <p id="descripcionProducto"></p>
 
-          <!-- Compra: cantidad y botón. Se conectan al carrito más adelante -->
+          <!-- Compra: cantidad y botón. producto.js los conecta al carrito -->
           <div class="detalle-compra">
             <div>
               <label for="cantidadProducto" class="form-label">Cantidad</label>
@@ -118,6 +118,14 @@
             </div>
             <button type="button" class="btn btn-lg boton-principal" id="botonAnadir">Añadir al carrito</button>
           </div>
+
+          <!-- Error de la cantidad: producto.js lo escribe si no es válida.
+               role="alert" hace que los lectores de pantalla lo anuncien -->
+          <p class="mensaje-error detalle-mensaje" id="errorCantidadProducto" role="alert"></p>
+
+          <!-- Aquí producto.js escribe cuántas unidades de este producto
+               ya están en el carrito -->
+          <p class="detalle-en-carrito" id="infoCarritoProducto"></p>
         </div>
 
       </div>

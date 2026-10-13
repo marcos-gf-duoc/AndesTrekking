@@ -4,7 +4,8 @@
   Quién lo usa: solo carrito.html.
   Orden de carga: va al final, DESPUÉS de js/tienda/tienda-comun.js (usa
           sus funciones de carrito: leerCarrito, guardarCarrito, etc.).
-          Usa también CUPONES (js/data/cupones.js).
+          Usa también CUPONES (js/data/cupones.js) y, para crear la
+          orden, la sesión de js/core/auth.js.
 
   El carrito guardado solo tiene { codigo, cantidad }. Para mostrarlo, este
   script busca cada producto en localStorage y toma de ahí el nombre, la
@@ -354,20 +355,6 @@ function mostrarCarrito() {
 // Totales y cupón de descuento
 // ==========================================================
 
-// Recibe: un monto en pesos.
-// Hace: le da formato de dinero. Para los totales no sirve usar siempre
-//       formatearPrecio, porque esa función escribe "Gratis" cuando el
-//       valor es 0 (pensada para el precio de un producto): un descuento
-//       de 0 debe verse como "$0".
-// Devuelve: el texto del monto, por ejemplo "$259.980" o "$0".
-function formatearMonto(monto) {
-  if (monto === 0) {
-    return "$0";
-  }
-
-  return formatearPrecio(monto);
-}
-
 // Recibe: un código de cupón tal como se escribió.
 // Hace: lo busca en CUPONES. Antes le quita los espacios y lo pasa a
 //       mayúsculas: así "andes10", " Andes10 " y "ANDES10" valen lo mismo.
@@ -519,13 +506,200 @@ function limpiarErrorCupon() {
 }
 
 // ==========================================================
+// Órdenes de compra
+// Una orden es el registro de una compra. Se guarda en localStorage
+// (clave at_ordenes) y después se ve en el panel de administración.
+// ==========================================================
+
+// Estado con que nace toda orden creada desde la tienda
+const ESTADO_INICIAL_ORDEN = "Pendiente";
+
+// Recibe: el arreglo de órdenes ya guardadas.
+// Hace: busca el número más alto entre los ids existentes ("ORD-1020" es el
+//       número 1020) y le suma 1. Así los ids son correlativos y no se
+//       repiten, aunque se haya borrado alguna orden.
+// Devuelve: el id para la próxima orden, por ejemplo "ORD-1021". Si no hay
+//           órdenes, devuelve "ORD-1001".
+function obtenerSiguienteIdOrden(ordenes) {
+  let numeroMasAlto = 1000;
+
+  ordenes.forEach(function (orden) {
+    // slice(4) quita "ORD-" y deja solo el número, todavía como texto
+    const numero = Number(orden.id.slice(4));
+
+    // isNaN descarta un id que no tenga un número después de "ORD-"
+    if (!isNaN(numero) && numero > numeroMasAlto) {
+      numeroMasAlto = numero;
+    }
+  });
+
+  return "ORD-" + (numeroMasAlto + 1);
+}
+
+// Recibe: nada.
+// Hace: convierte el carrito en la lista de productos de una orden. Por
+//       cada producto copia su código, su nombre, su precio y la cantidad.
+//       El nombre y el precio se copian a propósito: si después el
+//       administrador cambia el producto, la orden ya hecha no cambia.
+// Devuelve: un arreglo de { codigo, nombre, precio, cantidad }.
+function crearItemsDeOrden() {
+  const items = [];
+
+  leerCarrito().forEach(function (item) {
+    const producto = buscarProductoPorCodigo(item.codigo);
+
+    if (producto !== null) {
+      items.push({
+        codigo: producto.codigo,
+        nombre: producto.nombre,
+        precio: producto.precio,
+        cantidad: item.cantidad
+      });
+    }
+  });
+
+  return items;
+}
+
+// Recibe: la sesión del usuario que está comprando.
+// Hace: arma la orden con el carrito y el cupón actuales, y la agrega a la
+//       lista de órdenes de localStorage. Los montos salen de
+//       calcularTotales, la misma función que muestra el resumen: así la
+//       orden guarda exactamente lo que el cliente vio en pantalla.
+//       Esta función solo registra la orden: no descuenta el stock ni
+//       vacía el carrito.
+// Devuelve: la orden creada.
+function crearOrden(sesion) {
+  const ordenes = leerDeStorage(CLAVE_ORDENES);
+  const totales = calcularTotales();
+  const cupon = obtenerCuponAplicado();
+
+  // El nombre completo se toma del usuario guardado, porque la sesión solo
+  // tiene el nombre. Si el usuario ya no existiera, se usa el de la sesión.
+  let nombreCliente = sesion.nombre;
+  const usuario = buscarUsuarioPorRun(sesion.run);
+  if (usuario !== null) {
+    nombreCliente = usuario.nombre + " " + usuario.apellidos;
+  }
+
+  // La orden guarda el código del cupón, o null si no se usó ninguno
+  let codigoCupon = null;
+  if (cupon !== null) {
+    codigoCupon = cupon.codigo;
+  }
+
+  const orden = {
+    id: obtenerSiguienteIdOrden(ordenes),
+    fecha: obtenerFechaDeHoy(),
+    runCliente: sesion.run,
+    nombreCliente: nombreCliente,
+    correoCliente: sesion.correo,
+    items: crearItemsDeOrden(),
+    subtotal: totales.subtotal,
+    cupon: codigoCupon,
+    descuento: totales.descuento,
+    total: totales.total,
+    estado: ESTADO_INICIAL_ORDEN
+  };
+
+  ordenes.push(orden);
+  guardarEnStorage(CLAVE_ORDENES, ordenes);
+
+  return orden;
+}
+
+// Recibe: una orden recién creada.
+// Hace: resta del stock de cada producto las unidades vendidas en la orden
+//       y guarda los productos. Si por algún motivo el resultado fuera
+//       menor que 0, deja el stock en 0: un stock no puede ser negativo.
+// Devuelve: nada.
+function descontarStock(orden) {
+  const productos = leerDeStorage(CLAVE_PRODUCTOS);
+
+  orden.items.forEach(function (item) {
+    for (let i = 0; i < productos.length; i++) {
+      if (productos[i].codigo === item.codigo) {
+        productos[i].stock = productos[i].stock - item.cantidad;
+
+        if (productos[i].stock < 0) {
+          productos[i].stock = 0;
+        }
+      }
+    }
+  });
+
+  guardarEnStorage(CLAVE_PRODUCTOS, productos);
+}
+
+// Recibe: la orden recién creada.
+// Hace: reemplaza el carrito por la confirmación de la compra: oculta la
+//       lista y el resumen, escribe el número de la orden y el total, y
+//       pone el foco en el título para que se anuncie el cambio.
+// Devuelve: nada.
+function mostrarConfirmacionCompra(orden) {
+  document.getElementById("contenidoCarrito").hidden = true;
+  document.getElementById("avisoCarrito").hidden = true;
+
+  document.getElementById("numeroOrdenConfirmada").textContent = orden.id;
+  document.getElementById("totalOrdenConfirmada").textContent = formatearMonto(orden.total);
+
+  document.getElementById("confirmacionCompra").hidden = false;
+  document.getElementById("tituloConfirmacion").focus();
+}
+
+// Recibe: nada.
+// Hace: responde al botón Pagar. Sigue estos pasos:
+//       1. Con el carrito vacío no hace nada.
+//       2. Sin sesión iniciada, lleva al login. La URL lleva dos códigos:
+//          "aviso=sesion" (muestra "Debes iniciar sesión") y
+//          "volver=carrito" (después del login, vuelve aquí).
+//       3. Revisa el carrito por última vez: el stock pudo cambiar desde
+//          que se abrió la página. Si hubo que corregir algo, no se compra:
+//          se avisa y se muestra el carrito corregido.
+//       4. Crea la orden, descuenta el stock, y vacía el carrito y el cupón.
+//       5. Muestra la confirmación con el número de la orden.
+// Devuelve: nada.
+function pagar() {
+  if (leerCarrito().length === 0) {
+    return;
+  }
+
+  const sesion = obtenerSesion();
+
+  if (sesion === null) {
+    irAPagina("login.html?aviso=sesion&volver=carrito");
+    return;
+  }
+
+  const avisos = revisarCarrito();
+
+  if (avisos.length > 0) {
+    // unshift agrega un elemento al comienzo del arreglo
+    avisos.unshift("No se completó la compra porque tu carrito cambió.");
+    mostrarAvisosDelCarrito(avisos);
+    mostrarCarrito();
+    return;
+  }
+
+  const orden = crearOrden(sesion);
+  descontarStock(orden);
+
+  guardarCarrito([]);
+  guardarEnStorage(CLAVE_CUPON, null);
+  actualizarContadorCarrito();
+
+  mostrarConfirmacionCompra(orden);
+}
+
+// ==========================================================
 // Inicio de la página
 // ==========================================================
 
 // Recibe: nada.
 // Hace: prepara la página: primero revisa y corrige el carrito, muestra los
 //       avisos de lo que cambió, dibuja los productos con el resumen y
-//       conecta el formulario del cupón y el botón para quitarlo.
+//       conecta el formulario del cupón, el botón para quitarlo y el
+//       botón Pagar.
 // Devuelve: nada.
 function iniciarCarrito() {
   const avisos = revisarCarrito();
@@ -535,6 +709,7 @@ function iniciarCarrito() {
   document.getElementById("formularioCupon").addEventListener("submit", aplicarCupon);
   document.getElementById("codigoCupon").addEventListener("input", limpiarErrorCupon);
   document.getElementById("botonQuitarCupon").addEventListener("click", quitarCupon);
+  document.getElementById("botonPagar").addEventListener("click", pagar);
 }
 
 // Se ejecuta al cargar el archivo, con la página ya dibujada

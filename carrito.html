@@ -3,7 +3,8 @@
   Archivo: carrito.html
   Qué es: "Mi carrito de compras". Muestra los productos que el cliente
           añadió, con su cantidad y su subtotal, y el resumen de la compra
-          con el cupón de descuento y el total.
+          con el cupón de descuento, el total y el botón Pagar, que
+          crea la orden de compra.
   Script propio: js/tienda/carrito.js (revisa y dibuja el carrito, calcula
           los totales y maneja el cupón).
 -->
@@ -87,8 +88,9 @@
       <p class="mensaje-aviso" id="avisoCarrito" role="status" hidden></p>
 
       <!-- Dos columnas: los productos a la izquierda y el resumen a la
-           derecha. En pantallas chicas el resumen baja debajo de la lista -->
-      <div class="row g-4">
+           derecha. En pantallas chicas el resumen baja debajo de la lista.
+           Después de pagar, carrito.js oculta este bloque completo -->
+      <div class="row g-4" id="contenidoCarrito">
 
         <div class="col-12 col-lg-8">
           <!-- LISTA: carrito.js agrega aquí un <li> por cada producto -->
@@ -141,11 +143,26 @@
             </dl>
 
             <!-- PAGAR: queda deshabilitado si el carrito está vacío.
-                 Su funcionamiento (crear la orden) se agrega más adelante -->
+                 Exige sesión iniciada; carrito.js crea la orden -->
             <button type="button" class="btn btn-lg boton-principal carrito-boton-pagar" id="botonPagar">Pagar</button>
           </aside>
         </div>
 
+      </div>
+
+      <!-- CONFIRMACIÓN: parte oculta. Se muestra después de pagar, en lugar
+           de la lista y el resumen. carrito.js escribe el número de la
+           orden y el total. tabindex="-1" permite llevar el foco al título
+           con JavaScript, para que los lectores de pantalla lo anuncien -->
+      <div class="carrito-confirmacion" id="confirmacionCompra" hidden>
+        <i class="bi bi-check-circle carrito-confirmacion-icono" aria-hidden="true"></i>
+        <h2 id="tituloConfirmacion" tabindex="-1">¡Gracias por tu compra!</h2>
+        <p>
+          Tu orden <strong id="numeroOrdenConfirmada"></strong> quedó registrada
+          por un total de <strong id="totalOrdenConfirmada"></strong>.
+        </p>
+        <p>Su estado es "Pendiente". Guarda el número de la orden para tus consultas.</p>
+        <a class="btn boton-principal" href="productos.html">Seguir comprando</a>
       </div>
     </section>
 

@@ -13,6 +13,9 @@
   <meta name="description" content="Conoce AndesTrekking: nuestra misión, nuestra historia y quién desarrolló el sitio.">
   <title>Nosotros | AndesTrekking</title>
 
+  <!-- Ícono de la pestaña del navegador (favicon) -->
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo/favicon.svg">
+
   <!-- Estilos, en este orden: Bootstrap, íconos y al final los propios,
        para que estilos.css tenga prioridad sobre Bootstrap -->
   <link rel="stylesheet" href="assets/vendor/bootstrap/bootstrap.min.css">
@@ -20,6 +23,11 @@
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
+
+  <!-- ENLACE DE SALTO: es lo primero que recibe el foco al usar la tecla
+       Tab. Lleva directo al contenido, sin recorrer el menú. Está fuera de
+       la pantalla y aparece solo cuando recibe el foco (css/estilos.css) -->
+  <a class="enlace-saltar" href="#contenido">Saltar al contenido</a>
 
   <!-- HEADER: logo, menú de navegación, carrito y enlaces de sesión -->
   <header class="encabezado">
@@ -75,7 +83,7 @@
   </header>
 
   <!-- MAIN: contenido propio de cada página -->
-  <main class="container py-4">
+  <main class="container py-4" id="contenido" tabindex="-1">
 
     <!-- PRESENTACIÓN: qué es AndesTrekking. Texto a la izquierda y foto
          a la derecha en pantallas grandes; uno bajo el otro en el celular -->

@@ -17,6 +17,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Producto | Panel AndesTrekking</title>
 
+  <!-- Ícono de la pestaña del navegador (favicon) -->
+  <link rel="icon" type="image/svg+xml" href="../assets/img/logo/favicon.svg">
+
   <!-- Estilos, en este orden: Bootstrap, íconos, los comunes del sitio
        y al final los propios del panel -->
   <link rel="stylesheet" href="../assets/vendor/bootstrap/bootstrap.min.css">
@@ -29,6 +32,11 @@
   <!-- El panel parte oculto (atributo hidden). admin-comun.js lo muestra
        solo después de comprobar que el usuario tiene permiso -->
   <div class="panel-contenedor" id="panel" hidden>
+
+    <!-- ENLACE DE SALTO: es lo primero que recibe el foco al usar la tecla
+         Tab. Lleva directo al contenido, sin recorrer el menú. Está fuera de
+         la pantalla y aparece solo cuando recibe el foco (css/estilos.css) -->
+    <a class="enlace-saltar" href="#contenido">Saltar al contenido</a>
 
     <!-- MENÚ VERTICAL. aside es la etiqueta para un bloque lateral -->
     <aside class="panel-lateral">
@@ -46,7 +54,7 @@
     </aside>
 
     <!-- CONTENIDO propio de cada página del panel -->
-    <main class="panel-contenido">
+    <main class="panel-contenido" id="contenido" tabindex="-1">
       <a class="panel-volver" href="productos.html">
         <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al listado
       </a>

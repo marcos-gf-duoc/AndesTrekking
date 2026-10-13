@@ -1,0 +1,22 @@
+<!--
+  Archivo: assets/img/logo/favicon.svg
+  Qué es: ícono de la pestaña del navegador (favicon) de AndesTrekking.
+  Quién lo usa: todas las páginas, con <link rel="icon"> en el <head>.
+  Es un dibujo hecho con código (SVG): un cuadrado verde con dos montañas
+  y un sol, en los colores del sitio. viewBox define una hoja de 64 x 64
+  unidades; como es un dibujo vectorial, se ve nítido a cualquier tamaño.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fondo: cuadrado verde bosque con las esquinas redondeadas (rx) -->
+  <rect width="64" height="64" rx="12" fill="#2D4A3E"/>
+
+  <!-- Sol: círculo naranja claro, arriba a la derecha -->
+  <circle cx="46" cy="18" r="7" fill="#F4A261"/>
+
+  <!-- Montaña del fondo: triángulo verde claro. Cada par de números de
+       "points" es una esquina (x,y) -->
+  <polygon points="28,52 44,28 60,52" fill="#A9BCA9"/>
+
+  <!-- Montaña del frente: triángulo color arena, más grande -->
+  <polygon points="4,52 25,16 46,52" fill="#F5EFE6"/>
+</svg>

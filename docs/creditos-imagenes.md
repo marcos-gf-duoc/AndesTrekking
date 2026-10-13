@@ -13,6 +13,12 @@ Cada vez que se agrega una imagen al proyecto, se agrega una fila a la tabla que
 | `hero.webp` | Foto del hero del home: excursionista frente a un lago turquesa y montañas nevadas en la Patagonia | Paulius Dragunas | https://unsplash.com/photos/14weKuGAe3I | Licencia Unsplash |
 | `nosotros.webp` | Foto de la página Nosotros: dos excursionistas con mochilas en un sendero hacia montañas nevadas | Toomas Tartes | https://unsplash.com/photos/Yizrl9N_eDA | Licencia Unsplash |
 
+## Ícono del sitio (`assets/img/logo/`)
+
+| Archivo | Descripción | Autor | Fuente | Licencia |
+|---|---|---|---|---|
+| `favicon.svg` | Ícono de la pestaña del navegador: dos montañas y un sol sobre un cuadrado verde, en los colores del sitio | Marcos Godoy (creación propia, dibujado con código SVG) | No aplica | Uso propio del proyecto |
+
 ## Imágenes de productos (`assets/img/productos/`)
 
 Todas se descargaron desde Unsplash, recortadas a 800 × 600 px y en formato WebP.

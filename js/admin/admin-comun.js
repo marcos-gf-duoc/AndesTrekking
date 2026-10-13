@@ -2,8 +2,9 @@
   Archivo: js/admin/admin-comun.js
   Qué es: funciones compartidas por todas las páginas del panel de
           administración: protección por rol, menú vertical, saludo,
-          cierre de sesión, avisos, celdas de tabla, paginación,
-          etiquetas de estado y conexión de los campos de formulario.
+          cierre de sesión, avisos, celdas de tabla, paginación, pista
+          de desplazamiento de las tablas, etiquetas de estado y conexión
+          de los campos de formulario.
   Quién lo usa: todas las páginas de la carpeta admin/.
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa auth.js y
           utils.js) y ANTES del script propio de cada página.
@@ -354,6 +355,33 @@ function crearEtiquetaEstado(estado) {
   return etiqueta;
 }
 
+// Recibe: nada.
+// Hace: revisa cada tabla del panel. Si la tabla es más ancha que su
+//       contenedor (pasa en pantallas angostas), muestra la pista que
+//       avisa que se puede deslizar y deja el contenedor alcanzable con
+//       la tecla Tab, para desplazarlo con las flechas. Si la tabla cabe,
+//       oculta la pista y quita el contenedor del recorrido de Tab.
+// Devuelve: nada.
+function actualizarPistasDeTablas() {
+  const contenedores = document.querySelectorAll(".panel-tabla-contenedor");
+
+  contenedores.forEach(function (contenedor) {
+    // La pista es el elemento que está justo antes del contenedor
+    const pista = contenedor.previousElementSibling;
+
+    // scrollWidth es el ancho del contenido; clientWidth, el espacio visible
+    const tablaNoCabe = contenedor.scrollWidth > contenedor.clientWidth;
+
+    pista.hidden = !tablaNoCabe;
+
+    if (tablaNoCabe) {
+      contenedor.tabIndex = 0;
+    } else {
+      contenedor.removeAttribute("tabindex");
+    }
+  });
+}
+
 // ==========================================================
 // Formularios del panel
 // ==========================================================
@@ -394,5 +422,11 @@ function iniciarPanel(rolesPermitidos, claveActiva) {
   mostrarAvisoDeUrlPanel();
 
   document.getElementById("panel").hidden = false;
+
+  // Con el panel ya visible se pueden medir las tablas. Se revisan ahora
+  // y cada vez que cambia el tamaño de la ventana (o se gira el teléfono)
+  actualizarPistasDeTablas();
+  window.addEventListener("resize", actualizarPistasDeTablas);
+
   return true;
 }

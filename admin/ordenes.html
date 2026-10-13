@@ -15,6 +15,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Órdenes | Panel AndesTrekking</title>
 
+  <!-- Ícono de la pestaña del navegador (favicon) -->
+  <link rel="icon" type="image/svg+xml" href="../assets/img/logo/favicon.svg">
+
   <!-- Estilos, en este orden: Bootstrap, íconos, los comunes del sitio
        y al final los propios del panel -->
   <link rel="stylesheet" href="../assets/vendor/bootstrap/bootstrap.min.css">
@@ -27,6 +30,11 @@
   <!-- El panel parte oculto (atributo hidden). admin-comun.js lo muestra
        solo después de comprobar que el usuario tiene permiso -->
   <div class="panel-contenedor" id="panel" hidden>
+
+    <!-- ENLACE DE SALTO: es lo primero que recibe el foco al usar la tecla
+         Tab. Lleva directo al contenido, sin recorrer el menú. Está fuera de
+         la pantalla y aparece solo cuando recibe el foco (css/estilos.css) -->
+    <a class="enlace-saltar" href="#contenido">Saltar al contenido</a>
 
     <!-- MENÚ VERTICAL. aside es la etiqueta para un bloque lateral -->
     <aside class="panel-lateral">
@@ -44,7 +52,7 @@
     </aside>
 
     <!-- CONTENIDO propio de cada página del panel -->
-    <main class="panel-contenido">
+    <main class="panel-contenido" id="contenido" tabindex="-1">
       <h1 class="panel-titulo">Órdenes</h1>
 
       <!-- Caja de avisos: parte oculta. Muestra los avisos que llegan por
@@ -56,9 +64,20 @@
         <p class="panel-barra-texto" id="resumenOrdenes"></p>
       </div>
 
+      <!-- Pista: avisa que la tabla se puede deslizar. Parte oculta;
+           admin-comun.js la muestra solo si la tabla no cabe -->
+      <p class="panel-tabla-pista" hidden>
+        <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+        Desliza la tabla hacia los lados para ver todas las columnas.
+      </p>
+
       <!-- El contenedor permite desplazar la tabla hacia los lados en
-           pantallas angostas, sin que se desborde la página -->
-      <div class="panel-tabla-contenedor">
+           pantallas angostas, sin que se desborde la página. role y
+           aria-label le dan un nombre para los lectores de pantalla.
+           Cuando la tabla no cabe, admin-comun.js le agrega tabindex,
+           para llegar con Tab y desplazarla con las flechas -->
+      <div class="panel-tabla-contenedor" role="region"
+           aria-label="Tabla de órdenes, se puede desplazar hacia los lados">
         <table class="table panel-tabla">
           <!-- caption describe la tabla para los lectores de pantalla -->
           <caption class="visually-hidden">Listado de órdenes de compra, de la más reciente a la más antigua</caption>

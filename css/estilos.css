@@ -1018,6 +1018,16 @@ main {
   .carrito-item-totales {
     width: 100%;
   }
+
+  /* La foto se achica y el bloque de texto acepta ser más angosto: así
+     el nombre cabe al lado de la foto y no queda un espacio vacío */
+  .carrito-item-imagen {
+    width: 5rem;
+  }
+
+  .carrito-item-info {
+    min-width: 9rem;
+  }
 }
 
 /* Bloque que se muestra cuando el carrito no tiene productos */

@@ -2,7 +2,7 @@
 
 > Archivo de contexto para Claude Code. Se lee al inicio de cada sesión.
 > Es un documento vivo: se actualizará al cerrar cada etapa del proyecto.
-> Última actualización: etapa (a), estructura de carpetas y flujo de navegación.
+> Última actualización: cierre de la entrega 1. Sitio completo (ramas 1 a 11 unidas a `main`); documentación (README, ERS y planilla) en la rama `docs/ers-y-readme`.
 
 ---
 
@@ -70,7 +70,7 @@
 ```
 andestrekking/
 ├── CLAUDE.md                  # este archivo
-├── README.md                  # descripción del proyecto (se crea en etapa b)
+├── README.md                  # descripción del proyecto
 ├── .gitignore                 # debe ignorar docs-curso/
 ├── index.html                 # Home tienda
 ├── productos.html             # Listado de productos
@@ -98,11 +98,10 @@ andestrekking/
 │   └── admin.css              # layout del panel (menú vertical, tablas)
 ├── js/
 │   ├── data/                  # datos iniciales (semillas), solo arreglos/objetos
-│   │   ├── productos.js       # PRODUCTOS_INICIALES + CATEGORIAS
+│   │   ├── productos.js       # PRODUCTOS_INICIALES + CATEGORIAS + IMAGENES_PRODUCTOS
 │   │   ├── usuarios.js        # USUARIOS_INICIALES
 │   │   ├── ordenes.js         # ORDENES_INICIALES
 │   │   ├── cupones.js         # CUPONES
-│   │   ├── blogs.js           # (opcional) contenido de blogs si se lista por JS
 │   │   └── regiones.js        # REGIONES (16 regiones de Chile con sus comunas)
 │   ├── core/                  # lógica compartida
 │   │   ├── storage.js         # leer/guardar en localStorage + carga de semillas
@@ -131,7 +130,7 @@ andestrekking/
 │       └── orden-detalle.js
 ├── assets/
 │   ├── img/
-│   │   ├── logo/              # logo (lo entrega el autor más adelante)
+│   │   ├── logo/              # favicon.svg (ícono de la pestaña, dibujo propio)
 │   │   ├── productos/         # imágenes de productos (licencia libre)
 │   │   ├── blog/
 │   │   └── general/           # hero, nosotros, placeholder.webp
@@ -139,8 +138,10 @@ andestrekking/
 │       ├── bootstrap/         # bootstrap.min.css + bootstrap.bundle.min.js (local)
 │       └── bootstrap-icons/   # bootstrap-icons.min.css + carpeta fonts/ (local)
 ├── docs/
-│   ├── ERS_AndesTrekking_v1.docx   # ERS (se completa fuera de Claude Code)
-│   └── creditos-imagenes.md        # fuente y licencia de cada imagen descargada
+│   ├── ERS_AndesTrekking_v1.docx   # ERS v1, sobre la plantilla del Anexo 4
+│   ├── Planilla_Requerimientos_AndesTrekking.xlsx   # 42 requisitos, sobre la plantilla del Anexo 2
+│   ├── creditos-imagenes.md        # fuente y licencia de cada imagen descargada
+│   └── guion-defensa.md            # material de estudio del autor, IGNORADO por Git
 └── docs-curso/                # PDFs del curso, IGNORADO por Git (no se publica)
 ```
 
@@ -222,10 +223,10 @@ Convenciones de nombres:
 | `at_sesion` | objeto o null | `{run, nombre, correo, tipo}` |
 | `at_suscriptores` | arreglo | correos de la newsletter |
 
-**Producto:** `{ codigo, nombre, descripcion, precio, stock, stockCritico, categoria, imagenes: [rutas] }`
+**Producto:** `{ codigo, nombre, descripcion, precio, stock, stockCritico, categoria, imagenes: [nombres de archivo] }`
 
 - `codigo` es único y no se puede editar en modo Editar.
-- `imagenes` lleva una o más rutas relativas a `assets/img/productos/`. Si está vacío, se usa `assets/img/general/placeholder.webp`.
+- `imagenes` lleva uno o más nombres de archivo de `assets/img/productos/` (por ejemplo `carpa-refugio-1.webp`); la carpeta la agrega el código. Si está vacío, se usa `assets/img/general/placeholder.webp`.
 - Categorías (`CATEGORIAS`): Mochilas, Calzado, Carpas y Refugio, Ropa Técnica, Accesorios, Navegación y Seguridad.
 - Semilla: 12 a 16 productos con al menos 2 por categoría. Incluir:
   - Uno con stock 0, para probar "Agotado".
@@ -401,7 +402,7 @@ Casos de prueba:
   - Descargar solo imágenes de **licencia libre** (por ejemplo Unsplash o Pexels).
   - Formato `.webp` o `.jpg`, con un peso máximo aproximado de 200 KB cada una.
   - Registrar la fuente y la licencia de cada imagen en `docs/creditos-imagenes.md`.
-  - El logo lo entregará el autor más adelante; mientras tanto, usar el nombre en texto.
+  - El logo es el nombre "AndesTrekking" en texto (decisión D-15). El ícono de la pestaña es `assets/img/logo/favicon.svg`.
 
 ## 10. Decisiones aprobadas (registro)
 
@@ -421,6 +422,12 @@ Casos de prueba:
 | D-12 | Bootstrap Icons aprobado, en archivos locales. |
 | D-13 | Los avisos entre páginas viajan como códigos fijos en la URL, sin claves nuevas en localStorage: `?aviso=sesion`, `?aviso=permisos` y `?aviso=restablecido`. El texto de cada aviso lo define el sitio (`tienda-comun.js`), nunca la URL. Para volver al carrito después del login se usa `login.html?volver=carrito`. |
 | D-14 | Las fechas se guardan como `AAAA-MM-DD` y se muestran al usuario como `DD-MM-AAAA`, con la función `formatearFecha` de `utils.js`. |
+| D-15 | El logo es el nombre del sitio en texto. El ícono de la pestaña (favicon) es un dibujo propio en SVG, enlazado en todas las páginas. |
+| D-16 | Producto: el precio acepta coma o punto decimal, con máximo 2 decimales y sin separador de miles. El stock crítico vacío vale 0. El código es único sin distinguir mayúsculas de minúsculas. |
+| D-17 | Los listados del panel muestran 5 filas por página. Las órdenes se listan de la más reciente a la más antigua. Las eliminaciones piden confirmación con `confirm`. |
+| D-18 | Carrito: el límite de stock cuenta lo que ya está en el carrito; si el stock bajó, el carrito se ajusta y avisa. El cupón se guarda en mayúsculas. Cualquier usuario con sesión puede pagar, y antes de crear la orden se revisa el stock otra vez. |
+| D-19 | Accesibilidad: enlace "Saltar al contenido" en todas las páginas, foco visible en todos los controles, zonas de toque de al menos 24 px y respeto de la preferencia "reducir movimiento". Las tablas del panel se deslizan hacia los lados cuando no caben. |
+| D-20 | El ERS y la planilla de requisitos se generan con apoyo de Claude Code en `docs/` y el autor los revisa. El guion de defensa es material personal y no se publica. |
 | S-01 | Un solo formulario por entidad para Nuevo y Editar (el modo se define por el parámetro en la URL). |
 | S-02 | Código de producto y RUN no editables en modo Editar (son identificadores). |
 | S-03 | Header y footer escritos en cada HTML (sin `fetch`), para que funcione con `file://`. |
@@ -439,12 +446,12 @@ Casos de prueba:
 
 - [x] (a) Estructura de carpetas y flujo de navegación
 - [x] (b) Plan de trabajo y estrategia de Git (ver sección 13)
-- [ ] (c) Requisitos (planilla)
-- [ ] (d) ERS v1 (se trabaja fuera de Claude Code)
-- [ ] (e) HTML y CSS base
-- [ ] (f) Validaciones JS
-- [ ] (g) Carrito con localStorage
-- [ ] (h) Guion de presentación y preguntas de defensa
+- [x] (c) Requisitos (planilla en `docs/`)
+- [x] (d) ERS v1 (en `docs/`)
+- [x] (e) HTML y CSS base
+- [x] (f) Validaciones JS
+- [x] (g) Carrito con localStorage
+- [x] (h) Guion de presentación y preguntas de defensa (archivo local, no se publica)
 
 ## 13. Estrategia de Git (trabajo individual)
 
@@ -463,7 +470,8 @@ Casos de prueba:
 | 7 | `feature/admin-productos` | Listado, formulario, detalle y eliminación de productos |
 | 8 | `feature/admin-usuarios` | Listado, formulario, detalle y eliminación de usuarios |
 | 9 | `feature/carrito` | Añadir, contador, página del carrito, cupones |
-| 10 | `feature/ordenes` | Pagar (crea la orden y descuenta stock), listado y detalle de órdenes |
+| 10 | `feature/ordenes` | Pagar (crea la orden y descuenta stock), listado y detalle de órdenes, cambio de estado |
+| 10b | `feature/devolver-stock-cancelada` | Devolver el stock al cancelar una orden (rama agregada después del plan, decisión S-06) |
 | 11 | `style/responsive-accesibilidad` | Pulido visual, revisión móvil, accesibilidad |
 | 12 | `docs/ers-y-readme` | ERS v1 en `docs/`, README final, créditos de imágenes |
 

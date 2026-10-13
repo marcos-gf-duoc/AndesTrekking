@@ -14,3 +14,6 @@ docs-curso/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Guion de defensa: material de estudio personal, no se publica
+docs/guion-defensa.md

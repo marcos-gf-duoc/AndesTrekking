@@ -95,10 +95,12 @@
         <form class="panel-cambio-estado" id="formularioEstado" novalidate>
           <label for="estadoOrden" class="form-label">Cambiar estado</label>
           <div class="panel-cambio-estado-fila">
-            <select class="form-select" id="estadoOrden"></select>
+            <!-- aria-describedby une el selector con su texto de ayuda -->
+            <select class="form-select" id="estadoOrden" aria-describedby="ayudaEstadoOrden"></select>
             <button type="submit" class="btn boton-principal">Guardar</button>
             <div class="invalid-feedback" id="errorEstadoOrden"></div>
           </div>
+          <div class="form-text" id="ayudaEstadoOrden">Al cancelar una orden, sus productos vuelven al stock.</div>
         </form>
 
         <h2 class="h5">Productos comprados</h2>

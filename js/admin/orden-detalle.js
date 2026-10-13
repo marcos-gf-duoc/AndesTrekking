@@ -11,7 +11,14 @@
   localStorage y escribe sus datos, sus productos y sus totales.
   Además permite cambiar el estado de la orden con un selector y el
   botón "Guardar".
+
+  Stock: una orden cancelada no se va a entregar, así que al cancelarla
+  sus productos vuelven al stock. Si después se saca de "Cancelada", el
+  stock se descuenta otra vez, siempre que alcance.
 */
+
+// Estado que devuelve el stock de la orden al catálogo
+const ESTADO_CANCELADA = "Cancelada";
 
 // Orden que se está mostrando. Se guarda en una variable fuera de las
 // funciones para que "Guardar" sepa qué orden debe cambiar. Se declara
@@ -150,10 +157,57 @@ function guardarEstadoEnStorage(id, nuevoEstado) {
   return false;
 }
 
+// Recibe: una orden y un sentido: 1 para devolver su stock al catálogo,
+//         o -1 para descontarlo.
+// Hace: recorre los productos de la orden y le suma (o le resta) a cada
+//       uno la cantidad comprada. Un producto que ya fue eliminado del
+//       catálogo se omite. El stock nunca queda bajo 0.
+// Devuelve: nada.
+function moverStockDeOrden(orden, sentido) {
+  const productos = leerDeStorage(CLAVE_PRODUCTOS);
+
+  orden.items.forEach(function (item) {
+    for (let i = 0; i < productos.length; i++) {
+      if (productos[i].codigo === item.codigo) {
+        // Con sentido 1 se suma la cantidad; con -1 se resta
+        productos[i].stock = productos[i].stock + item.cantidad * sentido;
+
+        if (productos[i].stock < 0) {
+          productos[i].stock = 0;
+        }
+      }
+    }
+  });
+
+  guardarEnStorage(CLAVE_PRODUCTOS, productos);
+}
+
+// Recibe: una orden cancelada que se quiere reactivar.
+// Hace: revisa que el stock actual alcance para volver a descontar cada
+//       producto de la orden. Un producto eliminado del catálogo no se
+//       revisa, porque tampoco se le descontará nada.
+// Devuelve: el mensaje del primer producto al que le falta stock, o ""
+//           si alcanza para todos.
+function revisarStockParaReactivar(orden) {
+  for (let i = 0; i < orden.items.length; i++) {
+    const item = orden.items[i];
+    const producto = buscarProductoPorCodigo(item.codigo);
+
+    if (producto !== null && producto.stock < item.cantidad) {
+      return "No se puede reactivar la orden: de \"" + producto.nombre + "\" quedan " +
+        producto.stock + " en stock y la orden necesita " + item.cantidad + ".";
+    }
+  }
+
+  return "";
+}
+
 // Recibe: el evento "submit" del formulario de estado.
 // Hace: valida el estado elegido. Si es válido y distinto del actual, lo
 //       guarda, actualiza la etiqueta de estado de la página y muestra un
-//       aviso de confirmación.
+//       aviso de confirmación. Al cancelar pide confirmación y devuelve el
+//       stock; al reactivar una orden cancelada, vuelve a descontarlo, y
+//       si no alcanza no permite el cambio.
 // Devuelve: nada.
 function cambiarEstadoOrden(evento) {
   // Evita que el navegador envíe el formulario y recargue la página
@@ -175,6 +229,31 @@ function cambiarEstadoOrden(evento) {
     return;
   }
 
+  const estabaCancelada = ordenEnPantalla.estado === ESTADO_CANCELADA;
+  const quedaCancelada = nuevoEstado === ESTADO_CANCELADA;
+
+  // Cancelar: se pide confirmación. Si no se acepta, el selector vuelve
+  // al estado que tenía la orden
+  if (quedaCancelada) {
+    const acepto = confirm("¿Cancelar la orden " + ordenEnPantalla.id + "? Sus productos volverán al stock.");
+
+    if (!acepto) {
+      document.getElementById("estadoOrden").value = ordenEnPantalla.estado;
+      return;
+    }
+  }
+
+  // Reactivar: solo se permite si el stock alcanza para descontarlo de nuevo
+  if (estabaCancelada) {
+    const mensajeStock = revisarStockParaReactivar(ordenEnPantalla);
+
+    if (mensajeStock !== "") {
+      document.getElementById("estadoOrden").value = ordenEnPantalla.estado;
+      mostrarAvisoPanel(mensajeStock);
+      return;
+    }
+  }
+
   const seGuardo = guardarEstadoEnStorage(ordenEnPantalla.id, nuevoEstado);
 
   if (!seGuardo) {
@@ -182,11 +261,22 @@ function cambiarEstadoOrden(evento) {
     return;
   }
 
+  // El stock solo se mueve al entrar o salir de "Cancelada". Entre los
+  // demás estados (por ejemplo de Pendiente a Enviada) no cambia
+  let textoStock = "";
+  if (quedaCancelada) {
+    moverStockDeOrden(ordenEnPantalla, 1);
+    textoStock = " Sus productos volvieron al stock.";
+  } else if (estabaCancelada) {
+    moverStockDeOrden(ordenEnPantalla, -1);
+    textoStock = " Sus productos se descontaron otra vez del stock.";
+  }
+
   // La página se actualiza sin recargar: se cambia el dato en memoria y
   // se vuelven a escribir los datos, con la etiqueta del estado nuevo
   ordenEnPantalla.estado = nuevoEstado;
   mostrarDatosOrden(ordenEnPantalla);
-  mostrarAvisoPanel("El estado de la orden " + ordenEnPantalla.id + " se cambió a \"" + nuevoEstado + "\".");
+  mostrarAvisoPanel("El estado de la orden " + ordenEnPantalla.id + " se cambió a \"" + nuevoEstado + "\"." + textoStock);
 }
 
 // Recibe: nada.

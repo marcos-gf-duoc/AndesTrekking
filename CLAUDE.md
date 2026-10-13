@@ -426,6 +426,7 @@ Casos de prueba:
 | S-03 | Header y footer escritos en cada HTML (sin `fetch`), para que funcione con `file://`. |
 | S-04 | Un Administrador no puede eliminar su propio usuario mientras tiene la sesión iniciada. |
 | S-05 | Un Administrador no puede cambiar el tipo de su propia cuenta. Si edita su nombre o su correo, la sesión (`at_sesion`) se actualiza con los datos nuevos. |
+| S-06 | Administrador y Vendedor pueden cambiar el estado de una orden desde su detalle. Al pasar a "Cancelada" se pide confirmación y los productos de la orden vuelven al stock. Al sacarla de "Cancelada" el stock se descuenta otra vez; si no alcanza, el cambio no se permite. Los productos eliminados del catálogo se omiten. |
 
 ## 11. Fuera de alcance (no implementar)
 

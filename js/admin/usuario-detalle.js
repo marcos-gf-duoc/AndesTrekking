@@ -43,7 +43,8 @@ function mostrarDatosUsuario(usuario) {
   escribirDato("datoCorreo", usuario.correo);
   escribirDato("datoTipo", usuario.tipo);
   escribirDato("datoTelefono", usuario.telefono);
-  escribirDato("datoFechaNacimiento", usuario.fechaNacimiento);
+  // La fecha se guarda como AAAA-MM-DD y se muestra como DD-MM-AAAA
+  escribirDato("datoFechaNacimiento", formatearFecha(usuario.fechaNacimiento));
   escribirDato("datoRegion", usuario.region);
   escribirDato("datoComuna", usuario.comuna);
   escribirDato("datoDireccion", usuario.direccion);

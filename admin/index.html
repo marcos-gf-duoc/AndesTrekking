@@ -29,6 +29,11 @@
        solo después de comprobar que el usuario tiene permiso -->
   <div class="panel-contenedor" id="panel" hidden>
 
+    <!-- ENLACE DE SALTO: es lo primero que recibe el foco al usar la tecla
+         Tab. Lleva directo al contenido, sin recorrer el menú. Está fuera de
+         la pantalla y aparece solo cuando recibe el foco (css/estilos.css) -->
+    <a class="enlace-saltar" href="#contenido">Saltar al contenido</a>
+
     <!-- MENÚ VERTICAL. aside es la etiqueta para un bloque lateral -->
     <aside class="panel-lateral">
       <a class="panel-marca" href="index.html">AndesTrekking</a>
@@ -45,7 +50,7 @@
     </aside>
 
     <!-- CONTENIDO propio de cada página del panel -->
-    <main class="panel-contenido">
+    <main class="panel-contenido" id="contenido" tabindex="-1">
       <h1 class="panel-titulo">Inicio</h1>
 
       <!-- home.js escribe aquí la bienvenida con el nombre del usuario

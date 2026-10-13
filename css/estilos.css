@@ -91,6 +91,32 @@ textarea:focus-visible {
   outline-offset: 2px; /* separa el contorno del borde del elemento */
 }
 
+/* Enlace "Saltar al contenido": es el primer elemento de cada página.
+   top negativo lo deja fuera de la pantalla, pero sigue en el recorrido
+   de la tecla Tab (con display: none no se podría enfocar) */
+.enlace-saltar {
+  position: absolute;
+  top: -5rem;
+  left: var(--espacio-sm);
+  z-index: 2000;            /* por encima del header y del menú del panel */
+  padding: var(--espacio-sm) var(--espacio-md);
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde);
+  color: var(--color-verde-bosque);
+  font-weight: 700;
+}
+
+/* Al recibir el foco baja y queda visible en la esquina superior */
+.enlace-saltar:focus {
+  top: var(--espacio-sm);
+}
+
+/* El main recibe el foco al llegar con el enlace de salto. No necesita
+   contorno: es toda la zona de contenido, no un control */
+main:focus {
+  outline: none;
+}
+
 /* ==========================================================
    3. HEADER DE LA TIENDA
    La estructura (navbar, colapso en el celular) la da Bootstrap.

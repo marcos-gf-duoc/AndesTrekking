@@ -22,6 +22,11 @@
 </head>
 <body>
 
+  <!-- ENLACE DE SALTO: es lo primero que recibe el foco al usar la tecla
+       Tab. Lleva directo al contenido, sin recorrer el menú. Está fuera de
+       la pantalla y aparece solo cuando recibe el foco (css/estilos.css) -->
+  <a class="enlace-saltar" href="#contenido">Saltar al contenido</a>
+
   <!-- HEADER: logo, menú de navegación, carrito y enlaces de sesión -->
   <header class="encabezado">
     <!-- navbar-expand-lg: en pantallas grandes el menú se ve completo;
@@ -76,7 +81,7 @@
   </header>
 
   <!-- MAIN: contenido propio de cada página -->
-  <main class="container py-4">
+  <main class="container py-4" id="contenido" tabindex="-1">
 
     <section class="seccion" aria-labelledby="tituloBlogs">
       <h1 id="tituloBlogs">Noticias importantes</h1>

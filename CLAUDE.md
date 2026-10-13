@@ -419,6 +419,7 @@ Casos de prueba:
 | D-10 | Bootstrap local como complemento; el CSS propio debe ser visible y explicable. |
 | D-11 | Live Server aprobado como herramienta de desarrollo, con rutas siempre relativas. |
 | D-12 | Bootstrap Icons aprobado, en archivos locales. |
+| D-13 | Los avisos entre páginas viajan como códigos fijos en la URL, sin claves nuevas en localStorage: `?aviso=sesion`, `?aviso=permisos` y `?aviso=restablecido`. El texto de cada aviso lo define el sitio (`tienda-comun.js`), nunca la URL. Para volver al carrito después del login se usa `login.html?volver=carrito`. |
 | S-01 | Un solo formulario por entidad para Nuevo y Editar (el modo se define por el parámetro en la URL). |
 | S-02 | Código de producto y RUN no editables en modo Editar (son identificadores). |
 | S-03 | Header y footer escritos en cada HTML (sin `fetch`), para que funcione con `file://`. |

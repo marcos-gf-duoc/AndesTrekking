@@ -352,3 +352,103 @@ function validarFechaNacimiento(valor) {
 
   return "";
 }
+
+// ==========================================================
+// Producto: código, precio y cantidades
+// (el nombre y la descripción usan validarTextoRequerido y
+// validarTextoOpcional, definidas al comienzo de este archivo)
+// ==========================================================
+
+// Largo mínimo del código de un producto
+const LARGO_MINIMO_CODIGO = 3;
+
+// Recibe: el valor del campo código.
+// Hace: revisa que no esté vacío y que tenga al menos 3 caracteres, sin
+//       contar los espacios del inicio y del final. No tiene largo máximo.
+//       No revisa si el código ya existe: eso depende de los productos
+//       guardados y lo hace el formulario.
+// Devuelve: el mensaje de error, o "" si el código es válido.
+function validarCodigoProducto(valor) {
+  const codigo = valor.trim();
+
+  if (codigo === "") {
+    return "Ingresa el código.";
+  }
+
+  if (codigo.length < LARGO_MINIMO_CODIGO) {
+    return "El código debe tener al menos " + LARGO_MINIMO_CODIGO + " caracteres.";
+  }
+
+  return "";
+}
+
+// Recibe: un texto que debería ser un número mayor o igual a 0, por ejemplo
+//         "19990", "1990.5" o "1990,5" (acepta coma o punto decimal).
+// Hace: revisa que tenga solo dígitos y, como máximo, un separador decimal
+//       seguido de 1 o 2 dígitos. Con esa regla, "129.990" NO se acepta:
+//       tiene 3 dígitos después del punto, así que casi seguro es un
+//       separador de miles y no un decimal.
+// Devuelve: el número, o NaN si el texto no tiene esa forma. NaN significa
+//           "no es un número" (Not a Number) y se detecta con isNaN().
+function convertirANumero(valor) {
+  // Se cambia la coma por punto, que es el separador que entiende JavaScript
+  const texto = valor.trim().replace(",", ".");
+
+  // split(".") separa la parte entera de la decimal
+  const partes = texto.split(".");
+
+  if (partes.length > 2 || !esSoloDigitos(partes[0])) {
+    return NaN;
+  }
+
+  if (partes.length === 2) {
+    const decimales = partes[1];
+    if (!esSoloDigitos(decimales) || decimales.length > 2) {
+      return NaN;
+    }
+  }
+
+  return Number(texto);
+}
+
+// Recibe: el valor del campo precio.
+// Hace: revisa que no esté vacío y que sea un número mayor o igual a 0,
+//       con hasta 2 decimales. El 0 es válido: significa producto gratis.
+//       Como convertirANumero solo acepta dígitos y un separador decimal,
+//       un signo menos ("-5") también queda rechazado.
+// Devuelve: el mensaje de error, o "" si el precio es válido.
+function validarPrecio(valor) {
+  if (valor.trim() === "") {
+    return "Ingresa el precio.";
+  }
+
+  if (isNaN(convertirANumero(valor))) {
+    return "El precio debe ser un número mayor o igual a 0, sin puntos de miles (por ejemplo 19990 o 1990,5).";
+  }
+
+  return "";
+}
+
+// Recibe: el valor de un campo que debe ser un número entero mayor o igual
+//         a 0 (stock o stock crítico), si es obligatorio (true) u opcional
+//         (false), y el nombre del campo para el mensaje ("el stock").
+// Hace: revisa que no esté vacío (solo si es obligatorio) y que tenga
+//       únicamente dígitos. Así se rechazan los decimales ("2,5"), los
+//       negativos ("-1") y las letras.
+// Devuelve: el mensaje de error, o "" si el valor es válido.
+function validarEnteroNoNegativo(valor, esObligatorio, nombreCampo) {
+  const texto = valor.trim();
+
+  if (texto === "") {
+    if (esObligatorio) {
+      return "Ingresa " + nombreCampo + ".";
+    }
+    return ""; // vacío y opcional: es válido
+  }
+
+  if (!esSoloDigitos(texto)) {
+    return "Debe ser un número entero mayor o igual a 0.";
+  }
+
+  return "";
+}

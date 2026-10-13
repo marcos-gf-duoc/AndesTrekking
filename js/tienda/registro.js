@@ -4,7 +4,8 @@
   Quién lo usa: solo registro.html.
   Orden de carga: va al final, DESPUÉS de js/tienda/tienda-comun.js.
           Usa REGIONES (js/data/regiones.js) y las funciones de
-          js/core/storage.js, utils.js y validaciones.js.
+          js/core/storage.js, utils.js (entre ellas crearOpcion) y
+          validaciones.js.
 
   Tiene cuatro partes:
     1. Selects de Región y Comuna.
@@ -16,16 +17,6 @@
 // ==========================================================
 // Selects de Región y Comuna
 // ==========================================================
-
-// Recibe: el texto que verá el usuario y el valor que guardará la opción.
-// Hace: crea un elemento <option> para un select.
-// Devuelve: la opción creada (todavía sin agregar a ningún select).
-function crearOpcion(texto, valor) {
-  const opcion = document.createElement("option");
-  opcion.textContent = texto;
-  opcion.value = valor;
-  return opcion;
-}
 
 // Recibe: nada.
 // Hace: agrega al select de Región una opción por cada región de REGIONES.

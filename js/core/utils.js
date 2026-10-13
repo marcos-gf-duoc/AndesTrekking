@@ -153,6 +153,16 @@ function limpiarEstadoCampo(idCampo) {
   cajaError.textContent = "";
 }
 
+// Recibe: el texto que verá el usuario y el valor que guardará la opción.
+// Hace: crea un elemento <option> para un select.
+// Devuelve: la opción creada (todavía sin agregar a ningún select).
+function crearOpcion(texto, valor) {
+  const opcion = document.createElement("option");
+  opcion.textContent = texto;
+  opcion.value = valor;
+  return opcion;
+}
+
 // Recibe: el id de un formulario.
 // Hace: busca el primer campo marcado con error dentro de ese formulario
 //       y pone el cursor en él, para que el usuario lo corrija.

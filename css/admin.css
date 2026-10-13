@@ -162,3 +162,249 @@
   margin-bottom: var(--espacio-sm);
   font-size: 1.3rem;
 }
+
+/* ==========================================================
+   4. TABLAS DEL PANEL
+   La clase "table" de Bootstrap da la base (bordes y espacios);
+   aquí van los colores y los detalles propios.
+   ========================================================== */
+
+/* Caja de la tabla. overflow-x: auto agrega una barra de desplazamiento
+   horizontal solo cuando la tabla no cabe en la pantalla */
+.panel-tabla-contenedor {
+  overflow-x: auto;
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+}
+
+.panel-tabla {
+  margin-bottom: 0;         /* Bootstrap deja un margen bajo las tablas */
+}
+
+/* Fila de títulos */
+.panel-tabla thead th {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+  white-space: nowrap;      /* los títulos no se parten en dos líneas */
+}
+
+/* Primera columna (el código o identificador): no se parte en dos líneas
+   aunque la pantalla sea angosta */
+.panel-tabla td:first-child {
+  white-space: nowrap;
+}
+
+/* Columnas de números (precio, stock): alineadas a la derecha, para que
+   las cifras se comparen con facilidad */
+.panel-tabla .celda-numero {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Fila de un producto con stock menor o igual a su stock crítico */
+.panel-tabla .fila-stock-critico td {
+  background-color: #FDF1E3;                    /* naranja muy claro */
+}
+
+/* Etiqueta "Stock crítico" junto al número: el aviso no depende solo
+   del color de la fila */
+.etiqueta-critico {
+  display: inline-block;
+  margin-left: var(--espacio-sm);
+  padding: 0 var(--espacio-sm);
+  background-color: var(--color-naranja);
+  border-radius: 999px;
+  color: var(--color-blanco);
+  font-size: var(--tamano-texto-chico);
+  font-weight: 700;
+}
+
+/* ==========================================================
+   5. PAGINACIÓN DE LAS TABLAS
+   ========================================================== */
+
+/* Bloque bajo la tabla: el texto a la izquierda y los botones a la derecha.
+   Si no caben en una línea, los botones bajan */
+.panel-paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-sm);
+  margin-top: var(--espacio-md);
+}
+
+.panel-paginacion-texto {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--tamano-texto-chico);
+}
+
+.panel-paginacion-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-xs);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.panel-paginacion-boton {
+  min-width: 2.5rem;        /* los botones de un dígito quedan cuadrados */
+  padding: var(--espacio-xs) var(--espacio-sm);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-verde-bosque);
+  border-radius: var(--radio-borde);
+  color: var(--color-verde-bosque);
+}
+
+/* Botón con el mouse encima y botón de la página actual */
+.panel-paginacion-boton:hover,
+.panel-paginacion-boton.activa {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}
+
+/* Botón que no se puede usar ("Anterior" en la primera página y
+   "Siguiente" en la última) */
+.panel-paginacion-boton:disabled {
+  background-color: var(--color-arena);
+  border-color: var(--color-borde);
+  color: var(--color-texto-suave);
+  cursor: not-allowed;
+}
+
+/* ==========================================================
+   6. ACCIONES DE LOS LISTADOS
+   ========================================================== */
+
+/* Fila sobre la tabla: un texto a la izquierda y un botón a la derecha */
+.panel-barra {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-md);
+}
+
+.panel-barra-texto {
+  margin: 0;
+}
+
+/* Celda con los botones de acción de una fila */
+.panel-tabla .celda-acciones {
+  white-space: nowrap;      /* los botones quedan en una sola línea */
+}
+
+/* Botón pequeño para las acciones de cada fila (Ver, Editar, Eliminar).
+   Sirve para enlaces (<a>) y para botones (<button>) */
+.panel-boton-chico {
+  display: inline-block;
+  margin-right: var(--espacio-xs);
+  padding: 0.15rem var(--espacio-sm);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-verde-bosque);
+  border-radius: var(--radio-borde);
+  color: var(--color-verde-bosque);
+  font-size: var(--tamano-texto-chico);
+  text-decoration: none;
+}
+
+.panel-boton-chico:hover {
+  background-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}
+
+/* Variante para acciones que borran datos */
+.panel-boton-chico.peligro {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.panel-boton-chico.peligro:hover {
+  background-color: var(--color-error);
+  color: var(--color-blanco);
+}
+
+/* ==========================================================
+   7. DETALLE DE UN REGISTRO (producto, usuario, orden)
+   ========================================================== */
+
+/* Enlace para volver al listado, sobre el título */
+.panel-volver {
+  display: inline-block;
+  margin-bottom: var(--espacio-sm);
+  font-size: var(--tamano-texto-chico);
+}
+
+/* Variante más ancha de la caja, para páginas con dos columnas */
+.panel-caja-ancha {
+  max-width: 60rem;
+}
+
+/* Lista de datos: el nombre del dato (dt) en chico y en mayúsculas,
+   y debajo su valor (dd) */
+.panel-datos dt {
+  color: var(--color-tierra);
+  font-size: var(--tamano-texto-chico);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.panel-datos dd {
+  margin-bottom: var(--espacio-md);
+}
+
+/* Foto dentro del detalle de un producto */
+.panel-detalle-foto {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--espacio-sm);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+}
+
+/* ==========================================================
+   8. FORMULARIOS DEL PANEL
+   La caja y los campos usan las clases de estilos.css (formulario,
+   formulario-ancho) y de Bootstrap (form-control, form-select).
+   ========================================================== */
+
+/* Vista previa de la imagen elegida en el formulario de producto */
+.panel-vista-previa {
+  display: block;
+  width: 100%;
+  max-width: 16rem;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+}
+
+/* Fila de botones al final de un formulario */
+.formulario-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  margin-top: var(--espacio-lg);
+}
+
+/* Botón secundario (Cancelar): mismo tamaño que el principal, pero con
+   borde y sin relleno, para que la acción principal destaque más */
+.boton-secundario {
+  background-color: var(--color-blanco);
+  border-color: var(--color-verde-bosque);
+  color: var(--color-verde-bosque);
+}
+
+.boton-secundario:hover,
+.boton-secundario:focus {
+  background-color: var(--color-verde-bosque);
+  border-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}

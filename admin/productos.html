@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!--
   Archivo: admin/productos.html
-  Qué es: listado de productos del panel de administración, en una tabla.
-          Resalta los productos con stock crítico.
+  Qué es: listado de productos del panel de administración, en una tabla
+          con paginación. Resalta los productos con stock crítico.
   Quién puede verla: Administrador y Vendedor (el Vendedor, solo lectura).
   Script propio: js/admin/productos.js
   Rutas: esta página está dentro de la carpeta admin/. Para llegar a los
@@ -70,6 +70,15 @@
           <tbody id="cuerpoTablaProductos"></tbody>
         </table>
       </div>
+
+      <!-- PAGINACIÓN: productos.js escribe el texto ("Mostrando 1 a 5 de 14")
+           y dibuja los botones Anterior, 1, 2, 3 y Siguiente -->
+      <nav class="panel-paginacion" aria-label="Páginas del listado de productos">
+        <!-- role="status": al cambiar de página, los lectores de pantalla
+             anuncian qué productos se están viendo -->
+        <p class="panel-paginacion-texto" id="textoPaginacion" role="status"></p>
+        <ul class="panel-paginacion-botones" id="botonesPaginacion"></ul>
+      </nav>
     </main>
 
   </div>
@@ -102,7 +111,7 @@
   <!-- 4. Script común del panel: protección, menú, saludo y cerrar sesión -->
   <script src="../js/admin/admin-comun.js"></script>
 
-  <!-- 5. Script propio de esta página: tabla de productos -->
+  <!-- 5. Script propio de esta página: tabla de productos y paginación -->
   <script src="../js/admin/productos.js"></script>
 </body>
 </html>

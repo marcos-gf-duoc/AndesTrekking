@@ -2,7 +2,8 @@
 <!--
   Archivo: admin/index.html
   Qué es: página de inicio (home) del panel de administración.
-          Muestra el menú vertical y una bienvenida.
+          Muestra el menú vertical, una bienvenida y, solo al Administrador,
+          el botón para restablecer los datos de demostración.
   Quién puede verla: Administrador y Vendedor.
   Rutas: esta página está dentro de la carpeta admin/. Para llegar a los
           archivos de la raíz (css, js, assets) las rutas empiezan con "../",
@@ -46,7 +47,25 @@
     <!-- CONTENIDO propio de cada página del panel -->
     <main class="panel-contenido">
       <h1 class="panel-titulo">Inicio</h1>
-      <p id="bienvenidaPanel">Bienvenido al panel de administración de AndesTrekking.</p>
+
+      <!-- home.js escribe aquí la bienvenida con el nombre del usuario
+           y lo que puede hacer según su rol -->
+      <p class="texto-destacado" id="bienvenidaPanel"></p>
+      <p id="descripcionRol"></p>
+
+      <!-- DATOS DE DEMOSTRACIÓN: solo para el Administrador. Parte oculta;
+           home.js la muestra o la quita según el rol -->
+      <section class="panel-caja" id="seccionRestablecer" aria-labelledby="tituloRestablecer" hidden>
+        <h2 class="panel-caja-titulo" id="tituloRestablecer">Datos de demostración</h2>
+        <p>
+          Devuelve los productos, usuarios y órdenes a su estado inicial.
+          Se pierden todos los cambios hechos, el carrito y los mensajes
+          de contacto, y se cierra la sesión.
+        </p>
+        <button type="button" class="btn boton-principal" id="botonRestablecer">
+          <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Restablecer datos demo
+        </button>
+      </section>
     </main>
 
   </div>
@@ -79,7 +98,7 @@
   <!-- 4. Script común del panel: protección, menú, saludo y cerrar sesión -->
   <script src="../js/admin/admin-comun.js"></script>
 
-  <!-- 5. Script propio de esta página -->
+  <!-- 5. Script propio de esta página: bienvenida y restablecer datos -->
   <script src="../js/admin/home.js"></script>
 </body>
 </html>

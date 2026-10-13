@@ -10,17 +10,35 @@
   Aplica las mismas reglas que el registro de la tienda (js/core/
   validaciones.js), más el campo "Tipo de usuario".
 
-  Tiene cuatro partes:
+  Dos modos, según la URL:
+    - Nuevo:  usuario-form.html            (formulario vacío)
+    - Editar: usuario-form.html?run=XXX    (formulario con los datos)
+
+  Tiene cinco partes:
     1. Selects de Región y Comuna.
     2. Validación de cada campo (una función por campo).
     3. Guardado del usuario y envío del formulario.
-    4. Inicio de la página (conexión de los eventos).
+    4. Modo Editar (carga de los datos del usuario).
+    5. Inicio de la página (conexión de los eventos).
 */
 
 // Largos máximos de los campos de texto (regla del enunciado)
 const LARGO_MAXIMO_NOMBRE_USUARIO = 50;
 const LARGO_MAXIMO_APELLIDOS_USUARIO = 100;
 const LARGO_MAXIMO_DIRECCION_USUARIO = 300;
+
+// Usuario que se está editando. Vale null en modo Nuevo. Se declara con let
+// porque se define al iniciar la página, según la URL. Varias funciones la
+// consultan para saber en qué modo está el formulario.
+let usuarioEnEdicion = null;
+
+// Recibe: nada.
+// Hace: revisa si el usuario que se está editando es el mismo que tiene la
+//       sesión iniciada, es decir, si el Administrador edita su propia cuenta.
+// Devuelve: true si es su propia cuenta; false en modo Nuevo o si edita a otro.
+function estaEditandoSuPropiaCuenta() {
+  return usuarioEnEdicion !== null && usuarioEnEdicion.run === obtenerSesion().run;
+}
 
 // ==========================================================
 // 1. Selects de Región y Comuna
@@ -76,7 +94,12 @@ function cargarComunasUsuario() {
 // ==========================================================
 
 // RUN: formato, largo y dígito verificador (validarRun) y, además, único.
+// En modo Editar no se valida: el campo está bloqueado y el RUN no cambia.
 function validarRunUsuario() {
+  if (usuarioEnEdicion !== null) {
+    return true;
+  }
+
   const valor = document.getElementById("runUsuario").value;
   let mensajeError = validarRun(valor);
 
@@ -128,7 +151,13 @@ function validarFechaNacimientoUsuario() {
 }
 
 // Tipo de usuario: hay que elegir uno (la primera opción tiene valor vacío).
+// Si el Administrador edita su propia cuenta no se valida: el campo está
+// bloqueado y el tipo no cambia.
 function validarTipoUsuario() {
+  if (estaEditandoSuPropiaCuenta()) {
+    return true;
+  }
+
   const valor = document.getElementById("tipoUsuario").value;
 
   let mensajeError = "";
@@ -144,8 +173,17 @@ function validarCorreoUsuario() {
   const valor = document.getElementById("correoUsuario").value;
   let mensajeError = validarCorreo(valor, true);
 
-  if (mensajeError === "" && buscarUsuarioPorCorreo(valor) !== null) {
-    mensajeError = "Ya existe un usuario con este correo.";
+  if (mensajeError === "") {
+    const usuarioConEseCorreo = buscarUsuarioPorCorreo(valor);
+
+    // Hay choque si el correo es de otro usuario. En modo Editar, que el
+    // correo sea del mismo usuario que se edita no es un error.
+    const esDeOtroUsuario = usuarioConEseCorreo !== null &&
+      (usuarioEnEdicion === null || usuarioConEseCorreo.run !== usuarioEnEdicion.run);
+
+    if (esDeOtroUsuario) {
+      mensajeError = "Ya existe un usuario con este correo.";
+    }
   }
 
   return mostrarResultadoCampo("correoUsuario", mensajeError);
@@ -159,22 +197,35 @@ function validarConfirmarCorreoUsuario() {
   return mostrarResultadoCampo("confirmarCorreoUsuario", mensajeError);
 }
 
-// Contraseña: obligatoria al crear un usuario, de 4 a 10 caracteres.
+// Contraseña: de 4 a 10 caracteres. Al crear un usuario es obligatoria.
+// Al editar es opcional: si queda vacía, se conserva la anterior.
 function validarPasswordUsuario() {
   const valor = document.getElementById("passwordUsuario").value;
-  const mensajeError = validarPassword(valor, true);
+  const esObligatoria = usuarioEnEdicion === null;
+
+  if (valor === "" && !esObligatoria) {
+    limpiarEstadoCampo("passwordUsuario");
+    return true;
+  }
+
+  const mensajeError = validarPassword(valor, esObligatoria);
   return mostrarResultadoCampo("passwordUsuario", mensajeError);
 }
 
-// Confirmar contraseña: obligatoria al crear un usuario e igual a la
-// contraseña.
+// Confirmar contraseña: debe ser igual a la contraseña. Al crear un usuario
+// siempre se exige. Al editar, si ambas quedan vacías no hay nada que
+// confirmar, porque la contraseña no cambia.
 function validarConfirmarPasswordUsuario() {
   const valor = document.getElementById("confirmarPasswordUsuario").value;
   const password = document.getElementById("passwordUsuario").value;
+
+  if (usuarioEnEdicion !== null && valor === "" && password === "") {
+    limpiarEstadoCampo("confirmarPasswordUsuario");
+    return true;
+  }
+
   let mensajeError = validarConfirmacionPassword(valor, password);
 
-  // validarConfirmacionPassword acepta que ambas estén vacías. Al crear
-  // un usuario la confirmación siempre se exige.
   if (valor === "") {
     mensajeError = "Confirma la contraseña.";
   }
@@ -231,8 +282,15 @@ function revisarCorreoYConfirmacion() {
 function revisarPasswordYConfirmacion() {
   validarPasswordUsuario();
 
-  if (document.getElementById("confirmarPasswordUsuario").value !== "") {
-    validarConfirmarPasswordUsuario();
+  // También se revisa cuando la contraseña quedó vacía: en modo Editar eso
+  // quita el error que pudiera tener la confirmación
+  const confirmacion = document.getElementById("confirmarPasswordUsuario").value;
+  const password = document.getElementById("passwordUsuario").value;
+
+  if (confirmacion !== "" || password === "") {
+    if (usuarioEnEdicion !== null || confirmacion !== "") {
+      validarConfirmarPasswordUsuario();
+    }
   }
 }
 
@@ -243,18 +301,38 @@ function revisarPasswordYConfirmacion() {
 // Recibe: nada (lee los valores directamente del formulario, ya validados).
 // Hace: arma un usuario con los once campos del modelo de datos. Guarda el
 //       RUN normalizado (K en mayúscula), el correo en minúsculas y los
-//       textos sin espacios sobrantes.
+//       textos sin espacios sobrantes. En modo Editar conserva el RUN y,
+//       si no se escribió una contraseña nueva, también la contraseña.
 // Devuelve: el usuario armado (todavía sin guardar).
 function leerUsuarioDelFormulario() {
+  let run = normalizarRun(document.getElementById("runUsuario").value);
+  let password = document.getElementById("passwordUsuario").value;
+  let tipo = document.getElementById("tipoUsuario").value;
+
+  if (usuarioEnEdicion !== null) {
+    // El RUN es el identificador: siempre se conserva el original
+    run = usuarioEnEdicion.run;
+
+    // Contraseña vacía al editar: se conserva la que tenía
+    if (password === "") {
+      password = usuarioEnEdicion.password;
+    }
+  }
+
+  // Un Administrador no puede cambiar el tipo de su propia cuenta
+  if (estaEditandoSuPropiaCuenta()) {
+    tipo = usuarioEnEdicion.tipo;
+  }
+
   return {
-    run: normalizarRun(document.getElementById("runUsuario").value),
+    run: run,
     nombre: document.getElementById("nombreUsuario").value.trim(),
     apellidos: document.getElementById("apellidosUsuario").value.trim(),
     correo: document.getElementById("correoUsuario").value.trim().toLowerCase(),
-    password: document.getElementById("passwordUsuario").value,
+    password: password,
     telefono: document.getElementById("telefonoUsuario").value.trim(),
     fechaNacimiento: document.getElementById("fechaNacimientoUsuario").value,
-    tipo: document.getElementById("tipoUsuario").value,
+    tipo: tipo,
     region: document.getElementById("regionUsuario").value,
     comuna: document.getElementById("comunaUsuario").value,
     direccion: document.getElementById("direccionUsuario").value.trim()
@@ -270,11 +348,49 @@ function guardarUsuarioNuevo(usuario) {
   guardarEnStorage(CLAVE_USUARIOS, usuarios);
 }
 
+// Recibe: un usuario editado, ya validado.
+// Hace: busca en localStorage al usuario con el mismo RUN y lo reemplaza por
+//       el nuevo, en la misma posición de la lista.
+// Devuelve: true si lo reemplazó; false si el usuario ya no existe (por
+//           ejemplo, si se eliminó desde otra pestaña mientras se editaba).
+function guardarCambiosUsuario(usuarioEditado) {
+  const usuarios = leerDeStorage(CLAVE_USUARIOS);
+
+  for (let i = 0; i < usuarios.length; i++) {
+    if (usuarios[i].run === usuarioEditado.run) {
+      usuarios[i] = usuarioEditado;
+      guardarEnStorage(CLAVE_USUARIOS, usuarios);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// Recibe: el usuario recién guardado.
+// Hace: si es el mismo que tiene la sesión iniciada, vuelve a escribir la
+//       sesión con sus datos nuevos. Así el saludo ("Hola, ...") y el
+//       correo de la sesión coinciden con lo que se acaba de guardar.
+// Devuelve: nada.
+function actualizarSesionSiEsLaPropia(usuario) {
+  if (usuario.run !== obtenerSesion().run) {
+    return;
+  }
+
+  guardarEnStorage(CLAVE_SESION, {
+    run: usuario.run,
+    nombre: usuario.nombre,
+    correo: usuario.correo,
+    tipo: usuario.tipo
+  });
+}
+
 // Recibe: el evento "submit" del formulario.
 // Hace: detiene el envío normal (que recargaría la página) y valida todos
 //       los campos. Si alguno tiene error, pone el cursor en el primero.
-//       Si todo está bien, guarda el usuario y vuelve al listado con un
-//       aviso, cuyo código viaja en la URL.
+//       Si todo está bien, guarda (agrega en modo Nuevo, reemplaza en modo
+//       Editar) y vuelve al listado con un aviso, cuyo código viaja en
+//       la URL.
 // Devuelve: nada.
 function enviarFormularioUsuario(evento) {
   evento.preventDefault();
@@ -304,19 +420,98 @@ function enviarFormularioUsuario(evento) {
     return;
   }
 
-  guardarUsuarioNuevo(leerUsuarioDelFormulario());
-  irAPagina("usuarios.html?aviso=usuario-creado");
+  const usuario = leerUsuarioDelFormulario();
+
+  if (usuarioEnEdicion === null) {
+    guardarUsuarioNuevo(usuario);
+    irAPagina("usuarios.html?aviso=usuario-creado");
+    return;
+  }
+
+  if (!guardarCambiosUsuario(usuario)) {
+    mostrarAvisoPanel("No se pudo guardar: el usuario ya no existe. Vuelve al listado.");
+    return;
+  }
+
+  // Se recuerda la versión recién guardada. Así, si el formulario se
+  // enviara otra vez antes de cambiar de página, usaría los datos nuevos
+  // (por ejemplo, la contraseña que se acaba de cambiar) y no los antiguos.
+  usuarioEnEdicion = usuario;
+
+  actualizarSesionSiEsLaPropia(usuario);
+  irAPagina("usuarios.html?aviso=usuario-actualizado");
 }
 
 // ==========================================================
-// 4. Inicio de la página
+// 4. Modo Editar
+// ==========================================================
+
+// Recibe: el usuario que se va a editar.
+// Hace: deja el formulario en modo Editar: cambia los títulos, escribe los
+//       datos actuales en los campos y bloquea el RUN, que es el
+//       identificador del usuario. Las contraseñas parten vacías: la
+//       contraseña guardada nunca se escribe en la página.
+//       Si el Administrador edita su propia cuenta, bloquea también el
+//       tipo, para que no pueda quitarse a sí mismo el acceso al panel.
+// Devuelve: nada.
+function prepararModoEditarUsuario(usuario) {
+  document.getElementById("tituloFormulario").textContent = "Editar usuario";
+  document.title = "Editar a " + usuario.nombre + " " + usuario.apellidos + " | Panel AndesTrekking";
+
+  const campoRun = document.getElementById("runUsuario");
+  campoRun.value = usuario.run;
+  campoRun.disabled = true; // un campo deshabilitado no se puede modificar
+  document.getElementById("ayudaRunUsuario").textContent = "El RUN no se puede cambiar.";
+
+  document.getElementById("nombreUsuario").value = usuario.nombre;
+  document.getElementById("apellidosUsuario").value = usuario.apellidos;
+  document.getElementById("telefonoUsuario").value = usuario.telefono;
+  document.getElementById("fechaNacimientoUsuario").value = usuario.fechaNacimiento;
+  document.getElementById("tipoUsuario").value = usuario.tipo;
+  document.getElementById("direccionUsuario").value = usuario.direccion;
+
+  // El correo y su confirmación parten iguales: solo hay que volver a
+  // escribirlos si se quiere cambiar el correo
+  document.getElementById("correoUsuario").value = usuario.correo;
+  document.getElementById("confirmarCorreoUsuario").value = usuario.correo;
+
+  document.getElementById("ayudaPasswordUsuario").textContent =
+    "Déjala vacía para conservar la contraseña actual. Si la cambias, entre 4 y 10 caracteres.";
+
+  // Primero la región; con ella se cargan sus comunas y recién entonces
+  // se puede elegir la comuna del usuario
+  document.getElementById("regionUsuario").value = usuario.region;
+  cargarComunasUsuario();
+  document.getElementById("comunaUsuario").value = usuario.comuna;
+
+  if (estaEditandoSuPropiaCuenta()) {
+    document.getElementById("tipoUsuario").disabled = true;
+    document.getElementById("ayudaTipoUsuario").textContent = "No puedes cambiar el tipo de tu propia cuenta.";
+  }
+}
+
+// Recibe: nada.
+// Hace: reemplaza el formulario por un aviso cuando el RUN de la URL no
+//       corresponde a ningún usuario.
+// Devuelve: nada.
+function mostrarUsuarioAEditarNoEncontrado() {
+  document.getElementById("formularioUsuario").remove();
+  document.getElementById("tituloFormulario").textContent = "Usuario no encontrado";
+  document.title = "Usuario no encontrado | Panel AndesTrekking";
+
+  mostrarAvisoPanel("El usuario que quieres editar no existe o fue eliminado. Vuelve al listado para elegir otro.");
+}
+
+// ==========================================================
+// 5. Inicio de la página
 // ==========================================================
 
 // Recibe: nada.
 // Hace: prepara la página. Primero iniciarPanel, con el Administrador como
 //       único rol permitido. La opción del menú que se marca es "usuarios",
 //       porque el formulario pertenece a esa sección. Después llena las
-//       regiones y conecta cada campo y el envío con sus funciones.
+//       regiones, revisa si la URL trae un RUN (modo Editar) y conecta
+//       cada campo y el envío con sus funciones.
 // Devuelve: nada.
 function iniciarFormularioUsuario() {
   const puedeVerLaPagina = iniciarPanel([ROL_ADMINISTRADOR], "usuarios");
@@ -326,6 +521,21 @@ function iniciarFormularioUsuario() {
   }
 
   cargarRegionesUsuario();
+
+  // Si la URL trae ?run=..., el formulario pasa a modo Editar
+  const run = obtenerParametroUrl("run");
+
+  if (run !== null) {
+    const usuario = buscarUsuarioPorRun(run);
+
+    if (usuario === null) {
+      mostrarUsuarioAEditarNoEncontrado();
+      return;
+    }
+
+    usuarioEnEdicion = usuario;
+    prepararModoEditarUsuario(usuario);
+  }
 
   // Al cambiar la región, primero se recargan las comunas
   document.getElementById("regionUsuario").addEventListener("change", cargarComunasUsuario);

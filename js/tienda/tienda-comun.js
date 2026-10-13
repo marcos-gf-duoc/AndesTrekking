@@ -54,8 +54,8 @@ function crearTarjetaProducto(producto) {
     atributoDeshabilitado = " disabled";
   }
 
-  // data-codigo guarda el código en el botón: así, al hacer clic, el carrito
-  // sabrá qué producto añadir (se programa en la rama del carrito)
+  // data-codigo guarda el código en el botón: así, al hacer clic,
+  // responderAClicEnAnadir (más abajo) sabe qué producto añadir
   let html = "";
   html += '<article class="tarjeta-producto">';
   html += '  <a class="tarjeta-producto-enlace" href="' + enlaceDetalle + '">';
@@ -492,3 +492,69 @@ function actualizarContadorCarrito() {
 
 // Se ejecuta al cargar el archivo, en todas las páginas de la tienda
 actualizarContadorCarrito();
+
+// ==========================================================
+// Aviso flotante y botón "Añadir" de las tarjetas
+// ==========================================================
+
+// Tiempo que el aviso flotante queda visible, en milisegundos (3 segundos)
+const DURACION_AVISO_FLOTANTE = 3000;
+
+// Guarda el temporizador que oculta el aviso, para poder cancelarlo si
+// aparece un aviso nuevo antes de que termine el anterior
+let temporizadorAvisoFlotante = null;
+
+// Recibe: el texto de un aviso.
+// Hace: lo muestra en una caja fija, abajo a la derecha de la pantalla, y lo
+//       oculta solo después de 3 segundos. La caja se crea la primera vez
+//       que se necesita y después se reutiliza.
+//       role="status" hace que los lectores de pantalla anuncien el texto.
+// Devuelve: nada.
+function mostrarAvisoFlotante(texto) {
+  let caja = document.getElementById("avisoFlotante");
+
+  if (caja === null) {
+    caja = document.createElement("div");
+    caja.id = "avisoFlotante";
+    caja.className = "aviso-flotante";
+    caja.setAttribute("role", "status");
+    document.body.appendChild(caja);
+  }
+
+  caja.textContent = texto;
+  caja.hidden = false;
+
+  // Si había un aviso anterior esperando para ocultarse, se cancela esa
+  // espera: el plazo de 3 segundos parte de nuevo con este aviso
+  clearTimeout(temporizadorAvisoFlotante);
+
+  // setTimeout ejecuta la función cuando pasa el tiempo indicado
+  temporizadorAvisoFlotante = setTimeout(function () {
+    caja.hidden = true;
+  }, DURACION_AVISO_FLOTANTE);
+}
+
+// Recibe: el evento de un clic hecho en cualquier parte de la página.
+// Hace: revisa si el clic fue en un botón "Añadir" de una tarjeta de
+//       producto (los reconoce por la clase "boton-anadir"). Si lo fue,
+//       añade 1 unidad del producto cuyo código está en data-codigo,
+//       actualiza el contador del header y muestra el aviso.
+//       Cualquier otro clic se ignora.
+// Devuelve: nada.
+function responderAClicEnAnadir(evento) {
+  const elemento = evento.target; // el elemento exacto donde se hizo clic
+
+  if (!elemento.classList.contains("boton-anadir")) {
+    return;
+  }
+
+  const resultado = agregarAlCarrito(elemento.dataset.codigo, 1);
+
+  actualizarContadorCarrito();
+  mostrarAvisoFlotante(resultado.mensaje);
+}
+
+// Un solo "escuchador" de clics para toda la página, en vez de uno por
+// botón. Así también funcionan las tarjetas que se dibujan después de
+// cargar la página, sin tener que conectarlas una por una.
+document.addEventListener("click", responderAClicEnAnadir);

@@ -783,3 +783,31 @@ main {
   color: var(--color-texto);
   font-weight: 600;
 }
+
+/* ==========================================================
+   15. AVISO FLOTANTE
+   Mensaje breve que aparece abajo a la derecha, por ejemplo al añadir un
+   producto al carrito. Lo crea mostrarAvisoFlotante (tienda-comun.js).
+   ========================================================== */
+.aviso-flotante {
+  position: fixed;          /* queda fijo en la pantalla aunque se baje la página */
+  right: var(--espacio-md);
+  bottom: var(--espacio-md);
+  z-index: 1080;            /* por encima del resto del contenido */
+  max-width: 22rem;
+  padding: var(--espacio-md);
+  background-color: var(--color-verde-oscuro);
+  border-left: 5px solid var(--color-naranja-claro);
+  border-radius: var(--radio-borde);
+  box-shadow: 0 6px 16px rgba(31, 53, 44, 0.3);
+  color: var(--color-blanco);
+  font-weight: 600;
+}
+
+/* En pantallas angostas el aviso ocupa el ancho disponible */
+@media (max-width: 575px) {
+  .aviso-flotante {
+    left: var(--espacio-md);
+    max-width: none;
+  }
+}

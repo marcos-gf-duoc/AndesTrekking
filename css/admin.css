@@ -404,3 +404,49 @@
   gap: var(--espacio-sm);
   margin-top: var(--espacio-lg);
 }
+
+/* ==========================================================
+   9. ESTADOS DE LAS ÓRDENES
+   Etiqueta con el nombre del estado. El texto siempre está escrito;
+   el color es un apoyo para reconocerlo de un vistazo.
+   ========================================================== */
+
+/* Forma común de todas las etiquetas */
+.etiqueta-estado {
+  display: inline-block;
+  padding: 0.1rem var(--espacio-sm);
+  background-color: var(--color-arena);
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  color: var(--color-texto);
+  font-size: var(--tamano-texto-chico);
+  font-weight: 700;
+  white-space: nowrap;      /* "En proceso" no se parte en dos líneas */
+}
+
+/* Pendiente: naranja claro, porque requiere atención */
+.estado-pendiente {
+  background-color: var(--color-naranja-claro);
+  border-color: var(--color-naranja-claro);
+}
+
+/* En proceso: azul claro */
+.estado-proceso {
+  background-color: #DCE9F5;
+  border-color: #A9C6E4;
+  color: #1F3A5F;
+}
+
+/* Enviada: verde, porque está completa */
+.estado-enviada {
+  background-color: var(--color-verde-bosque);
+  border-color: var(--color-verde-bosque);
+  color: var(--color-blanco);
+}
+
+/* Cancelada: rojo claro */
+.estado-cancelada {
+  background-color: #F8DEDB;
+  border-color: #E5B1AB;
+  color: #8C1D18;
+}

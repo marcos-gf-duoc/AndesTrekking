@@ -2,8 +2,8 @@
   Archivo: js/admin/admin-comun.js
   Qué es: funciones compartidas por todas las páginas del panel de
           administración: protección por rol, menú vertical, saludo,
-          cierre de sesión, avisos, celdas de tabla, paginación y
-          conexión de los campos de formulario.
+          cierre de sesión, avisos, celdas de tabla, paginación,
+          etiquetas de estado y conexión de los campos de formulario.
   Quién lo usa: todas las páginas de la carpeta admin/.
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa auth.js y
           utils.js) y ANTES del script propio de cada página.
@@ -319,6 +319,39 @@ function mostrarTextoPaginacion(paginaActual, cantidadElementos, palabraSingular
   }
 
   texto.textContent = "Mostrando " + primero + " a " + ultimo + " de " + cantidadElementos + " " + palabra;
+}
+
+// ==========================================================
+// Estados de las órdenes
+// ==========================================================
+
+// Estados que puede tener una orden, en el orden en que avanza una compra
+const ESTADOS_DE_ORDEN = ["Pendiente", "En proceso", "Enviada", "Cancelada"];
+
+// Recibe: el estado de una orden ("Pendiente", "En proceso", "Enviada" o
+//         "Cancelada").
+// Hace: crea una etiqueta con el nombre del estado y un color según cuál
+//       sea. El texto siempre está escrito: el color es solo un apoyo.
+// Devuelve: la etiqueta creada (un <span>).
+function crearEtiquetaEstado(estado) {
+  const etiqueta = document.createElement("span");
+  etiqueta.textContent = estado;
+
+  // Cada estado tiene su clase CSS (css/admin.css). Un estado desconocido
+  // queda con el estilo base, sin color propio.
+  let claseEstado = "";
+  if (estado === "Pendiente") {
+    claseEstado = "estado-pendiente";
+  } else if (estado === "En proceso") {
+    claseEstado = "estado-proceso";
+  } else if (estado === "Enviada") {
+    claseEstado = "estado-enviada";
+  } else if (estado === "Cancelada") {
+    claseEstado = "estado-cancelada";
+  }
+
+  etiqueta.className = "etiqueta-estado " + claseEstado;
+  return etiqueta;
 }
 
 // ==========================================================

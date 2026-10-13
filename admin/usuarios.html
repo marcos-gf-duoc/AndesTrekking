@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+  Archivo: admin/usuarios.html
+  Qué es: listado de usuarios del panel de administración, en una tabla con
+          paginación. No muestra las contraseñas.
+  Quién puede verla: solo el Administrador.
+  Script propio: js/admin/usuarios.js
+  Rutas: esta página está dentro de la carpeta admin/. Para llegar a los
+          archivos de la raíz (css, js, assets) las rutas empiezan con "../".
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Hace que la página se adapte al ancho de la pantalla del celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usuarios | Panel AndesTrekking</title>
+
+  <!-- Estilos, en este orden: Bootstrap, íconos, los comunes del sitio
+       y al final los propios del panel -->
+  <link rel="stylesheet" href="../assets/vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+  <!-- El panel parte oculto (atributo hidden). admin-comun.js lo muestra
+       solo después de comprobar que el usuario tiene permiso -->
+  <div class="panel-contenedor" id="panel" hidden>
+
+    <!-- MENÚ VERTICAL. aside es la etiqueta para un bloque lateral -->
+    <aside class="panel-lateral">
+      <a class="panel-marca" href="index.html">AndesTrekking</a>
+      <p class="panel-etiqueta">Panel de administración</p>
+
+      <!-- Aquí JavaScript escribe el nombre y el rol del usuario -->
+      <p class="panel-saludo" id="saludoPanel"></p>
+
+      <!-- La lista parte vacía: js/admin/admin-comun.js agrega solo las
+           opciones que el rol del usuario puede usar -->
+      <nav aria-label="Menú del panel">
+        <ul class="panel-menu" id="menuPanel"></ul>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO propio de cada página del panel -->
+    <main class="panel-contenido">
+      <h1 class="panel-titulo">Usuarios</h1>
+
+      <!-- Caja de avisos: parte oculta. Se usa para confirmar acciones,
+           por ejemplo "Se eliminó el usuario" -->
+      <p class="mensaje-aviso" id="avisoPanel" role="status" hidden></p>
+
+      <!-- Fila sobre la tabla: el resumen a la izquierda y, a la derecha,
+           el botón "Nuevo usuario", que agrega usuarios.js -->
+      <div class="panel-barra">
+        <p class="panel-barra-texto" id="resumenUsuarios"></p>
+        <div id="accionesListado"></div>
+      </div>
+
+      <!-- El contenedor permite desplazar la tabla hacia los lados en
+           pantallas angostas, sin que se desborde la página -->
+      <div class="panel-tabla-contenedor">
+        <table class="table panel-tabla">
+          <!-- caption describe la tabla para los lectores de pantalla -->
+          <caption class="visually-hidden">Listado de usuarios del sitio</caption>
+          <thead>
+            <tr>
+              <!-- scope="col" indica que cada título corresponde a su columna -->
+              <th scope="col">RUN</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Correo</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <!-- El cuerpo parte vacío: usuarios.js agrega una fila por usuario -->
+          <tbody id="cuerpoTablaUsuarios"></tbody>
+        </table>
+      </div>
+
+      <!-- PAGINACIÓN: usuarios.js escribe el texto ("Mostrando 1 a 5 de 7")
+           y dibuja los botones Anterior, 1, 2 y Siguiente -->
+      <nav class="panel-paginacion" aria-label="Páginas del listado de usuarios">
+        <!-- role="status": al cambiar de página, los lectores de pantalla
+             anuncian qué usuarios se están viendo -->
+        <p class="panel-paginacion-texto" id="textoPaginacion" role="status"></p>
+        <ul class="panel-paginacion-botones" id="botonesPaginacion"></ul>
+      </nav>
+    </main>
+
+  </div>
+
+  <!-- Scripts, siempre al final del body y en este orden:
+       1. Bootstrap bundle
+       2. js/data/*
+       3. js/core/*
+       4. Script común de la zona (js/admin/admin-comun.js)
+       5. Script de la página
+       El orden importa: cada archivo usa lo que definieron los anteriores. -->
+
+  <!-- 1. Bootstrap -->
+  <script src="../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+  <!-- 2. Datos iniciales (semillas) -->
+  <script src="../js/data/productos.js"></script>
+  <script src="../js/data/usuarios.js"></script>
+  <script src="../js/data/ordenes.js"></script>
+  <script src="../js/data/cupones.js"></script>
+  <script src="../js/data/regiones.js"></script>
+
+  <!-- 3. Lógica compartida. storage.js va después de los datos porque
+       copia las semillas a localStorage apenas se carga -->
+  <script src="../js/core/storage.js"></script>
+  <script src="../js/core/utils.js"></script>
+  <script src="../js/core/validaciones.js"></script>
+  <script src="../js/core/auth.js"></script>
+
+  <!-- 4. Script común del panel: protección, menú, saludo y cerrar sesión -->
+  <script src="../js/admin/admin-comun.js"></script>
+
+  <!-- 5. Script propio de esta página: tabla de usuarios, paginación y acciones -->
+  <script src="../js/admin/usuarios.js"></script>
+</body>
+</html>

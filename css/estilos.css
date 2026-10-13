@@ -1065,3 +1065,30 @@ main {
 .carrito-boton-pagar {
   width: 100%;
 }
+
+/* Confirmación de la compra: reemplaza al carrito después de pagar */
+.carrito-confirmacion {
+  max-width: 36rem;
+  margin: 0 auto;           /* centrada en la página */
+  padding: var(--espacio-xl) var(--espacio-lg);
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-top: 6px solid var(--color-verde-bosque);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+  text-align: center;
+}
+
+.carrito-confirmacion-icono {
+  display: block;
+  margin-bottom: var(--espacio-sm);
+  color: var(--color-verde-bosque);
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+/* El título recibe el foco por JavaScript, pero no es un control:
+   no necesita mostrar el contorno de foco */
+.carrito-confirmacion h2:focus {
+  outline: none;
+}

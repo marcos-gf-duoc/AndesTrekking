@@ -645,6 +645,66 @@ function descontarStock(orden) {
   guardarEnStorage(CLAVE_PRODUCTOS, productos);
 }
 
+// Recibe: la orden recién creada.
+// Hace: reemplaza el carrito por la confirmación de la compra: oculta la
+//       lista y el resumen, escribe el número de la orden y el total, y
+//       pone el foco en el título para que se anuncie el cambio.
+// Devuelve: nada.
+function mostrarConfirmacionCompra(orden) {
+  document.getElementById("contenidoCarrito").hidden = true;
+  document.getElementById("avisoCarrito").hidden = true;
+
+  document.getElementById("numeroOrdenConfirmada").textContent = orden.id;
+  document.getElementById("totalOrdenConfirmada").textContent = formatearMonto(orden.total);
+
+  document.getElementById("confirmacionCompra").hidden = false;
+  document.getElementById("tituloConfirmacion").focus();
+}
+
+// Recibe: nada.
+// Hace: responde al botón Pagar. Sigue estos pasos:
+//       1. Con el carrito vacío no hace nada.
+//       2. Sin sesión iniciada, lleva al login. La URL lleva dos códigos:
+//          "aviso=sesion" (muestra "Debes iniciar sesión") y
+//          "volver=carrito" (después del login, vuelve aquí).
+//       3. Revisa el carrito por última vez: el stock pudo cambiar desde
+//          que se abrió la página. Si hubo que corregir algo, no se compra:
+//          se avisa y se muestra el carrito corregido.
+//       4. Crea la orden, descuenta el stock, y vacía el carrito y el cupón.
+//       5. Muestra la confirmación con el número de la orden.
+// Devuelve: nada.
+function pagar() {
+  if (leerCarrito().length === 0) {
+    return;
+  }
+
+  const sesion = obtenerSesion();
+
+  if (sesion === null) {
+    irAPagina("login.html?aviso=sesion&volver=carrito");
+    return;
+  }
+
+  const avisos = revisarCarrito();
+
+  if (avisos.length > 0) {
+    // unshift agrega un elemento al comienzo del arreglo
+    avisos.unshift("No se completó la compra porque tu carrito cambió.");
+    mostrarAvisosDelCarrito(avisos);
+    mostrarCarrito();
+    return;
+  }
+
+  const orden = crearOrden(sesion);
+  descontarStock(orden);
+
+  guardarCarrito([]);
+  guardarEnStorage(CLAVE_CUPON, null);
+  actualizarContadorCarrito();
+
+  mostrarConfirmacionCompra(orden);
+}
+
 // ==========================================================
 // Inicio de la página
 // ==========================================================
@@ -652,7 +712,8 @@ function descontarStock(orden) {
 // Recibe: nada.
 // Hace: prepara la página: primero revisa y corrige el carrito, muestra los
 //       avisos de lo que cambió, dibuja los productos con el resumen y
-//       conecta el formulario del cupón y el botón para quitarlo.
+//       conecta el formulario del cupón, el botón para quitarlo y el
+//       botón Pagar.
 // Devuelve: nada.
 function iniciarCarrito() {
   const avisos = revisarCarrito();
@@ -662,6 +723,7 @@ function iniciarCarrito() {
   document.getElementById("formularioCupon").addEventListener("submit", aplicarCupon);
   document.getElementById("codigoCupon").addEventListener("input", limpiarErrorCupon);
   document.getElementById("botonQuitarCupon").addEventListener("click", quitarCupon);
+  document.getElementById("botonPagar").addEventListener("click", pagar);
 }
 
 // Se ejecuta al cargar el archivo, con la página ya dibujada

@@ -8,6 +8,9 @@
 
   La tabla usa las funciones generales de tablas y paginación de
   admin-comun.js. Por seguridad, el listado nunca muestra las contraseñas.
+
+  Regla S-04: un Administrador no puede eliminar su propio usuario mientras
+  tiene la sesión iniciada. En su fila no hay botón "Eliminar".
 */
 
 // Usuarios que se están listando y página que se está viendo. Se guardan
@@ -15,6 +18,10 @@
 // puedan usarlas al hacer clic. Se declaran con let porque cambian.
 let usuariosDelListado = [];
 let paginaActual = 1;
+
+// RUN del usuario que tiene la sesión iniciada. Se define al iniciar la
+// página y sirve para reconocer su propia fila en la tabla (regla S-04).
+let runDeLaSesion = "";
 
 // Recibe: un usuario.
 // Hace: une su nombre y sus apellidos.
@@ -39,7 +46,10 @@ function crearEnlaceAccionUsuario(texto, pagina, usuario) {
 }
 
 // Recibe: un usuario.
-// Hace: crea la celda de acciones de su fila, con "Ver" y "Editar".
+// Hace: crea la celda de acciones de su fila, con "Ver", "Editar" y
+//       "Eliminar". En la fila del usuario con la sesión iniciada no se
+//       crea el botón "Eliminar": en su lugar va la etiqueta "Tu cuenta"
+//       (regla S-04).
 // Devuelve: la celda creada.
 function crearCeldaAccionesUsuario(usuario) {
   const celda = document.createElement("td");
@@ -48,7 +58,68 @@ function crearCeldaAccionesUsuario(usuario) {
   celda.appendChild(crearEnlaceAccionUsuario("Ver", "usuario-detalle.html", usuario));
   celda.appendChild(crearEnlaceAccionUsuario("Editar", "usuario-form.html", usuario));
 
+  if (usuario.run === runDeLaSesion) {
+    const etiqueta = document.createElement("span");
+    etiqueta.className = "etiqueta-cuenta";
+    etiqueta.textContent = "Tu cuenta";
+    celda.appendChild(etiqueta);
+    return celda;
+  }
+
+  // Eliminar es un botón porque ejecuta una acción, no lleva a otra página
+  const botonEliminar = document.createElement("button");
+  botonEliminar.type = "button";
+  botonEliminar.className = "panel-boton-chico peligro";
+  botonEliminar.textContent = "Eliminar";
+  botonEliminar.setAttribute("aria-label", "Eliminar a " + obtenerNombreCompleto(usuario));
+  botonEliminar.addEventListener("click", function () {
+    eliminarUsuario(usuario);
+  });
+  celda.appendChild(botonEliminar);
+
   return celda;
+}
+
+// Recibe: el usuario que se quiere eliminar.
+// Hace: pide confirmación y, si se acepta, quita al usuario de localStorage
+//       y vuelve a dibujar el listado con un aviso.
+//       Antes comprueba la regla S-04: si el usuario es el mismo que tiene
+//       la sesión iniciada, no lo elimina. Su fila no tiene botón
+//       "Eliminar", pero una función que borra datos no debe confiar en
+//       que nadie la llame desde otro lugar.
+//       Las órdenes de ese usuario no se tocan: cada orden guarda su propia
+//       copia del RUN, el nombre y el correo del cliente.
+// Devuelve: nada.
+function eliminarUsuario(usuario) {
+  if (usuario.run === runDeLaSesion) {
+    mostrarAvisoPanel("No puedes eliminar tu propio usuario mientras tienes la sesión iniciada.");
+    return;
+  }
+
+  const pregunta = "¿Eliminar al usuario «" + obtenerNombreCompleto(usuario) + "» (RUN " + usuario.run + ")? " +
+    "Esta acción no se puede deshacer.";
+
+  // confirm devuelve true solo si el usuario presiona Aceptar
+  if (!confirm(pregunta)) {
+    return;
+  }
+
+  // Se arma un arreglo nuevo con todos los usuarios menos el eliminado
+  const usuariosRestantes = [];
+  leerDeStorage(CLAVE_USUARIOS).forEach(function (otroUsuario) {
+    if (otroUsuario.run !== usuario.run) {
+      usuariosRestantes.push(otroUsuario);
+    }
+  });
+
+  guardarEnStorage(CLAVE_USUARIOS, usuariosRestantes);
+
+  // Se actualiza lo que está en pantalla. mostrarPagina ajusta la página
+  // si la última quedó vacía.
+  usuariosDelListado = usuariosRestantes;
+  mostrarResumenUsuarios(usuariosDelListado);
+  mostrarPagina(paginaActual);
+  mostrarAvisoPanel("Se eliminó al usuario «" + obtenerNombreCompleto(usuario) + "».");
 }
 
 // Recibe: un usuario.
@@ -159,6 +230,9 @@ function iniciarUsuariosAdmin() {
   if (!puedeVerLaPagina) {
     return;
   }
+
+  // Se recuerda el RUN de quien inició sesión, para reconocer su fila
+  runDeLaSesion = obtenerSesion().run;
 
   usuariosDelListado = leerDeStorage(CLAVE_USUARIOS);
   mostrarBotonNuevoUsuario();

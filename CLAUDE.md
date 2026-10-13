@@ -420,10 +420,12 @@ Casos de prueba:
 | D-11 | Live Server aprobado como herramienta de desarrollo, con rutas siempre relativas. |
 | D-12 | Bootstrap Icons aprobado, en archivos locales. |
 | D-13 | Los avisos entre páginas viajan como códigos fijos en la URL, sin claves nuevas en localStorage: `?aviso=sesion`, `?aviso=permisos` y `?aviso=restablecido`. El texto de cada aviso lo define el sitio (`tienda-comun.js`), nunca la URL. Para volver al carrito después del login se usa `login.html?volver=carrito`. |
+| D-14 | Las fechas se guardan como `AAAA-MM-DD` y se muestran al usuario como `DD-MM-AAAA`, con la función `formatearFecha` de `utils.js`. |
 | S-01 | Un solo formulario por entidad para Nuevo y Editar (el modo se define por el parámetro en la URL). |
 | S-02 | Código de producto y RUN no editables en modo Editar (son identificadores). |
 | S-03 | Header y footer escritos en cada HTML (sin `fetch`), para que funcione con `file://`. |
 | S-04 | Un Administrador no puede eliminar su propio usuario mientras tiene la sesión iniciada. |
+| S-05 | Un Administrador no puede cambiar el tipo de su propia cuenta. Si edita su nombre o su correo, la sesión (`at_sesion`) se actualiza con los datos nuevos. |
 
 ## 11. Fuera de alcance (no implementar)
 

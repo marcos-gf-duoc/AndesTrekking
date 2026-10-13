@@ -91,6 +91,26 @@ textarea:focus-visible {
   outline-offset: 2px; /* separa el contorno del borde del elemento */
 }
 
+/* Bootstrap le quita el contorno de foco a sus botones y campos (les pone
+   "outline: 0") y lo reemplaza por un halo propio: azul en los campos e
+   inexistente en los botones sin variante de color, como los de este
+   sitio. Esta regla repite el contorno para esas clases. Gana porque
+   tiene la misma fuerza que la de Bootstrap y estilos.css se carga después */
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+  outline: 3px solid var(--color-naranja);
+  outline-offset: 2px;
+  box-shadow: none;         /* quita el halo de Bootstrap */
+}
+
+/* Borde del campo activo: verde del sitio en vez del azul de Bootstrap.
+   Los campos con error o válidos conservan su color rojo o verde */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-verde-bosque);
+}
+
 /* Enlace "Saltar al contenido": es el primer elemento de cada página.
    top negativo lo deja fuera de la pantalla, pero sigue en el recorrido
    de la tecla Tab (con display: none no se podría enfocar) */

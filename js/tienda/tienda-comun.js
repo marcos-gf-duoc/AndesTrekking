@@ -1,9 +1,9 @@
 /*
   Archivo: js/tienda/tienda-comun.js
   Qué es: funciones compartidas por las páginas de la tienda pública.
-          Arma las tarjetas de producto, maneja la newsletter del footer
-          y muestra la sesión en el header y los avisos que llegan por
-          la URL. Más adelante tendrá también el contador del carrito.
+          Arma las tarjetas de producto, maneja la newsletter del footer,
+          muestra la sesión en el header y los avisos que llegan por la
+          URL, y tiene la lógica del carrito de compras.
   Quién lo usa: todas las páginas de la tienda (todas tienen el header
           y el footer).
   Orden de carga: va DESPUÉS de los archivos de js/core/ (usa storage.js,
@@ -54,8 +54,8 @@ function crearTarjetaProducto(producto) {
     atributoDeshabilitado = " disabled";
   }
 
-  // data-codigo guarda el código en el botón: así, al hacer clic, el carrito
-  // sabrá qué producto añadir (se programa en la rama del carrito)
+  // data-codigo guarda el código en el botón: así, al hacer clic,
+  // responderAClicEnAnadir (más abajo) sabe qué producto añadir
   let html = "";
   html += '<article class="tarjeta-producto">';
   html += '  <a class="tarjeta-producto-enlace" href="' + enlaceDetalle + '">';
@@ -325,3 +325,236 @@ function mostrarAvisoDeUrl() {
 
 // Se ejecuta al cargar el archivo, en todas las páginas de la tienda
 mostrarAvisoDeUrl();
+
+// ==========================================================
+// Carrito de compras
+// El carrito se guarda en localStorage (clave at_carrito) como un arreglo
+// de objetos { codigo, cantidad }. Solo guarda el código: el nombre, el
+// precio y el stock se leen siempre del producto, para que estén al día.
+// ==========================================================
+
+// Recibe: nada.
+// Hace: lee el carrito guardado en localStorage.
+// Devuelve: un arreglo de { codigo, cantidad } (vacío si no hay productos).
+function leerCarrito() {
+  return leerDeStorage(CLAVE_CARRITO);
+}
+
+// Recibe: un arreglo de { codigo, cantidad }.
+// Hace: lo guarda en localStorage, reemplazando el carrito anterior.
+// Devuelve: nada.
+function guardarCarrito(carrito) {
+  guardarEnStorage(CLAVE_CARRITO, carrito);
+}
+
+// Recibe: nada.
+// Hace: suma las cantidades de todos los productos del carrito. Es el
+//       número que muestra el contador del header: unidades, no productos
+//       distintos (2 mochilas y 1 linterna son 3).
+// Devuelve: el total de unidades.
+function contarUnidadesCarrito() {
+  let totalUnidades = 0;
+
+  leerCarrito().forEach(function (item) {
+    totalUnidades = totalUnidades + item.cantidad;
+  });
+
+  return totalUnidades;
+}
+
+// Recibe: el código de un producto.
+// Hace: busca ese producto dentro del carrito.
+// Devuelve: cuántas unidades de ese producto hay en el carrito (0 si no está).
+function obtenerCantidadEnCarrito(codigo) {
+  const carrito = leerCarrito();
+
+  for (let i = 0; i < carrito.length; i++) {
+    if (carrito[i].codigo === codigo) {
+      return carrito[i].cantidad;
+    }
+  }
+
+  return 0;
+}
+
+// Recibe: una cantidad.
+// Hace: elige entre singular y plural.
+// Devuelve: un texto como "1 unidad" o "3 unidades".
+function escribirUnidades(cantidad) {
+  if (cantidad === 1) {
+    return "1 unidad";
+  }
+
+  return cantidad + " unidades";
+}
+
+// Recibe: el código de un producto y la cantidad que se quiere añadir.
+// Hace: añade el producto al carrito respetando el stock:
+//       - La cantidad debe ser un número entero mayor que 0.
+//       - Lo que ya está en el carrito cuenta: con stock 12 y 10 unidades
+//         en el carrito, solo se pueden añadir 2 más.
+//       - Si se pide más de lo disponible, añade solo lo que queda y lo
+//         avisa en el mensaje.
+//       Si el producto ya estaba en el carrito, aumenta su cantidad; si no,
+//       lo agrega al final.
+// Devuelve: un objeto con dos datos:
+//       cantidadAgregada  unidades que realmente se añadieron (0 si ninguna)
+//       mensaje           texto para mostrarle al usuario
+function agregarAlCarrito(codigo, cantidadPedida) {
+  const producto = buscarProductoPorCodigo(codigo);
+
+  if (producto === null) {
+    return { cantidadAgregada: 0, mensaje: "Este producto ya no está disponible." };
+  }
+
+  if (!Number.isInteger(cantidadPedida) || cantidadPedida < 1) {
+    return { cantidadAgregada: 0, mensaje: "La cantidad debe ser un número entero mayor que 0." };
+  }
+
+  if (producto.stock === 0) {
+    return { cantidadAgregada: 0, mensaje: producto.nombre + " está agotado." };
+  }
+
+  const carrito = leerCarrito();
+  const cantidadEnCarrito = obtenerCantidadEnCarrito(codigo);
+  const unidadesDisponibles = producto.stock - cantidadEnCarrito;
+
+  if (unidadesDisponibles <= 0) {
+    return {
+      cantidadAgregada: 0,
+      mensaje: "Ya tienes en el carrito todo el stock de " + producto.nombre + " (" + escribirUnidades(producto.stock) + ")."
+    };
+  }
+
+  // Si se pide más de lo que queda, se añade solo lo disponible
+  let cantidadAAgregar = cantidadPedida;
+  let seLimito = false;
+  if (cantidadAAgregar > unidadesDisponibles) {
+    cantidadAAgregar = unidadesDisponibles;
+    seLimito = true;
+  }
+
+  // Si el producto ya está en el carrito se suma a su cantidad;
+  // si no está, se agrega como un elemento nuevo
+  let yaEstaba = false;
+  carrito.forEach(function (item) {
+    if (item.codigo === codigo) {
+      item.cantidad = item.cantidad + cantidadAAgregar;
+      yaEstaba = true;
+    }
+  });
+
+  if (!yaEstaba) {
+    carrito.push({ codigo: codigo, cantidad: cantidadAAgregar });
+  }
+
+  guardarCarrito(carrito);
+
+  let mensaje = "Se añadió " + producto.nombre + " al carrito (" + escribirUnidades(cantidadAAgregar) + ").";
+  if (seLimito) {
+    mensaje = "Solo se añadieron " + escribirUnidades(cantidadAAgregar) + " de " + producto.nombre +
+      ": es todo el stock disponible.";
+  }
+
+  return { cantidadAgregada: cantidadAAgregar, mensaje: mensaje };
+}
+
+// Recibe: nada.
+// Hace: escribe en el círculo del header el total de unidades del carrito.
+//       También ajusta el texto oculto que sigue al número ("producto" o
+//       "productos"), que es lo que leen los lectores de pantalla:
+//       "Carrito 1 producto".
+//       Se llama al cargar cada página y cada vez que cambia el carrito.
+// Devuelve: nada.
+function actualizarContadorCarrito() {
+  const contador = document.getElementById("contadorCarrito");
+
+  // Si una página no tuviera el contador, no hay nada que actualizar
+  if (contador === null) {
+    return;
+  }
+
+  const totalUnidades = contarUnidadesCarrito();
+  contador.textContent = totalUnidades;
+
+  // nextElementSibling es el elemento que viene justo después del contador
+  // en el HTML: el <span class="visually-hidden">
+  const textoOculto = contador.nextElementSibling;
+
+  if (textoOculto !== null) {
+    if (totalUnidades === 1) {
+      textoOculto.textContent = "producto";
+    } else {
+      textoOculto.textContent = "productos";
+    }
+  }
+}
+
+// Se ejecuta al cargar el archivo, en todas las páginas de la tienda
+actualizarContadorCarrito();
+
+// ==========================================================
+// Aviso flotante y botón "Añadir" de las tarjetas
+// ==========================================================
+
+// Tiempo que el aviso flotante queda visible, en milisegundos (3 segundos)
+const DURACION_AVISO_FLOTANTE = 3000;
+
+// Guarda el temporizador que oculta el aviso, para poder cancelarlo si
+// aparece un aviso nuevo antes de que termine el anterior
+let temporizadorAvisoFlotante = null;
+
+// Recibe: el texto de un aviso.
+// Hace: lo muestra en una caja fija, abajo a la derecha de la pantalla, y lo
+//       oculta solo después de 3 segundos. La caja se crea la primera vez
+//       que se necesita y después se reutiliza.
+//       role="status" hace que los lectores de pantalla anuncien el texto.
+// Devuelve: nada.
+function mostrarAvisoFlotante(texto) {
+  let caja = document.getElementById("avisoFlotante");
+
+  if (caja === null) {
+    caja = document.createElement("div");
+    caja.id = "avisoFlotante";
+    caja.className = "aviso-flotante";
+    caja.setAttribute("role", "status");
+    document.body.appendChild(caja);
+  }
+
+  caja.textContent = texto;
+  caja.hidden = false;
+
+  // Si había un aviso anterior esperando para ocultarse, se cancela esa
+  // espera: el plazo de 3 segundos parte de nuevo con este aviso
+  clearTimeout(temporizadorAvisoFlotante);
+
+  // setTimeout ejecuta la función cuando pasa el tiempo indicado
+  temporizadorAvisoFlotante = setTimeout(function () {
+    caja.hidden = true;
+  }, DURACION_AVISO_FLOTANTE);
+}
+
+// Recibe: el evento de un clic hecho en cualquier parte de la página.
+// Hace: revisa si el clic fue en un botón "Añadir" de una tarjeta de
+//       producto (los reconoce por la clase "boton-anadir"). Si lo fue,
+//       añade 1 unidad del producto cuyo código está en data-codigo,
+//       actualiza el contador del header y muestra el aviso.
+//       Cualquier otro clic se ignora.
+// Devuelve: nada.
+function responderAClicEnAnadir(evento) {
+  const elemento = evento.target; // el elemento exacto donde se hizo clic
+
+  if (!elemento.classList.contains("boton-anadir")) {
+    return;
+  }
+
+  const resultado = agregarAlCarrito(elemento.dataset.codigo, 1);
+
+  actualizarContadorCarrito();
+  mostrarAvisoFlotante(resultado.mensaje);
+}
+
+// Un solo "escuchador" de clics para toda la página, en vez de uno por
+// botón. Así también funcionan las tarjetas que se dibujan después de
+// cargar la página, sin tener que conectarlas una por una.
+document.addEventListener("click", responderAClicEnAnadir);

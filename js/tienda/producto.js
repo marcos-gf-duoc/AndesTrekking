@@ -2,7 +2,8 @@
   Archivo: js/tienda/producto.js
   Qué es: script propio de la página de detalle de un producto.
   Quién lo usa: solo producto.html.
-  Orden de carga: va al final, DESPUÉS de js/tienda/tienda-comun.js.
+  Orden de carga: va al final, DESPUÉS de js/tienda/tienda-comun.js (usa
+          sus funciones de carrito y de aviso).
 
   Cómo funciona: la página se abre con el código del producto en la URL,
   por ejemplo producto.html?codigo=MOC-001. El script lee ese código, busca
@@ -97,18 +98,83 @@ function mostrarImagenes(producto) {
   });
 }
 
+// Recibe: el código del producto que se está viendo.
+// Hace: escribe bajo el botón cuántas unidades de este producto ya están
+//       en el carrito. Si no hay ninguna, deja el texto vacío.
+// Devuelve: nada.
+function mostrarCantidadEnCarrito(codigo) {
+  const cantidad = obtenerCantidadEnCarrito(codigo);
+  const texto = document.getElementById("infoCarritoProducto");
+
+  if (cantidad === 0) {
+    texto.textContent = "";
+    return;
+  }
+
+  texto.textContent = "Ya tienes " + escribirUnidades(cantidad) + " de este producto en tu carrito.";
+}
+
+// Recibe: el mensaje de error de la cantidad, o "" si no hay error.
+// Hace: muestra u oculta el error del campo cantidad. El mensaje va en un
+//       párrafo bajo el bloque de compra, y el campo se marca en rojo con
+//       la clase is-invalid (que solo da el estilo).
+// Devuelve: nada.
+function mostrarErrorCantidad(mensajeError) {
+  const campoCantidad = document.getElementById("cantidadProducto");
+  document.getElementById("errorCantidadProducto").textContent = mensajeError;
+
+  if (mensajeError === "") {
+    campoCantidad.classList.remove("is-invalid");
+    campoCantidad.removeAttribute("aria-invalid");
+    return;
+  }
+
+  campoCantidad.classList.add("is-invalid");
+  campoCantidad.setAttribute("aria-invalid", "true");
+}
+
+// Recibe: el producto que se está viendo.
+// Hace: responde al botón "Añadir al carrito". Lee la cantidad escrita y
+//       revisa que sea un número entero mayor que 0. Si lo es, la añade al
+//       carrito (agregarAlCarrito, de tienda-comun.js, respeta el stock),
+//       actualiza el contador del header y muestra el aviso.
+// Devuelve: nada.
+function anadirDesdeDetalle(producto) {
+  const campoCantidad = document.getElementById("cantidadProducto");
+  const textoCantidad = campoCantidad.value.trim();
+
+  // esSoloDigitos rechaza el vacío, los decimales ("1.5"), los negativos
+  // ("-2") y las letras. Además la cantidad no puede ser 0.
+  if (!esSoloDigitos(textoCantidad) || Number(textoCantidad) < 1) {
+    mostrarErrorCantidad("Ingresa una cantidad entera mayor que 0.");
+    campoCantidad.focus();
+    return;
+  }
+
+  mostrarErrorCantidad("");
+
+  const resultado = agregarAlCarrito(producto.codigo, Number(textoCantidad));
+
+  actualizarContadorCarrito();
+  mostrarCantidadEnCarrito(producto.codigo);
+  mostrarAvisoFlotante(resultado.mensaje);
+
+  // El campo vuelve a 1, listo para añadir más
+  campoCantidad.value = 1;
+}
+
 // Recibe: un producto.
 // Hace: ajusta el selector de cantidad y el botón según el stock.
 //       Sin stock: el botón dice "Agotado" y ambos quedan deshabilitados.
-//       Con stock: la cantidad máxima que acepta el selector es el stock.
-//       El botón todavía no añade al carrito: eso se programa en la rama
-//       del carrito, que usará el código guardado en data-codigo.
+//       Con stock: la cantidad máxima que sugiere el selector es el stock,
+//       y el botón queda conectado para añadir al carrito.
 // Devuelve: nada.
 function prepararCompra(producto) {
   const campoCantidad = document.getElementById("cantidadProducto");
   const boton = document.getElementById("botonAnadir");
 
   boton.dataset.codigo = producto.codigo;
+  mostrarCantidadEnCarrito(producto.codigo);
 
   if (producto.stock === 0) {
     boton.textContent = "Agotado";
@@ -117,7 +183,18 @@ function prepararCompra(producto) {
     return;
   }
 
+  // max es solo un apoyo del navegador: el límite real lo aplica
+  // agregarAlCarrito, que además cuenta lo que ya hay en el carrito
   campoCantidad.max = producto.stock;
+
+  boton.addEventListener("click", function () {
+    anadirDesdeDetalle(producto);
+  });
+
+  // Al corregir la cantidad se borra el error anterior
+  campoCantidad.addEventListener("input", function () {
+    mostrarErrorCantidad("");
+  });
 }
 
 // Cantidad máxima de productos relacionados que se muestran
